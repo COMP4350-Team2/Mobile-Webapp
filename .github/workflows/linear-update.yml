@@ -44,7 +44,6 @@ jobs:
         BRANCH_URL="https://github.com/COMP4350-Team2/${{ github.event.repository.name }}/branches/${GITHUB_HEAD_REF}"
         COMMENT="Branch ${GITHUB_HEAD_REF} has been created for this issue. You can view it [here](${BRANCH_URL})."
 
-
         echo "Updating Linear issue with number $ISSUE_NUMBER and adding comment..."
 
         # Update the Linear issue using Linear API
@@ -72,8 +71,9 @@ jobs:
             "query": "mutation { commentCreate(input: { issueId: \"'$ISSUE_NUMBER'\", body: \"'$COMMENT'\" }) { comment { id } } }"
           }')
 
-        if [ "$(echo $comment_response | grep -o '"id":' | wc -l)" -eq 0 ]; then
-          echo "Error adding comment to issue. Response code: $response"
+        # Check for errors in the comment response
+        if [ "$comment_response" -ne 200 ]; then
+          echo "Error adding comment to issue. Response code: $comment_response"
           cat comment_response.json
           exit 1
         else
