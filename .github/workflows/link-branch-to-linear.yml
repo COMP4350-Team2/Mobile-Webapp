@@ -1,11 +1,12 @@
-name: Connect Branch to Linear Issue
+name: Link Branch to Linear Issue
 
 on:
-  pull_request:
-    types: [opened, synchronize, closed]
+  create:
+    branches:
+      - '*'
 
 jobs:
-  connect-to-linear:
+  link-branch:
     runs-on: ubuntu-latest
 
     steps:
@@ -15,7 +16,7 @@ jobs:
     - name: Extract issue number from branch name
       id: extract
       run: |
-        BRANCH_NAME="${GITHUB_HEAD_REF}"
+        BRANCH_NAME="${GITHUB_REF#refs/heads/}"
         echo "Branch name: $BRANCH_NAME"
         
         # Define regex pattern to match the naming convention
@@ -31,7 +32,7 @@ jobs:
           exit 1
         fi
 
-    - name: Update Linear issue
+    - name: Add comment to Linear issue
       env:
         LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
       run: |
@@ -41,30 +42,12 @@ jobs:
         fi
         
         # Construct the branch URL
-        BRANCH_URL="https://github.com/COMP4350-Team2/${{ github.event.repository.name }}/branches/${GITHUB_HEAD_REF}"
-        COMMENT="Branch ${GITHUB_HEAD_REF} has been created for this issue. You can view it [here](${BRANCH_URL})."
+        BRANCH_URL="https://github.com/COMP4350-Team2/${{ github.event.repository.name }}/branches/${GITHUB_REF#refs/heads/}"
+        COMMENT="Branch ${GITHUB_REF#refs/heads/} has been created for this issue. You can view it [here](${BRANCH_URL})."
 
+        echo "Adding comment to Linear issue with number $ISSUE_NUMBER..."
 
-        echo "Updating Linear issue with number $ISSUE_NUMBER and adding comment..."
-
-        # Update the Linear issue using Linear API
-        response=$(curl -s -o response.json -w "%{http_code}" -X PATCH https://api.linear.app/graphql \
-          -H "Authorization: Bearer $LINEAR_API_KEY" \
-          -H "Content-Type: application/json" \
-          -d '{
-            "query": "mutation { issueUpdate(input: { id: \"'$ISSUE_NUMBER'\", stateId: \"in_progress\" }) { success } }"
-          }')
-
-        # Check for errors in the response
-        if [ "$response" -ne 200 ]; then
-          echo "Error updating issue. Response code: $response"
-          cat response.json
-          exit 1
-        else
-          echo "Issue updated successfully."
-        fi
-
-        # Add a comment to the Linear issue with a link to the GitHub branch
+        # Add a comment to the Linear issue using Linear API
         comment_response=$(curl -s -o comment_response.json -w "%{http_code}" -X POST https://api.linear.app/graphql \
           -H "Authorization: Bearer $LINEAR_API_KEY" \
           -H "Content-Type: application/json" \
@@ -72,9 +55,11 @@ jobs:
             "query": "mutation { commentCreate(input: { issueId: \"'$ISSUE_NUMBER'\", body: \"'$COMMENT'\" }) { comment { id } } }"
           }')
 
+        echo "Comment creation response: $comment_response"
+        cat comment_response.json
+
         if [ "$(echo $comment_response | grep -o '"id":' | wc -l)" -eq 0 ]; then
           echo "Error adding comment to issue. Response code: $response"
-          cat comment_response.json
           exit 1
         else
           echo "Comment added successfully."
