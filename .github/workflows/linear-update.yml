@@ -54,10 +54,11 @@ jobs:
             "query": "mutation { issueUpdate(input: { id: \"'$ISSUE_NUMBER'\", stateId: \"in_progress\" }) { success } }"
           }')
 
-        # Check for errors in the response
+        echo "API response: $response"
+        cat response.json
+
         if [ "$response" -ne 200 ]; then
           echo "Error updating issue. Response code: $response"
-          cat response.json
           exit 1
         else
           echo "Issue updated successfully."
@@ -71,10 +72,11 @@ jobs:
             "query": "mutation { commentCreate(input: { issueId: \"'$ISSUE_NUMBER'\", body: \"'$COMMENT'\" }) { comment { id } } }"
           }')
 
-        # Check for errors in the comment response
+        echo "Comment API response: $comment_response"
+        cat comment_response.json
+
         if [ "$comment_response" -ne 200 ]; then
           echo "Error adding comment to issue. Response code: $comment_response"
-          cat comment_response.json
           exit 1
         else
           echo "Comment added successfully."
