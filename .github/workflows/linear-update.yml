@@ -1,30 +1,79 @@
+# name: Connect Branch to Linear Issue
+
+# on:
+#   pull_request:
+#     types: [opened, reopened, closed]
+
+# jobs:
+#   connect-to-linear:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Check out code
+#       uses: actions/checkout@v3
+
+#     - name: Extract issue number from branch name
+#       id: extract
+#       run: |
+#         BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+#         echo "Branch name: $BRANCH_NAME"
+        
+#         # Extract the issue number from the branch name using regex
+#         if [[ "$BRANCH_NAME" =~ ^[a-zA-Z0-9._-]+/([0-9]+)/[a-zA-Z0-9._-]+$ ]]; then
+#           ISSUE_NUMBER="${BASH_REMATCH[1]}"
+#           echo "Issue number: $ISSUE_NUMBER"
+#           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+#         else
+#           echo "Branch name does not match the expected format."
+#           exit 1
+#         fi
+
+#     - name: Update Linear issue
+#       env:
+#         LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+#       run: |
+#         if [ -z "$ISSUE_NUMBER" ]; then
+#           echo "No issue number found."
+#           exit 1
+#         fi
+        
+#         # Update the Linear issue using Linear API
+#         curl -X PATCH https://api.linear.app/graphql \
+#           -H "Authorization: Bearer $LINEAR_API_KEY" \
+#           -H "Content-Type: application/json" \
+#           -d '{
+#             "query": "mutation { issueUpdate(input: { id: \"'$ISSUE_NUMBER'\", stateId: \"in_progress\" }) { success } }"
+#           }'
 name: Connect Branch to Linear Issue
 
 on:
   pull_request:
-    types: [opened, reopened, closed]
+    types: [opened, synchronize, closed]
 
 jobs:
   connect-to-linear:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Check out code
+    - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Extract issue number from branch name
       id: extract
       run: |
-        BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+        BRANCH_NAME="${GITHUB_HEAD_REF}"
         echo "Branch name: $BRANCH_NAME"
         
-        # Extract the issue number from the branch name using regex
-        if [[ "$BRANCH_NAME" =~ ^[a-zA-Z0-9._-]+/([0-9]+)/[a-zA-Z0-9._-]+$ ]]; then
+        # Define regex pattern to match the naming convention
+        PATTERN='^[a-zA-Z0-9._-]+/([0-9]+)-[a-zA-Z0-9._-]+$'
+
+        if [[ "$BRANCH_NAME" =~ $PATTERN ]]; then
           ISSUE_NUMBER="${BASH_REMATCH[1]}"
           echo "Issue number: $ISSUE_NUMBER"
           echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
         else
           echo "Branch name does not match the expected format."
+          echo "Expected format: username/identifier-title"
           exit 1
         fi
 
@@ -37,10 +86,16 @@ jobs:
           exit 1
         fi
         
+        echo "Updating Linear issue with number $ISSUE_NUMBER..."
+
         # Update the Linear issue using Linear API
-        curl -X PATCH https://api.linear.app/graphql \
+        response=$(curl -s -o response.json -w "%{http_code}" -X PATCH https://api.linear.app/graphql \
           -H "Authorization: Bearer $LINEAR_API_KEY" \
           -H "Content-Type: application/json" \
           -d '{
             "query": "mutation { issueUpdate(input: { id: \"'$ISSUE_NUMBER'\", stateId: \"in_progress\" }) { success } }"
-          }'
+          }')
+
+        # Check for errors in the response
+        if [ "$response" -ne 200 ]; then
+          echo "
