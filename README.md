@@ -11,12 +11,15 @@
 
 ## Prerequisites
 ### NVM (Node Version Manager)
-Please download the file called `nvm-setup.exe` found on [here](https://github.com/coreybutler/nvm-windows/releases)
+- Please download the file called `nvm-setup.exe` found on [here](https://github.com/coreybutler/nvm-windows/releases)
+- Once downloaded, run the following commands<br><br>
+`nvm install latest` <br>`nvm use latest`<br>
 
-### Node.js
+### Node.js 
 `nvm install node`
 
 ### NPM (Node Package Manager)
+Ensure you are in the repo's directory and run the following command<br>
 `npm install`
 
 ## Dependencies
