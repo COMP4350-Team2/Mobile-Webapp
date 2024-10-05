@@ -1,3 +1,4 @@
+/* Our starting point of the app. */
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
@@ -15,12 +16,11 @@ root.render(
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{ redirect_uri: window.location.origin }} 
+      authorizationParams={{
+        redirect_uri: `${window.location.origin}/logged-in`, 
+      }} 
     >
       <App />
     </Auth0Provider>
   </React.StrictMode>
 );
-
-
-

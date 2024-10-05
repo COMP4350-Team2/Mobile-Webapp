@@ -1,76 +1,52 @@
-// // src/Home.tsx
-// import React from 'react';
-// import { useAuth0 } from '@auth0/auth0-react';
+// src/Home.tsx
+import React from 'react';
+import { UserAuth } from './auth/UserAuth';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
-// const Home: React.FC = () => {
-//     const { loginWithRedirect } = useAuth0();
+interface HomeProps {
+  userAuth: UserAuth; // Receive UserAuth from props
+}
 
-//     const handleClick = () => {
-//         loginWithRedirect();
-//     };
+const Home: React.FC<HomeProps> = ({ userAuth }) => {
+  const navigate = useNavigate(); // Initialize navigate
 
-//     return (
-//         <div style={{ 
-//             display: 'flex', 
-//             justifyContent: 'center', 
-//             alignItems: 'center', 
-//             height: '100vh', 
-//             textAlign: 'center' 
-//         }}>
-//             <button 
-//                 onClick={handleClick} 
-//                 style={{
-//                     padding: '10px 20px', 
-//                     fontSize: '16px',
-//                     cursor: 'pointer'
-//                 }}
-//             >
-//                 Login Button
-//             </button>
-//         </div>
-//     );
-// };
+  const handleLogin = () => {
+    userAuth.login(); // Log in the user using Auth0 or Mock User
+    if (userAuth.isAuthenticated()) { // Check if the user is authenticated
+      navigate('/logged-in'); // Redirect to the Logged_In page
+    }
+  };
 
-// export default Home;
-import React, { useEffect } from 'react';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useNavigate } from 'react-router-dom';
-
-const Home: React.FC = () => {
-    const { loginWithRedirect, isAuthenticated } = useAuth0();
-    const navigate = useNavigate();
-
-    // Redirect to "Logged In" page after successful login
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/logged-in');
-        }
-    }, [isAuthenticated, navigate]);
-
-    const handleClick = () => {
-        loginWithRedirect();
-    };
-
-    return (
-        <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            height: '100vh', 
-            textAlign: 'center' 
-        }}>
-            <button 
-                onClick={handleClick} 
-                style={{
-                    padding: '10px 20px', 
-                    fontSize: '16px',
-                    cursor: 'pointer'
-                }}
-            >
-                Login Button
-            </button>
-        </div>
-    );
+  return (
+    <div 
+      style={{
+        display: 'flex', // Use flexbox for layout
+        flexDirection: 'column', // Align items in a column
+        justifyContent: 'center', // Center vertically
+        alignItems: 'center', // Center horizontally
+        height: '100vh', // Full viewport height
+        textAlign: 'center', // Center text alignment
+        backgroundColor: '#f0f0f5', // Light background color
+        fontFamily: 'Arial, sans-serif', // Font style
+      }}
+    >
+      <h1 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>Welcome to the App</h1> {/* Title */}
+      <button 
+        onClick={handleLogin} 
+        style={{
+          padding: '15px 30px', // Button padding
+          fontSize: '18px', // Button font size
+          backgroundColor: '#4CAF50', // Green background color
+          color: 'white', // White text color
+          border: 'none', // No border
+          borderRadius: '5px', // Rounded corners
+          cursor: 'pointer', // Pointer cursor on hover
+        }}
+      >
+        Log In
+      </button>
+    </div>
+  );
 };
 
 export default Home;
