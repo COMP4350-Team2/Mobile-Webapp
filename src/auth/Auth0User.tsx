@@ -16,4 +16,5 @@ export class Auth0User implements UserAuth {
   isAuthenticated(): boolean {
     return this.auth0.isAuthenticated; // This will be false initially until Auth0 completes login
   }
+	isAuth0User = () => true;
 }

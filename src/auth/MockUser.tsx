@@ -2,17 +2,19 @@
 import { UserAuth } from './UserAuth';
 
 export class MockUser implements UserAuth {
-  private isLoggedIn: boolean = false;
+    private isLoggedIn: boolean = false;
 
-  login() {
+    login() {
     this.isLoggedIn = true; // Simulate successful login
-  }
+    }
 
-  logout() {
+    logout() {
     this.isLoggedIn = false; // Simulate logout
-  }
+    }
 
-  isAuthenticated(): boolean {
+    isAuthenticated(): boolean {
     return this.isLoggedIn; // Check if logged in
-  }
+    }
+
+    isAuth0User = () => false;
 }
