@@ -1,5 +1,5 @@
 import React from 'react';
-import { UserAuth } from './auth/UserAuth';
+import { UserAuth } from '../auth/UserAuth';
 import { useNavigate } from 'react-router-dom';
 import myAppLogo from './assets/Cupboard_Logo.png'; // Import logo
 
