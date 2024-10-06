@@ -3,5 +3,6 @@ export interface UserAuth {
     login: () => void;
     logout: () => void;
     isAuthenticated: () => boolean;
+	isAuth0User: () => boolean;
   }
   
