@@ -165,7 +165,7 @@ const LoggedIn: React.FC<LoggedInProps> = ({ userAuth }) => {
         >
           {/* Card for "View My Lists" */}
           <div 
-            onClick={() => { /* No action right now */ }} 
+            onClick={() => navigate('/my-lists')} // Navigate to MyLists page
             style={{
               backgroundColor: '#AB4C11', 
               color: 'white', 
