@@ -27,6 +27,9 @@ Ensure you are in the repo's directory and run the following command<br>
 ### React Router Dom
 `npm install react-router-dom`
 
+### React Icons
+`npm install react-icons`
+
 ## Environment Variables Instructions
 - Download `SAMPLE.env` and rename it to `.env`. 
 - Enter the required details.
