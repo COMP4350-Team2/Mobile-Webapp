@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserAuth } from '../auth/UserAuth';
 import { useNavigate } from 'react-router-dom';
-import myAppLogo from './assets/Cupboard_Logo.png'; // Import logo
+import myAppLogo from '../assets/Cupboard_Logo.png'; // Import logo
 
 interface HomeProps {
   userAuth: UserAuth; // Receive UserAuth from props

@@ -4,7 +4,7 @@ import { UserAuth } from '../auth/UserAuth';
 import { MockUser } from '../auth/MockUser'; 
 import { FaUserCircle } from 'react-icons/fa'; // Importing Profile icon
 import { AiOutlineArrowLeft } from 'react-icons/ai'; // Importing Back icon
-import myAppLogo from './assets/Cupboard_Logo.png'; // Import your logo image
+import myAppLogo from '../assets/Cupboard_Logo.png'; // Import your logo image
 
 interface LoggedInProps {
   userAuth: UserAuth; // Define the prop type

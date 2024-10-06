@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './Home';
-import LoggedIn from './Logged_In';
-import MyLists from './MyLists'; // Import MyLists
+import Home from './Home/Home';
+import LoggedIn from './Logged_In/Logged_In';
+import MyLists from './MyLists/MyLists'; // Import MyLists
 import UserAuthFactory from './auth/UserAuthFactory';
 
 const App: React.FC = () => {
