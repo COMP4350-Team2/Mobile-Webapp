@@ -1,7 +1,7 @@
-// src/Home.tsx
 import React from 'react';
 import { UserAuth } from './auth/UserAuth';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom';
+import myAppLogo from './assets/Cupboard_Logo.png'; // Import logo
 
 interface HomeProps {
   userAuth: UserAuth; // Receive UserAuth from props
@@ -20,31 +20,80 @@ const Home: React.FC<HomeProps> = ({ userAuth }) => {
   return (
     <div 
       style={{
-        display: 'flex', // Use flexbox for layout
-        flexDirection: 'column', // Align items in a column
-        justifyContent: 'center', // Center vertically
-        alignItems: 'center', // Center horizontally
-        height: '100vh', // Full viewport height
-        textAlign: 'center', // Center text alignment
-        backgroundColor: '#f0f0f5', // Light background color
-        fontFamily: 'Arial, sans-serif', // Font style
+        position: 'relative',
+        height: '100vh',
+        textAlign: 'center',
+        backgroundColor: '#99D9EA',
       }}
     >
-      <h1 style={{ fontSize: '2.5rem', marginBottom: '20px' }}>Welcome to the App</h1> {/* Title */}
-      <button 
-        onClick={handleLogin} 
+      {/* Background Logo */}
+      <div 
         style={{
-          padding: '15px 30px', // Button padding
-          fontSize: '18px', // Button font size
-          backgroundColor: '#4CAF50', // Green background color
-          color: 'white', // White text color
-          border: 'none', // No border
-          borderRadius: '5px', // Rounded corners
-          cursor: 'pointer', // Pointer cursor on hover
+          position: 'absolute',
+          top: 0,
+          left: '50%',
+          width: '100%',
+          height: '100%',
+          backgroundImage: `url(${myAppLogo})`,
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          filter: 'blur(1px)',
+          opacity: 0.3,
+          transform: 'translateX(-50%) scale(0.95)',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Banner */}
+      <div 
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          width: '100%',
+          height: 'auto', // Use auto for responsive height
+          backgroundColor: '#9EAD39',
+          color: 'white',
+          padding: '10px 0', // Responsive padding
+          fontSize: '1.5rem',
+          fontWeight: 'bold',
+          textTransform: 'uppercase',
+          boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
         }}
       >
-        Log In
-      </button>
+        Welcome to Cupboard!
+      </div>
+
+      {/* Main Content */}
+      <div 
+        style={{
+          position: 'absolute', // Change to absolute positioning
+          bottom: '20px', // Set bottom offset
+          left: '50%', // Center horizontally
+          transform: 'translateX(-50%)', // Center alignment
+          zIndex: 1,
+        }}
+      >
+        {/* Button */}
+        <button 
+          onClick={handleLogin} 
+          style={{
+            padding: '15px 30px',
+            fontSize: '1.2rem', // Use rem for responsive font size
+            backgroundColor: '#AB4C11',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            minWidth: '200px', // Ensure a minimum width for the button
+            maxWidth: '90%', // Ensure the button doesn’t overflow on smaller screens
+          }}
+        >
+          Log In
+        </button>
+      </div>
     </div>
   );
 };
