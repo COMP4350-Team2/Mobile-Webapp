@@ -1,8 +1,9 @@
 /*This is just the interface for our Users. Used for MockUser and Auth0User */
 export interface UserAuth {
-    login: () => void;
-    logout: () => void;
-    isAuthenticated: () => boolean;
+	login: () => void;
+	logout: () => void;
+	isAuthenticated: () => boolean;
+	accessToken: string;
 	isAuth0User: () => boolean;
-  }
-  
+	storeAccessToken?: () => void;
+}
