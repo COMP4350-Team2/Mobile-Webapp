@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserAuth } from './auth/UserAuth'; 
-import { MockUser } from './auth/MockUser'; 
-import { FaUserCircle } from 'react-icons/fa'; // Importing Profile icon
+import { useState } from 'react';
 import { AiOutlineArrowLeft } from 'react-icons/ai'; // Importing Back icon
-import myAppLogo from './assets/Cupboard_Logo.png'; // Import your logo image
+import { FaUserCircle } from 'react-icons/fa'; // Importing Profile icon
+import { useNavigate } from 'react-router-dom';
+import myAppLogo from '../../assets/Cupboard_Logo.png'; // Import your logo image
+import { MockUser } from '../../auth/MockUser';
+import { UserAuth } from '../../auth/UserAuth';
 
 interface LoggedInProps {
   userAuth: UserAuth; // Define the prop type
 }
 
-const LoggedIn: React.FC<LoggedInProps> = ({ userAuth }) => {
+function LoggedIn({ userAuth }: LoggedInProps) {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control sliding menu
 
@@ -165,7 +165,7 @@ const LoggedIn: React.FC<LoggedInProps> = ({ userAuth }) => {
         >
           {/* Card for "View My Lists" */}
           <div 
-            onClick={() => { /* No action right now */ }} 
+            onClick={() => navigate('/my-lists')} // Navigate to MyLists page
             style={{
               backgroundColor: '#AB4C11', 
               color: 'white', 
@@ -189,7 +189,7 @@ const LoggedIn: React.FC<LoggedInProps> = ({ userAuth }) => {
 
           {/* Card for "View All Ingredients" */}
           <div 
-            onClick={() => { /* No action right now */ }} 
+            onClick={() => navigate('/all-ingredients')} // Navigate to All Ingredients page
             style={{
               backgroundColor: '#AB4C11', 
               color: 'white', 
