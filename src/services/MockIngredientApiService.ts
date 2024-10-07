@@ -5,11 +5,11 @@ export class MockIngredientApiService {
 		return [
 			{
 				name: "carrot",
-				type: "unknown",
+				type: "produce",
 			},
 			{
 				name: "potato",
-				type: "unknown",
+				type: "produce",
 			},
 			{
 				name: "pasta",
