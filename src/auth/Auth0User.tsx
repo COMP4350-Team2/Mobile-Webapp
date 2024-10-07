@@ -45,6 +45,9 @@ export class Auth0User implements UserAuth {
         }
     }
 
+    /** 
+     * Ping message to local back end to test connection
+     */
 	getAccessMessage(): void {
 		axios
 			.get("http://localhost:8000/api/private", {
@@ -60,6 +63,9 @@ export class Auth0User implements UserAuth {
 			});
 	}
 
+    /**
+     * Retrieve access token and store in user authentication object
+     */
 	storeAccessToken() {
 		this.auth0.getAccessTokenSilently().then((token) => (this._accessToken = token));
 	}
