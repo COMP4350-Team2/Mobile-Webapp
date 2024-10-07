@@ -51,5 +51,9 @@ export class MockUser implements UserAuth {
         }
     }
 
-    isAuth0User = () => false;
+	isAuth0User = () => false;
+
+	get accessToken() {
+		return "";
+	}
 }

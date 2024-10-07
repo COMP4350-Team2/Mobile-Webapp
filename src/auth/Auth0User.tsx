@@ -6,6 +6,7 @@ import { UserAuth } from './UserAuth';
 
 export class Auth0User implements UserAuth {
     private auth0 = useAuth0();
+	private _accessToken;
     mylists: List[] = []; // Initialize as empty
     allIngredients: Ingredient[] = [];
   
@@ -43,4 +44,27 @@ export class Auth0User implements UserAuth {
             list.ingredients.push(newIngredient); // Add the ingredient to the list
         }
     }
+
+	getAccessMessage(): void {
+		axios
+			.get("http://localhost:8000/api/private", {
+				headers: {
+					authorization: "Bearer " + this._accessToken,
+				},
+			})
+			.then(function (response) {
+				console.log(response.data);
+			})
+			.catch(function (error) {
+				console.error(error);
+			});
+	}
+
+	storeAccessToken() {
+		this.auth0.getAccessTokenSilently().then((token) => (this._accessToken = token));
+	}
+
+	get accessToken(): string {
+		return this._accessToken;
+	}
 }

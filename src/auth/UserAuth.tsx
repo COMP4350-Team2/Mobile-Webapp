@@ -2,12 +2,13 @@
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/Lists";
 export interface UserAuth {
-    login: () => void;
-    logout: () => void;
-    isAuthenticated: () => boolean;
+	login: () => void;
+	logout: () => void;
+	isAuthenticated: () => boolean;
+	accessToken: string;
 	isAuth0User: () => boolean;
     getMyLists: () => List[];
     getAllIngredients: () => Ingredient[]
     addToList: (listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") => void; 
-  }
-  
+  	storeAccessToken?: () => void;
+}
