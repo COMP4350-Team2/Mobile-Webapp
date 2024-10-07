@@ -22,8 +22,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai"; // Import Back and Plus icons
 import { useNavigate } from "react-router-dom";
-import { BackendInterface } from "../../backend/BackendInterface"; // Ensure you have the correct path
 import { Ingredient } from "../../models/Ingredient"; // Ensure you have the correct path
+import { BackendInterface } from "../../services/BackendInterface"; // Ensure you have the correct path
 
 interface AllIngredientsProps {
     backend: BackendInterface; // Receive backend as prop
