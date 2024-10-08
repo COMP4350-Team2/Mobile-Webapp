@@ -11,7 +11,9 @@ const Home: React.FC<HomeProps> = ({ userAuth }) => {
 	const navigate = useNavigate(); // Initialize navigate
 
 	const handleLogin = () => {
-		userAuth.login(); // Log in the user using Auth0 or Mock User
+		if (!userAuth.isAuthenticated()) {
+			userAuth.login(); // Log in the user using Auth0 or Mock User
+		}
 		if (userAuth.isAuthenticated()) {
 			// Check if the user is authenticated
 			navigate("/logged-in"); // Redirect to the LoggedIn page

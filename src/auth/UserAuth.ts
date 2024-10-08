@@ -4,11 +4,11 @@ import { List } from "../models/Lists";
 export interface UserAuth {
 	login: () => void;
 	logout: () => void;
-	isAuthenticated: () => boolean;
+	isAuthenticated(): boolean;
 	accessToken: string;
 	isAuth0User: () => boolean;
-    getMyLists: () => List[];
-    getAllIngredients: () => Ingredient[]
-    addToList: (listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") => void; 
-  	storeAccessToken?: () => void;
+	getMyLists: () => List[];
+	getAllIngredients: () => Ingredient[];
+	addToList: (listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") => void;
+	storeAccessToken?: () => void;
 }
