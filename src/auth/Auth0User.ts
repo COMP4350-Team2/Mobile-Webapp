@@ -7,7 +7,7 @@ import { UserAuth } from "./UserAuth";
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
 	private _accessToken;
-	private backendHost = process.env.BACKEND_HOST ?? "http://localhost:6060";
+	private backendHost = process.env.REACT_APP_BACKEND_HOST ?? "http://localhost:6060";
 	mylists: List[] = []; // Initialize as empty
 	allIngredients: Ingredient[] = [];
 
