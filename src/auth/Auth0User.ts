@@ -67,10 +67,25 @@ export class Auth0User implements UserAuth {
 	private createUser() {
 		try {
 			axios
-				.post(`${this.backendHost}/api/create_user`, {
+				.post<string>(`${this.backendHost}/api/create_user`, {}, {
 					headers: { authorization: "Bearer " + this._accessToken },
 				})
-                .then((response) => console.log(response.status))
+                .then((response) => {
+                    if(response.status === 200){
+                        const responseBody = response.data["message"];
+                        console.log("Response Data", responseBody);
+                        if (responseBody.includes("Item created successfully.")) {
+                            console.log("new user");
+                        } else if (responseBody.includes("Item already exists.")) {
+                            console.log("existing user");
+                        } else {
+                            console.log("Unexpected response:", responseBody);
+                        }
+                    }
+                    else{
+                        console.error('Unexpected response status');
+                    }
+                })
 				.catch((error) => {
 					console.error(error);
 				});
