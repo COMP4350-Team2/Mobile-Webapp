@@ -43,7 +43,7 @@ The team ran these tests on both the Production environment and a Mock environme
 The instructions for running these tests in **Production** and **Mock** are stated below.
 
 #### Production
-- Populated `.env` based on the `SAMPLE.env`
+- Populate `.env` based on the `SAMPLE.env`
 - Run [Backend](https://github.com/COMP4350-Team2/Backend) locally.
 - Run the app as above.
 
