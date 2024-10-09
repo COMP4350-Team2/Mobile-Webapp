@@ -13,4 +13,5 @@ jobs:
       - env:
           env_file: ${{ secrets.env }}
         run: echo "$env_file" > ".env"
-      - run: echo '[Replace This with code to run your tests]'
+      - run: echo "npm install"
+      - run: echo "npm start"
