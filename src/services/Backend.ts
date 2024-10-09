@@ -14,8 +14,9 @@ export class Backend implements BackendInterface {
 	// Method that returns all ingredients
 	async getAllIngredients(): Promise<Ingredient[]> {
 		try {
+			const token = await this.userAuth.getAccessToken();
 			const response = await axios.get<Ingredient[]>("http://localhost:6060/api/get_all_ingredients", {
-				headers: { authorization: "Bearer " + this.userAuth.accessToken },
+				headers: { authorization: "Bearer " + token },
 			});
 			this.userAuth.setAllIngredients!(response.data as Ingredient[]);
 			return response.data["result"] as Ingredient[];

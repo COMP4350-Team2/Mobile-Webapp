@@ -5,7 +5,7 @@ export interface UserAuth {
 	login: () => void;
 	logout: () => void;
 	isAuthenticated(): boolean;
-	accessToken: string;
+	getAccessToken: () => Promise<string>;
 	isAuth0User: () => boolean;
 	getMyLists: () => List[];
 	getAllIngredients: () => Ingredient[];

@@ -52,7 +52,7 @@ export class MockUser implements UserAuth {
 
 	isAuth0User = () => false;
 
-	get accessToken() {
+	async getAccessToken(): Promise<string> {
 		return "";
 	}
 }

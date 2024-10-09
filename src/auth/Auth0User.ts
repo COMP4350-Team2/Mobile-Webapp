@@ -78,7 +78,7 @@ export class Auth0User implements UserAuth {
 		}
 	}
 
-	private async getAccessToken(): Promise<string> {
+	private async getAccessTokenValue(): Promise<string> {
 		const res = await this.auth0.getAccessTokenSilently({
 			authorizationParams: {
 				audience: "https://cupboard/api", // Specify the audience here
@@ -87,9 +87,9 @@ export class Auth0User implements UserAuth {
 		return res;
 	}
 
-	get accessToken(): string {
+	async getAccessToken(): Promise<string> {
 		if (!this._accessToken) {
-			this.getAccessToken().then((token) => (this._accessToken = token));
+			this._accessToken = await this.getAccessTokenValue();
 		}
 		return this._accessToken;
 	}
