@@ -1,21 +1,20 @@
 import { useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai"; // Importing Back icon
-import { FaUserCircle } from "react-icons/fa"; // Importing Profile icon
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import myAppLogo from "../../assets/Cupboard_Logo.png"; // Import your logo image
+import myAppLogo from "../../assets/Cupboard_Logo.png";
 import { MockUser } from "../../auth/MockUser";
 import { UserAuth } from "../../auth/UserAuth";
 
 interface LoggedInProps {
-	userAuth: UserAuth; // Define the prop type
+	userAuth: UserAuth;
 }
 
 function LoggedIn({ userAuth }: LoggedInProps) {
 	const navigate = useNavigate();
-	const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control sliding menu
-	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
-	// Check authentication state
 	if (!userAuth.isAuthenticated()) {
 		// If not authenticated, redirect to home
 		navigate("/");
@@ -25,18 +24,18 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	}
 
 	const handleLogout = () => {
-		userAuth.logout(); // Log out the user
-		navigate("/"); // Navigate back to the home page
+		userAuth.logout();
+		navigate("/");
 	};
 
 	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type
 
 	const showComingSoonModal = () => {
-		setIsModalOpen(true); // Show the modal
+		setIsModalOpen(true);
 	};
 
 	const closeModal = () => {
-		setIsModalOpen(false); // Close the modal
+		setIsModalOpen(false);
 	};
 
 	return (

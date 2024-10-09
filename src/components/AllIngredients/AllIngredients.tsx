@@ -1,12 +1,12 @@
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai"; // Import Back and Plus icons
+import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { Ingredient } from "../../models/Ingredient"; // Ensure you have the correct path
-import { BackendInterface } from "../../services/BackendInterface"; // Ensure you have the correct path
+import { Ingredient } from "../../models/Ingredient";
+import { BackendInterface } from "../../services/BackendInterface";
 
 interface AllIngredientsProps {
-	backend: BackendInterface; // Receive backend as prop
+	backend: BackendInterface;
 }
 
 function AllIngredients({ backend }: AllIngredientsProps) {
@@ -16,27 +16,26 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [amount, setAmount] = useState<number | string>("");
 	const [unit, setUnit] = useState<string>("g");
-	const [list, setList] = useState<string>(""); // State for the selected list
+	const [list, setList] = useState<string>("");
 
-	const units: string[] = ["g", "ml", "count"]; // Define unit options
+	const units: string[] = ["g", "ml", "count"];
 	const lists: string[] = [];
-    
-    useEffect(() => {
-        // Fetch ingredients from backend
-        backend.getAllIngredients()
-            .then((res) => {
-                // Check if the response is in the expected format
-                if (Array.isArray(res)) {
-                    setIngredients(res);
-                } else {
-                    throw new Error("Unexpected response format");
-                }
-            })
-            .catch((error) => {
-                console.error("Error fetching ingredients:", error);
-            });
-    }, [backend]);
-    
+
+	useEffect(() => {
+		backend
+			.getAllIngredients()
+			.then((res) => {
+				if (Array.isArray(res)) {
+					setIngredients(res);
+				} else {
+					throw new Error("Unexpected response format");
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching ingredients:", error);
+			});
+	}, [backend]);
+
 	const handleOpen = (ingredient: Ingredient) => {
 		setSelectedIngredient(ingredient);
 		setOpen(true);
@@ -44,16 +43,16 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 
 	const handleClose = () => {
 		setOpen(false);
-		setAmount(""); // Reset fields
+		setAmount("");
 		setUnit("g");
-		setList(""); // Reset list selection
+		setList("");
 		setSelectedIngredient(null);
 	};
 
 	const handleAdd = () => {
 		// Handle adding ingredient logic here (currently does nothing)
 		console.log("Added:", { ingredient: selectedIngredient, amount, unit, list });
-		handleClose(); // Close the dialog after adding
+		handleClose();
 	};
 
 	return (

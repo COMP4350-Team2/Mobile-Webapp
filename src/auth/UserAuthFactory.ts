@@ -10,10 +10,10 @@ export const UserAuthFactory = (): UserAuth => {
 
 	if (domain && clientId) {
 		console.log("Using Auth0User for authentication.");
-		return new Auth0User(); // Use Auth0User for Auth0
+		return new Auth0User();
 	} else {
 		console.log("No Auth0 environment variables found, using MockUser."); // Log for debugging
-		return new MockUser(); // Fallback to MockUser
+		return new MockUser();
 	}
 };
 

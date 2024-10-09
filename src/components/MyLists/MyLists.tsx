@@ -1,18 +1,17 @@
 import { AppBar, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai"; // Importing Back icon
+import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
-import { UserAuth } from "../../auth/UserAuth"; // Import UserAuth
+import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/Lists";
 
 function MyLists({ userAuth }: { userAuth: UserAuth }) {
-	const navigate = useNavigate(); // Initialize navigate
-	const [myLists, setMyLists] = useState<List[]>([]); // State for user's lists
+	const navigate = useNavigate();
+	const [myLists, setMyLists] = useState<List[]>([]);
 
 	useEffect(() => {
-		// Fetch the user's lists when the component mounts
-		const lists = userAuth.getMyLists(); // Get the user's lists
-		setMyLists(lists); // Update state with the lists
+		const lists = userAuth.getMyLists();
+		setMyLists(lists);
 	}, [userAuth]);
 
 	return (
@@ -46,14 +45,13 @@ function MyLists({ userAuth }: { userAuth: UserAuth }) {
 								<TableRow
 									key={index}
 									onClick={() => {
-										console.log(`Clicked on list: ${list.name}`);
 										// Navigate to the specific list details page here
-										navigate(`/view-list/${list.name}`); // Navigate to the ViewList page with the list ID
+										navigate(`/view-list/${list.name}`);
 									}}
 									sx={{
-										cursor: "pointer", // Change cursor to pointer
+										cursor: "pointer",
 										"&:hover": {
-											backgroundColor: "#EDDC7E", // Change background color on hover
+											backgroundColor: "#EDDC7E",
 										},
 									}}
 								>

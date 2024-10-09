@@ -7,8 +7,9 @@ import { UserAuth } from "./UserAuth";
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
 	private _accessToken;
-	private backendHost = process.env.REACT_APP_BACKEND_HOST ?? "http://localhost:6060";
-	mylists: List[] = []; // Initialize as empty
+	private backendHost = process.env.REACT_APP_BACKEND_HOST ?? "";
+	private audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? "";
+	mylists: List[] = [];
 	allIngredients: Ingredient[] = [];
 
 	login() {
@@ -16,7 +17,7 @@ export class Auth0User implements UserAuth {
 	}
 
 	logout() {
-		this.auth0.logout(); // Logs the user out using Auth0 logout
+		this.auth0.logout();
 	}
 
 	isAuthenticated(): boolean {
@@ -25,14 +26,12 @@ export class Auth0User implements UserAuth {
 
 	isAuth0User = () => true;
 
-	// Method to return the user's myLists
 	getMyLists(): List[] {
 		return this.mylists;
 	}
 
-	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
-		return this.allIngredients; // Returns the ingredients
+		return this.allIngredients;
 	}
 
 	setAllIngredients(list: Ingredient[]) {
@@ -40,13 +39,11 @@ export class Auth0User implements UserAuth {
 	}
 
 	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") {
-		// Find the list by name
 		const list = this.mylists.find((list) => list.name === listName);
 
 		if (list) {
-			// Add ingredient to the list with specified amount and unit
-			const newIngredient = new Ingredient(ingredient.name, ingredient.type, amount, unit); // Create a new ingredient object with amount and unit
-			list.ingredients.push(newIngredient); // Add the ingredient to the list
+			const newIngredient = new Ingredient(ingredient.name, ingredient.type, amount, unit);
+			list.ingredients.push(newIngredient);
 		}
 	}
 
@@ -56,9 +53,15 @@ export class Auth0User implements UserAuth {
 	storeAccessToken() {
 		this.getAccessToken().then((token) => {
 			this._accessToken = token;
-			console.log(token);
 			this.createUser();
 		});
+	}
+
+	async getAccessToken(): Promise<string> {
+		if (!this._accessToken) {
+			this._accessToken = await this.getAccessTokenValue();
+		}
+		return this._accessToken;
 	}
 
 	/**
@@ -67,25 +70,27 @@ export class Auth0User implements UserAuth {
 	private createUser() {
 		try {
 			axios
-				.post<string>(`${this.backendHost}/api/create_user`, {}, {
-					headers: { authorization: "Bearer " + this._accessToken },
+				.post<string>(
+					`${this.backendHost}/api/create_user`,
+					{},
+					{
+						headers: { authorization: "Bearer " + this._accessToken },
+					}
+				)
+				.then((response) => {
+					if (response.status === 200) {
+						const responseBody = response.data["message"];
+						if (responseBody.includes("Item created successfully.")) {
+							console.log("new user");
+						} else if (responseBody.includes("Item already exists.")) {
+							console.log("existing user");
+						} else {
+							console.log("Unexpected response:", responseBody);
+						}
+					} else {
+						console.error("Unexpected response status");
+					}
 				})
-                .then((response) => {
-                    if(response.status === 200){
-                        const responseBody = response.data["message"];
-                        console.log("Response Data", responseBody);
-                        if (responseBody.includes("Item created successfully.")) {
-                            console.log("new user");
-                        } else if (responseBody.includes("Item already exists.")) {
-                            console.log("existing user");
-                        } else {
-                            console.log("Unexpected response:", responseBody);
-                        }
-                    }
-                    else{
-                        console.error('Unexpected response status');
-                    }
-                })
 				.catch((error) => {
 					console.error(error);
 				});
@@ -97,16 +102,9 @@ export class Auth0User implements UserAuth {
 	private async getAccessTokenValue(): Promise<string> {
 		const res = await this.auth0.getAccessTokenSilently({
 			authorizationParams: {
-				audience: "https://cupboard/api",
+				audience: this.audience,
 			},
 		});
 		return res;
-	}
-
-	async getAccessToken(): Promise<string> {
-		if (!this._accessToken) {
-			this._accessToken = await this.getAccessTokenValue();
-		}
-		return this._accessToken;
 	}
 }
