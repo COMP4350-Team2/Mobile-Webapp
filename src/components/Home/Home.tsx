@@ -7,7 +7,7 @@ interface HomeProps {
 	userAuth: UserAuth; // Receive UserAuth from props
 }
 
-const Home: React.FC<HomeProps> = ({ userAuth }) => {
+function Home({ userAuth }: HomeProps) {
 	const navigate = useNavigate(); // Initialize navigate
 
 	const handleLogin = () => {
@@ -99,6 +99,6 @@ const Home: React.FC<HomeProps> = ({ userAuth }) => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default Home;

@@ -7,7 +7,7 @@ import { UserAuth } from "./UserAuth";
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
 	private _accessToken;
-	private backend = process.env.BACKEND_HOST ?? "http://localhost:6060";
+	private backendHost = process.env.BACKEND_HOST ?? "http://localhost:6060";
 	mylists: List[] = []; // Initialize as empty
 	allIngredients: Ingredient[] = [];
 
@@ -33,6 +33,10 @@ export class Auth0User implements UserAuth {
 	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
 		return this.allIngredients; // Returns the ingredients
+	}
+
+	setAllIngredients(list: Ingredient[]) {
+		this.allIngredients = list;
 	}
 
 	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") {
@@ -69,7 +73,7 @@ export class Auth0User implements UserAuth {
 	private createUser() {
 		try {
 			axios
-				.post(`${this.backend}/api/create_user`, {
+				.post(`${this.backendHost}/api/create_user`, {
 					header: { authorization: "Bearer " + this._accessToken },
 				})
 				.catch((error) => {

@@ -11,4 +11,5 @@ export interface UserAuth {
 	getAllIngredients: () => Ingredient[];
 	addToList: (listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") => void;
 	storeAccessToken?: () => void;
+	setAllIngredients?: (list: Ingredient[]) => void;
 }

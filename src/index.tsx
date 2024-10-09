@@ -7,7 +7,6 @@ import "./index.css";
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN ?? "";
 const clientId = process.env.REACT_APP_CLIENT_ID ?? "";
-const audience = process.env.REACT_APP_AUTH0_IDENTIFIER ?? "";
 
 const container = document.getElementById("root")!;
 const root = createRoot(container); // Create root for React 18
