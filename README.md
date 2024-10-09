@@ -13,7 +13,7 @@
 ### NVM (Node Version Manager)
 - Please download the file called `nvm-setup.exe` found on [here](https://github.com/coreybutler/nvm-windows/releases)
 - Once downloaded, run the following commands<br><br>
-`nvm install latest` <br>`nvm use latest`<br>
+`nvm install latest` <br> `nvm use latest`<br>
 
 ### Node.js 
 `nvm install node`
