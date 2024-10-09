@@ -18,6 +18,8 @@ root.render(
 			clientId={clientId}
 			authorizationParams={{
 				redirect_uri: `${window.location.origin}/logged-in`,
+				audience: "https://cupboard/api",
+				scope: "read:post",
 			}}
 		>
 			<App />

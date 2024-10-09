@@ -54,17 +54,11 @@ export class Auth0User implements UserAuth {
 	 * Retrieve access token and store in user authentication object
 	 */
 	storeAccessToken() {
-		this.auth0
-			.getAccessTokenSilently({
-				authorizationParams: {
-					audience: "https://cupboard/api", // Specify the audience here
-				},
-			})
-			.then((token) => {
-				this._accessToken = token;
-				console.log(token);
-				this.createUser();
-			});
+		this.getAccessToken().then((token) => {
+			this._accessToken = token;
+			console.log(token);
+			this.createUser();
+		});
 	}
 
 	/**
@@ -84,7 +78,19 @@ export class Auth0User implements UserAuth {
 		}
 	}
 
+	private async getAccessToken(): Promise<string> {
+		const res = await this.auth0.getAccessTokenSilently({
+			authorizationParams: {
+				audience: "https://cupboard/api", // Specify the audience here
+			},
+		});
+		return res;
+	}
+
 	get accessToken(): string {
+		if (!this._accessToken) {
+			this.getAccessToken().then((token) => (this._accessToken = token));
+		}
 		return this._accessToken;
 	}
 }

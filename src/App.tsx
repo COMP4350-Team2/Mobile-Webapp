@@ -1,5 +1,4 @@
 // App.tsx
-import React from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import UserAuthFactory from "./auth/UserAuthFactory";
 import AllIngredients from "./components/AllIngredients/AllIngredients"; // Import AllIngredients
@@ -8,7 +7,7 @@ import LoggedIn from "./components/LoggedIn/LoggedIn";
 import MyLists from "./components/MyLists/MyLists"; // Import MyLists
 import BackendFactory from "./services/BackendFactory"; // Import your BackendFactory
 
-const App: React.FC = () => {
+function App() {
 	const userAuth = UserAuthFactory();
 	const backend = BackendFactory(userAuth); // Use BackendFactory to get the appropriate backend instance
 
@@ -22,6 +21,6 @@ const App: React.FC = () => {
 			</Routes>
 		</Router>
 	);
-};
+}
 
 export default App;
