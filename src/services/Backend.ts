@@ -1,3 +1,6 @@
+/**
+ * This is our real backend. The purpose of this class is to talk to our actual backend and utilize its methods
+ */
 import axios from "axios";
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";

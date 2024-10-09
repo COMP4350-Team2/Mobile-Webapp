@@ -1,3 +1,7 @@
+/**
+ * This page displays all the ingredients available to the user
+ */
+
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";

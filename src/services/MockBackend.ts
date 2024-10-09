@@ -1,3 +1,7 @@
+/**
+ * This is our Mock Backend. it just returns our Mock user's allIngredients list.
+ */
+
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
 import { BackendInterface } from "./BackendInterface";

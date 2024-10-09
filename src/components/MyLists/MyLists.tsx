@@ -1,3 +1,6 @@
+/**
+ * This page will be used in our Sprint 2. As it stands, it doesn't do anything.
+ */
 import { AppBar, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
