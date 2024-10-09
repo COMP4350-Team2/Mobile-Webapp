@@ -13,6 +13,7 @@ interface LoggedInProps {
 function LoggedIn({ userAuth }: LoggedInProps) {
 	const navigate = useNavigate();
 	const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control sliding menu
+	const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
 
 	// Check authentication state
 	if (!userAuth.isAuthenticated()) {
@@ -29,6 +30,14 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	};
 
 	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type
+
+	const showComingSoonModal = () => {
+		setIsModalOpen(true); // Show the modal
+	};
+
+	const closeModal = () => {
+		setIsModalOpen(false); // Close the modal
+	};
 
 	return (
 		<div style={{ position: "relative", height: "100vh", backgroundColor: "#99D9EA" }}>
@@ -165,7 +174,7 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 				>
 					{/* Card for "View My Lists" */}
 					<div
-						onClick={() => navigate("/my-lists")} // Navigate to MyLists page
+						onClick={showComingSoonModal} // Show modal instead of navigating
 						style={{
 							backgroundColor: "#AB4C11",
 							color: "white",
@@ -212,6 +221,51 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 					</div>
 				</div>
 			</div>
+
+			{/* Modal for Coming Soon */}
+			{isModalOpen && (
+				<div
+					style={{
+						position: "fixed",
+						top: 0,
+						left: 0,
+						width: "100%",
+						height: "100%",
+						backgroundColor: "rgba(0, 0, 0, 0.5)",
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						zIndex: 2000,
+					}}
+					onClick={closeModal}
+				>
+					<div
+						style={{
+							backgroundColor: "#fff",
+							padding: "30px",
+							borderRadius: "10px",
+							textAlign: "center",
+						}}
+						onClick={(e) => e.stopPropagation()} // Prevent click on modal from closing it
+					>
+						<h2>Coming Soon!</h2>
+						<p>Team Teacup is working hard to bring this feature to you. Stay tuned for our next release!</p>
+						<button
+							onClick={closeModal}
+							style={{
+								backgroundColor: "#AB4C11",
+								color: "white",
+								padding: "10px 20px",
+								border: "none",
+								borderRadius: "5px",
+								cursor: "pointer",
+							}}
+						>
+							Close
+						</button>
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
