@@ -1,5 +1,3 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
 import myAppLogo from "../../assets/Cupboard_Logo.png"; // Import logo
 import { UserAuth } from "../../auth/UserAuth";
 
@@ -7,14 +5,10 @@ interface HomeProps {
 	userAuth: UserAuth; // Receive UserAuth from props
 }
 
-const Home: React.FC<HomeProps> = ({ userAuth }) => {
-	const navigate = useNavigate(); // Initialize navigate
-
+function Home({ userAuth }: HomeProps) {
 	const handleLogin = () => {
-		userAuth.login(); // Log in the user using Auth0 or Mock User
-		if (userAuth.isAuthenticated()) {
-			// Check if the user is authenticated
-			navigate("/logged-in"); // Redirect to the LoggedIn page
+		if (!userAuth.isAuthenticated()) {
+			userAuth.login(); // Log in the user using Auth0 or Mock User
 		}
 	};
 
@@ -97,6 +91,6 @@ const Home: React.FC<HomeProps> = ({ userAuth }) => {
 			</div>
 		</div>
 	);
-};
+}
 
 export default Home;
