@@ -25,13 +25,12 @@ Ensure you are in the repo's directory and run the following command<br>
 
 ## Environment Variables Instructions
 - Download `SAMPLE.env` and rename it to `.env`. 
-- Enter the required details.
-- Ensure that any environment variable must have the prefix of `REACT_APP` followed by a name of your choice. 
+- Enter the required details. 
 - Please contact the team if you'd like the `.env` file for this component.
 
 ## Run
 This app will, for now, be running locally. Therefore, ensure that you navigate to the [Backend](https://github.com/COMP4350-Team2/Backend) repository and follow the instructions to have the backend running in terminal. <br/><br>
-Once the environment variables are placed in the `./mobile-webapp` and the Backend is running in a separate terminal, run the app using the following command:
+Once the environment variables (`.env` file) are placed in the `./mobile-webapp` and the Backend is running in a separate terminal, run the app using the following command:
 
  - `npm start` <br/><br>
 
@@ -41,7 +40,7 @@ This will run the app on the PORT specified in the `.env` file. <br/><br>
 ## Acceptance Tests
 ### Environment Setup
 The team ran these tests on both the Production environment and a Mock environment. </br>
-If you would like to run these test, use the Mock section.
+The instructions for running these tests in **Production** and **Mock** are stated below.
 
 #### Production
 - Populated `.env` based on the `SAMPLE.env`
@@ -81,5 +80,5 @@ If you would like to run these test, use the Mock section.
 - After logging in, the user is given two button options. Click on `All Ingredients`.
 - All ingredients are shown on the page. Each ingredient has a `+` button next to it. 
 - Click the `+` button to add ingredient. This gives the user the option to add a certain amount of an Ingredient to one of their specified lists. <br>
-    - However, please note that the functionality to create a list and adding these ingredients to your list is planned for the next sprint.
+    - However, please note that the functionality to create a list and adding these ingredients to your list is planned for the next sprint.<br>
     - Therefore, the "Add" option, while still functional, does not do anything at the moment.

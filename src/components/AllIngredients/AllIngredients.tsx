@@ -141,4 +141,6 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 	);
 }
 
+
 export default AllIngredients;
+
