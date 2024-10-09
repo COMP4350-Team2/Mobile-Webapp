@@ -16,7 +16,7 @@ export class Backend implements BackendInterface {
 		try {
 			const token = await this.userAuth.getAccessToken();
 			const response = await axios.get<Ingredient[]>("http://localhost:6060/api/get_all_ingredients", {
-				headers: { authorization: "Bearer " + token },
+				headers: { Authorization: "Bearer " + token },
 			});
 			this.userAuth.setAllIngredients!(response.data as Ingredient[]);
 			return response.data["result"] as Ingredient[];
@@ -47,4 +47,31 @@ export class Backend implements BackendInterface {
 	// 	// Correct return type
 	// 	return this.userAuth.getMyLists();
 	// }
+
+    // async createUser(): Promise<any> {
+	// 	try {
+	// 		const token = await this.userAuth.getAccessToken();
+    //         console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    //         console.log("ACCESS TOKEN HERE:", token);
+	// 		const response = await axios.post<string>("http://localhost:6060/api/create_user", {
+	// 			headers: { authorization: "Bearer " + token },
+	// 		});
+	// 		if(response.status === 200){
+    //             const responseBody = response.data;
+    //             if (responseBody.includes("Item created successfully.")) {
+    //                 console.log("new user");
+    //             } else if (responseBody.includes("Item already exists.")) {
+    //                 console.log("existing user");
+    //             } else {
+    //                 console.log("Unexpected response:", responseBody);
+    //             }
+    //         }
+    //         else{
+    //             console.error('Unexpected response status');
+    //         }
+	// 	} catch (error) {
+	// 		console.error(error);
+	// 	}
+	// }
+    
 }

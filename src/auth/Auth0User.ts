@@ -68,8 +68,9 @@ export class Auth0User implements UserAuth {
 		try {
 			axios
 				.post(`${this.backendHost}/api/create_user`, {
-					header: { authorization: "Bearer " + this._accessToken },
+					headers: { authorization: "Bearer " + this._accessToken },
 				})
+                .then((response) => console.log(response.status))
 				.catch((error) => {
 					console.error(error);
 				});
@@ -81,7 +82,7 @@ export class Auth0User implements UserAuth {
 	private async getAccessTokenValue(): Promise<string> {
 		const res = await this.auth0.getAccessTokenSilently({
 			authorizationParams: {
-				audience: "https://cupboard/api", // Specify the audience here
+				audience: "https://cupboard/api",
 			},
 		});
 		return res;
