@@ -1,3 +1,6 @@
+/**
+ * This page is what the user is redirected to once theyve successfully logged in.
+ */
 import { useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
@@ -28,7 +31,7 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 		navigate("/");
 	};
 
-	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type
+	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type (for printing purposes)
 
 	const showComingSoonModal = () => {
 		setIsModalOpen(true);
@@ -173,7 +176,7 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 				>
 					{/* Card for "View My Lists" */}
 					<div
-						onClick={showComingSoonModal} // Show modal instead of navigating
+						onClick={showComingSoonModal} 
 						style={{
 							backgroundColor: "#AB4C11",
 							color: "white",

@@ -1,3 +1,6 @@
+/**
+ * This is our Ingredient class.
+ */
 export class Ingredient {
     name: string;
     type: string;

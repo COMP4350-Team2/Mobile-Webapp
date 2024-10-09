@@ -6,7 +6,7 @@ export class MockUser implements UserAuth {
 	private isLoggedIn: boolean = false;
 	mylists: List[] = [new List("Grocery", [new Ingredient("Tomato", "Vegetable", 4, "count"), new Ingredient("Chicken", "Meat", 500, "g")]), new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")])];
 
-	// Method to return the user's myLists
+	// Method to return the user's myLists (will be utilized in the next iteration)
 	getMyLists(): List[] {
 		return this.mylists;
 	}
@@ -28,6 +28,7 @@ export class MockUser implements UserAuth {
 		return this.isLoggedIn;
 	}
 
+    //placeholder method for the next sprint
 	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count" | "g" | "ml"): void {
 		const list = this.mylists.find((list) => list.name === listName);
 		if (list) {
