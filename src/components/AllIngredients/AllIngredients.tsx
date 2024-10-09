@@ -20,11 +20,6 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 
 	const units: string[] = ["g", "ml", "count"]; // Define unit options
 	const lists: string[] = [];
-
-	// useEffect(() => {
-	// 	// Fetch ingredients from backend
-	// 	backend.getAllIngredients().then((res) => setIngredients(res));
-	// }, [backend]);
     
     useEffect(() => {
         // Fetch ingredients from backend

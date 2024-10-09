@@ -1,23 +1,15 @@
 import myAppLogo from "../../assets/Cupboard_Logo.png"; // Import logo
 import { UserAuth } from "../../auth/UserAuth";
-//import { BackendInterface } from "../../services/BackendInterface";
 
 interface HomeProps {
 	userAuth: UserAuth; // Receive UserAuth from props
-    //backendInterface: BackendInterface;
 }
 
-function Home({ userAuth}: HomeProps) {
-	//const navigate = useNavigate(); // Initialize navigate
-
+function Home({ userAuth }: HomeProps) {
 	const handleLogin = () => {
 		if (!userAuth.isAuthenticated()) {
 			userAuth.login(); // Log in the user using Auth0 or Mock User
 		}
-		// if (userAuth.isAuthenticated()) {
-		// 	backendInterface.createUser();
-        //     navigate("/logged-in"); // Redirect to the LoggedIn page
-		// }
 	};
 
 	return (
