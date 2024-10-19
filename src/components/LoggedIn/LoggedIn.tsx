@@ -5,9 +5,9 @@ import { useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import myAppLogo from "../../assets/Cupboard_Logo.png";
 import { MockUser } from "../../auth/MockUser";
 import { UserAuth } from "../../auth/UserAuth";
+import "./LoggedIn.css";
 
 interface LoggedInProps {
 	userAuth: UserAuth;
@@ -42,26 +42,9 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	};
 
 	return (
-		<div style={{ position: "relative", height: "100vh", backgroundColor: "#99D9EA" }}>
+		<div className="sub-color" style={{ height: "100vh" }}>
 			{/* Background Logo */}
-			<div
-				style={{
-					position: "absolute",
-					top: 0,
-					left: "50%",
-					width: "100%",
-					height: "100%",
-					backgroundImage: `url(${myAppLogo})`,
-					backgroundSize: "contain", // Change to 'cover' for full coverage
-					backgroundRepeat: "no-repeat",
-					backgroundPosition: "center",
-					filter: "blur(1px)", // Blur effect
-					opacity: 0.3,
-					transform: "translateX(-50%) scale(0.95)", // Scale down for zoom effect (change 0.9 to experiment)
-					zIndex: 0,
-				}}
-			/>
-
+			<div className="logo-background" />
 			{/* Main Content */}
 			<div
 				style={{
@@ -74,44 +57,29 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 					fontFamily: "Arial, sans-serif",
 					position: "relative",
 					zIndex: 1, // Ensure content is above the background
+					overflowY: "clip",
 				}}
 			>
 				{/* Top Right User Profile Icon */}
-				<div
-					style={{
-						position: "absolute",
-						top: "20px",
-						right: "20px",
-						display: "flex",
-						alignItems: "center",
-						cursor: "pointer",
-						padding: "10px",
-						borderRadius: "50%",
-						backgroundColor: "#7FB5D8",
-						boxShadow: "0 2px 5px rgba(0, 0, 0, 0.3)",
-						transition: "background-color 0.3s ease",
-					}}
-					onClick={() => setIsMenuOpen(!isMenuOpen)}
-					onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#A8D1E6")}
-					onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#7FB5D8")}
-				>
+				<div className="secondary-color profile-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
 					<FaUserCircle style={{ fontSize: "36px", color: "white" }} />
 				</div>
 
 				{/* Sliding Menu */}
 				{isMenuOpen && (
 					<div
+						className="secondary-color"
 						style={{
 							position: "absolute",
 							top: 0,
 							right: 0,
 							width: "250px",
-							height: "100vh",
-							backgroundColor: "#88B4D8",
+							height: "100%",
 							boxShadow: "-2px 0 5px rgba(0, 0, 0, 0.5)",
 							padding: "20px",
 							zIndex: 1000,
 							transition: "transform 0.3s ease",
+							opacity: 0.95,
 						}}
 					>
 						{/* Back Icon and Text */}
@@ -146,9 +114,9 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 						<div style={{ color: "white", fontSize: "1.2rem", marginBottom: "20px" }}>User Type: {userType}</div>
 
 						<button
+							className="primary-color logout-button"
 							onClick={handleLogout}
 							style={{
-								backgroundColor: "red",
 								color: "white",
 								padding: "10px 20px",
 								border: "none",
@@ -156,8 +124,6 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 								cursor: "pointer",
 								transition: "background-color 0.3s ease",
 							}}
-							onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#D94F4F")}
-							onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "red")}
 						>
 							Log Out
 						</button>
@@ -176,9 +142,9 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 				>
 					{/* Card for "View My Lists" */}
 					<div
-						onClick={showComingSoonModal} 
+						className="primary-color"
+						onClick={showComingSoonModal}
 						style={{
-							backgroundColor: "#AB4C11",
 							color: "white",
 							padding: "20px",
 							borderRadius: "15px",
@@ -200,9 +166,9 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 
 					{/* Card for "View All Ingredients" */}
 					<div
+						className="primary-color"
 						onClick={() => navigate("/all-ingredients")} // Navigate to All Ingredients page
 						style={{
-							backgroundColor: "#AB4C11",
 							color: "white",
 							padding: "20px",
 							borderRadius: "15px",
@@ -253,9 +219,9 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 						<h2>Coming Soon!</h2>
 						<p>Team Teacup is working hard to bring this feature to you. Stay tuned for our next release!</p>
 						<button
+							className="secondary-color"
 							onClick={closeModal}
 							style={{
-								backgroundColor: "#AB4C11",
 								color: "white",
 								padding: "10px 20px",
 								border: "none",

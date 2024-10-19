@@ -8,6 +8,7 @@ import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
+import "./AllIngredients.css";
 
 interface AllIngredientsProps {
 	backend: BackendInterface;
@@ -60,9 +61,9 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 	};
 
 	return (
-		<Container maxWidth={false} disableGutters style={{ height: "100vh", backgroundColor: "#99D9EA" }}>
+		<Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
 			{/* App Bar */}
-			<AppBar position="static" style={{ backgroundColor: "#9EAD39" }}>
+			<AppBar position="static" className="header-color">
 				<Toolbar>
 					<AiOutlineArrowLeft style={{ fontSize: "24px", color: "white", cursor: "pointer" }} onClick={() => navigate("/logged-in")} />
 					<Typography variant="h6" style={{ flexGrow: 1, textAlign: "center" }}>
@@ -88,7 +89,7 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 								<TableCell>{ingredient.type}</TableCell>
 								<TableCell style={{ textAlign: "center" }}>
 									<IconButton onClick={() => handleOpen(ingredient)}>
-										<AiOutlinePlus style={{ color: "#AB4C11" }} />
+										<AiOutlinePlus className="secondary-color" />
 									</IconButton>
 								</TableCell>
 							</TableRow>
@@ -145,6 +146,4 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 	);
 }
 
-
 export default AllIngredients;
-
