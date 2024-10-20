@@ -29,7 +29,6 @@ function AllIngredients({ backend }: AllIngredientsProps) {
    /**
         * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
         * Once the result is validated, it calls setIngredients to display all available ingredients.
-        * @return {void} No return value.
     */
 	useEffect(() => {
 		backend
@@ -50,8 +49,6 @@ function AllIngredients({ backend }: AllIngredientsProps) {
         * This function handles setting a certain ingredient (so that it can be added to a list)
         *
         * @param {Ingredient} ingredient - The ingredient object to be set
-        * 
-        * @return {void}
     */
 	const handleOpen = (ingredient: Ingredient) => {
 		setSelectedIngredient(ingredient);
@@ -70,7 +67,6 @@ function AllIngredients({ backend }: AllIngredientsProps) {
     /**
         *  Purpose: This function handles adding an ingredient to a certain list
         *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION 
-        * @return {void}
     */
 	const handleAdd = () => {
 		// Handle adding ingredient logic here (currently does nothing)

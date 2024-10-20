@@ -50,7 +50,6 @@ export class Auth0User implements UserAuth {
         * @param {Ingredient} ingredient - The ingredient object to be added.
         * @param {number} amount - The amount of the ingredient to be added.
         * @param {string} unit - The unit of the ingredient, which can be "mg", "kg", or "count".
-        * @return {void} No return value.
  */
 	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") {
 		const list = this.mylists.find((list) => list.name === listName);
@@ -66,8 +65,6 @@ export class Auth0User implements UserAuth {
         * Purpose: Retrieves the user's JWT access token using `getAccessToken` and stores it in the user authentication object.
                 * Then, it calls the `createUser` method, which sends a request to the `create_user` API endpoint.
                 * This checks the database to see if the user associated with the access token already exists or needs to be added.
-        * 
-        * @return {void} No return value.
     */
 	storeAccessToken() {
 		this.getAccessToken().then((token) => {
@@ -78,8 +75,6 @@ export class Auth0User implements UserAuth {
 
     /**
         * Purpose: This method retrieves the user's JWT access token and updates the instance variable.
-        * 
-        * @return {void} No return value.
     */
 	async getAccessToken(): Promise<string> {
         
@@ -92,8 +87,6 @@ export class Auth0User implements UserAuth {
 	/**
         * Purpose: This method makes a POST request to our API endpoint to create a user.
         * The backend checks the database for an existing user and adds the user to the database if it’s a new user.
-        * 
-        * @return {void} No return value.
     */
 	private createUser() {
 		try {
