@@ -33,6 +33,8 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 
 	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type (for printing purposes)
 
+
+    //These two methods are just for showing the sliding modal for logging out
 	const showComingSoonModal = () => {
 		setIsModalOpen(true);
 	};
