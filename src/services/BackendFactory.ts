@@ -7,6 +7,11 @@ import { Backend } from "./Backend";
 import { BackendInterface } from "./BackendInterface";
 import { MockBackend } from "./MockBackend";
 
+/**
+    * Purpose: This function checks the environment variables of our app and determines what instance of 
+                Backend to call (and return)
+    * @return {Backend} Either `Backend` or `MockBackend` 
+*/
 const BackendFactory = (userAuth: UserAuth): BackendInterface => {
 	// Check if the user is an Auth0 user or a mock user
 	if (userAuth.isAuth0User()) {
