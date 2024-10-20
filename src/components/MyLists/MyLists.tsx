@@ -21,10 +21,11 @@ function MyLists({ userAuth }: { userAuth: UserAuth }) {
 		<Container
 			maxWidth={false} // Remove maximum width constraints
 			disableGutters // Remove padding on the left and right
-			style={{ height: "100vh", backgroundColor: "#99D9EA" }}
+			className="sub-color"
+			style={{ height: "100vh" }}
 		>
 			{/* App Bar */}
-			<AppBar position="static" style={{ backgroundColor: "#9EAD39" }}>
+			<AppBar position="static" className="header-color">
 				<Toolbar>
 					<AiOutlineArrowLeft style={{ fontSize: "24px", color: "white", cursor: "pointer" }} onClick={() => navigate("/logged-in")} />
 					<Typography variant="h6" style={{ flexGrow: 1, textAlign: "center" }}>

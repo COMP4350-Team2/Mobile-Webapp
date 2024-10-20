@@ -1,5 +1,5 @@
-import myAppLogo from "../../assets/Cupboard_Logo.png"; // Import logo
 import { UserAuth } from "../../auth/UserAuth";
+import "./Home.css";
 
 interface HomeProps {
 	userAuth: UserAuth; // Receive UserAuth from props
@@ -13,51 +13,12 @@ function Home({ userAuth }: HomeProps) {
 	};
 
 	return (
-		<div
-			style={{
-				position: "relative",
-				height: "100vh",
-				textAlign: "center",
-				backgroundColor: "#99D9EA",
-			}}
-		>
+		<div className="container">
 			{/* Background Logo */}
-			<div
-				style={{
-					position: "absolute",
-					top: 0,
-					left: "50%",
-					width: "100%",
-					height: "100%",
-					backgroundImage: `url(${myAppLogo})`,
-					backgroundSize: "contain",
-					backgroundRepeat: "no-repeat",
-					backgroundPosition: "center",
-					filter: "blur(1px)",
-					opacity: 0.3,
-					transform: "translateX(-50%) scale(0.95)",
-					zIndex: 0,
-				}}
-			/>
+			<div className="sub-color logo-background" />
 
 			{/* Banner */}
-			<div
-				style={{
-					position: "relative",
-					zIndex: 1,
-					width: "100%",
-					height: "auto", // Use auto for responsive height
-					backgroundColor: "#9EAD39",
-					color: "white",
-					padding: "10px 0", // Responsive padding
-					fontSize: "1.5rem",
-					fontWeight: "bold",
-					textTransform: "uppercase",
-					boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-				}}
-			>
-				Welcome to Cupboard!
-			</div>
+			<span className="header-color header">Welcome to Cupboard!</span>
 
 			{/* Main Content */}
 			<div
@@ -72,10 +33,10 @@ function Home({ userAuth }: HomeProps) {
 				{/* Button */}
 				<button
 					onClick={handleLogin}
+					className="primary-color"
 					style={{
 						padding: "15px 30px",
 						fontSize: "1.2rem", // Use rem for responsive font size
-						backgroundColor: "#AB4C11",
 						color: "white",
 						border: "none",
 						borderRadius: "5px",

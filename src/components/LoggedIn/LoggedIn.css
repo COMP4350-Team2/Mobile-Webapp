@@ -1,14 +1,36 @@
 .centered {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; /* Full viewport height */
-  }
-  
-  button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-  }
-  
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	height: 100vh; /* Full viewport height */
+}
+
+button {
+	margin-top: 20px;
+	padding: 10px 20px;
+	font-size: 16px;
+}
+
+.profile-button {
+	opacity: 0.6;
+	position: absolute;
+	top: 20px;
+	right: 20px;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	padding: 10px;
+	border-radius: 50%;
+	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+	transition: all 0.2s ease-in-out;
+}
+
+.profile-button:hover {
+	opacity: 1;
+	scale: 105%;
+}
+
+.logout-button:hover {
+	opacity: 0.95;
+}
