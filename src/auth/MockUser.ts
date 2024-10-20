@@ -1,3 +1,5 @@
+/*This class is for our Mock User object. It follows the same methods as Auth0User but returns hardcoded values instead*/
+
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/Lists";
 import { UserAuth } from "./UserAuth";

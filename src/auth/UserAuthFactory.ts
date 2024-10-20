@@ -4,6 +4,11 @@ import { Auth0User } from "./Auth0User";
 import { MockUser } from "./MockUser";
 import { UserAuth } from "./UserAuth";
 
+/**
+    * Purpose: This function checks the environment variables of our app and determines what instance of 
+                UserAuth to call (and return)
+    * @return {UserAuth} Either `Auth0User` or `MockUser` 
+*/
 export const UserAuthFactory = (): UserAuth => {
 	const domain = process.env.REACT_APP_AUTH0_DOMAIN ?? "";
 	const clientId = process.env.REACT_APP_CLIENT_ID ?? "";

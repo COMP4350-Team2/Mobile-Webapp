@@ -13,7 +13,11 @@ export class Backend implements BackendInterface {
 		this.userAuth = userAuth;
 	}
 
-	// Method that returns all ingredients
+/**
+    * Purpose: This function makes a GET request to an API endpoint and retrieves a list of ingredients.
+    * 
+    * @return {Promise<Ingredient[]>} A promise that resolves to a list of `Ingredient` objects.
+*/
 	async getAllIngredients(): Promise<Ingredient[]> {
 		try {
 			const token = await this.userAuth.getAccessToken();
