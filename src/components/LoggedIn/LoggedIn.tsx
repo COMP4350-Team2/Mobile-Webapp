@@ -1,7 +1,7 @@
 /**
  * This page is what the user is redirected to once theyve successfully logged in.
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -18,13 +18,15 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
+useEffect(() => {
 	if (!userAuth.isAuthenticated()) {
 		// If not authenticated, redirect to home
 		navigate("/");
-		return null; // Prevent rendering of the component
-	} else {
+			} else {
 		userAuth.storeAccessToken!();
+console.log("token stored");
 	}
+}, [navigate, userAuth]);
 
 	const handleLogout = () => {
 		userAuth.logout();
@@ -32,7 +34,6 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	};
 
 	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type (for printing purposes)
-
 
     //These two methods are just for showing the sliding modal for logging out
 	const showComingSoonModal = () => {
