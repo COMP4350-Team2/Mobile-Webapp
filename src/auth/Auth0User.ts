@@ -31,6 +31,10 @@ export class Auth0User implements UserAuth {
 		return this.mylists;
 	}
 
+    setMyLists(lists: List[]){
+        this.mylists = lists;
+    }
+
 	getAllIngredients(): Ingredient[] {
 		return this.allIngredients;
 	}

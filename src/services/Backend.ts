@@ -4,6 +4,7 @@
 import axios from "axios";
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
+import { List } from "../models/Lists";
 import { BackendInterface } from "./BackendInterface";
 
 export class Backend implements BackendInterface {
@@ -31,4 +32,10 @@ export class Backend implements BackendInterface {
 			return [];
 		}
 	}
+
+
+    async getMyLists(): Promise<List[]>{
+        const myLists : List[]=  [new List("Grocery", []), new List("Pantry", [])];
+        return myLists;
+    }
 }

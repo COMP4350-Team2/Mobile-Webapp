@@ -15,7 +15,7 @@ function App() {
 				<Route path="/" element={<Home userAuth={userAuth} />} />
 				<Route path="/logged-in" element={<LoggedIn userAuth={userAuth} />} />
 				<Route path="/all-ingredients" element={<AllIngredients backend={backend} />} /> {}
-                <Route path="/my-lists" element={<MyLists userAuth={userAuth} />} />
+                <Route path="/my-lists" element={<MyLists userAuth={userAuth} backendInterface={backend}/>} />
 			</Routes>
 		</Router>
 	);

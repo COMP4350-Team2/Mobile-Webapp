@@ -13,6 +13,10 @@ export class MockUser implements UserAuth {
 		return this.mylists;
 	}
 
+    setMyLists(lists: List[]){
+        this.mylists = lists;
+    }
+
 	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
 		return [new Ingredient("Tomato", "Vegetable"), new Ingredient("Chicken", "Meat"), new Ingredient("Basil", "Herb"), new Ingredient("Cheese", "Dairy")];

@@ -5,17 +5,34 @@ import { AppBar, Container, Paper, Table, TableBody, TableCell, TableContainer, 
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
+import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/Lists";
 
-function MyLists({ userAuth }: { userAuth: UserAuth }) {
-	const navigate = useNavigate();
-	const [myLists, setMyLists] = useState<List[]>([]);
+interface MyListsProps{
+    userAuth: UserAuth;
+    backendInterface: BackendInterface;
+}
 
-	useEffect(() => {
-		const lists = userAuth.getMyLists();
-		setMyLists(lists);
-	}, [userAuth]);
+function MyLists({ userAuth, backendInterface }: MyListsProps) {
+	const navigate = useNavigate();
+    const [myLists, updateMyLists] = useState<List[]>([]);
+
+    useEffect(() => {
+        const fetchLists = async () => {
+            try {
+                // Fetch the lists from the backend
+                const lists = await backendInterface.getMyLists();
+                // Update the userAuth DSO with the fetched lists
+                userAuth.setMyLists?.(lists); 
+                // Set the state with the lists from userAuth
+                updateMyLists(userAuth.getMyLists()); 
+            } catch (error) {
+                console.error("Error fetching lists:", error);
+            }
+        };
+        fetchLists();
+    }, [userAuth, backendInterface]);
 
 	return (
 		<Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
