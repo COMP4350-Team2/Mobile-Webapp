@@ -3,7 +3,7 @@ import axios from "axios";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/Lists";
 import { UserAuth } from "./UserAuth";
-import MyLists from "components/MyLists/MyLists";
+
 
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();

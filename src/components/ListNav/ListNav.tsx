@@ -6,6 +6,8 @@ import { Add } from "@mui/icons-material";
 import { UserAuth } from "auth/UserAuth";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button} from "@mui/material";
+
 
 interface ListNavProps {
     backendInterface: BackendInterface;
@@ -16,6 +18,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const { listName } = useParams<{ listName: string }>();
     const navigate = useNavigate();
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+    const [open, setOpen] = useState(false);
+    const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -30,6 +34,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         };
         fetchIngredients();
     }, [listName, userAuth]);
+
+    const handleAddIngredient = () => {
+        const allIngreds = userAuth.getAllIngredients();
+        setAllIngredients(allIngreds);
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
 
     return (
         <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh", position: "relative" }}>
@@ -97,12 +111,45 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     bottom: "20px",
                     right: "20px",
                 }}
-                onClick={() => { /* Placeholder for future functionality */ }}
+                onClick={handleAddIngredient}
             >
                 <Add />
             </Fab>
+            
+            {/* Dialog for Adding Ingredients */}
+            <Dialog open={open} onClose={handleClose} PaperProps={{ className: "sub-color" }}>
+            <DialogTitle>Select Ingredients</DialogTitle>
+            <DialogContent>
+            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+            {allIngredients.map((ingredient, index) => (
+                <div
+                    key={index}
+                    onClick={() => { /* Future functionality on ingredient click */ }}
+                    style={{
+                        padding: '10px',
+                        cursor: 'pointer',
+                        borderBottom: '1px solid #ddd',
+                        backgroundColor: '#f5f5f5',
+                        transition: 'background-color 0.2s',
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                >
+                    {ingredient.name}
+                </div>
+                ))}
+            </div>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                    Close
+                </Button>
+            </DialogActions>
+            </Dialog>
+
         </Container>
     );
 }
 
 export default ListNav;
+
