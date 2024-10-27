@@ -52,4 +52,9 @@ export class MockUser implements UserAuth {
     storeAccessToken(){
         return null;
     }
+
+	getIngredientsFromList(listName: String): Promise<Ingredient[]>{
+		const foundList = this.mylists.find(list => list.name === listName);
+    	return Promise.resolve(foundList ? foundList.ingredients : []);
+	}
 }

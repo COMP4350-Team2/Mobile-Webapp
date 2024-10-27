@@ -35,7 +35,7 @@ export class Backend implements BackendInterface {
 
 
     async getMyLists(): Promise<List[]>{
-        const myLists : List[]=  [new List("Grocery", []), new List("Pantry", [])];
+        const myLists : List[]=  [new List("Grocery", [new Ingredient("Tomato", "Produce", 5, "count"), new Ingredient("Beef", "Meat", 1.5, "kg")]), new List("Pantry", [new Ingredient("Milk", "Dairy", 2000, "ml"), new Ingredient("Eggs", "Poultry", 12, "count")])];
         return myLists;
     }
 }

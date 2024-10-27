@@ -62,7 +62,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 							myLists.map((list, index) => (
 								<TableRow
 									key={index}
-									onClick={() => navigate(`/view-list/${list.name}`)}
+									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)} // we will pass the list name onto the next page
 									sx={{
 										cursor: "pointer",
 										backgroundColor: "white",

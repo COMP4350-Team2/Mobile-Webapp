@@ -5,6 +5,7 @@ import AllIngredients from "./components/AllIngredients/AllIngredients";
 import Home from "./components/Home/Home";
 import LoggedIn from "./components/LoggedIn/LoggedIn";
 import BackendFactory from "./services/BackendFactory";
+import ListNav from "components/ListNav/ListNav";
 function App() {
 	const userAuth = UserAuthFactory();
 	const backend = BackendFactory(userAuth);
@@ -16,6 +17,7 @@ function App() {
 				<Route path="/logged-in" element={<LoggedIn userAuth={userAuth} />} />
 				<Route path="/all-ingredients" element={<AllIngredients backend={backend} />} /> {}
                 <Route path="/my-lists" element={<MyLists userAuth={userAuth} backendInterface={backend}/>} />
+				<Route path="/view-list/:listName" element={<ListNav userAuth={userAuth} backendInterface={backend} />} />
 			</Routes>
 		</Router>
 	);

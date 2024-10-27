@@ -13,4 +13,5 @@ export interface UserAuth {
 	storeAccessToken?: () => void;
 	setAllIngredients?: (list: Ingredient[]) => void;
     setMyLists?: (lists: List[]) => void;
+	getIngredientsFromList: (listName : String) => Promise<Ingredient[]>
 }

@@ -3,14 +3,15 @@ import axios from "axios";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/Lists";
 import { UserAuth } from "./UserAuth";
+import MyLists from "components/MyLists/MyLists";
 
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
 	private _accessToken;
 	private backendHost = process.env.REACT_APP_BACKEND_HOST ?? "";
 	private audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? "";
-	mylists: List[] = [];
-	allIngredients: Ingredient[] = [];
+	private mylists: List[] = [];
+	private allIngredients: Ingredient[] = [];
    
 	login() {
 		this.auth0.loginWithRedirect().then((test) => console.log(test)); // Logs the user in using Auth0 redirect
@@ -137,5 +138,10 @@ export class Auth0User implements UserAuth {
 			},
 		});
 		return res;
+	}
+
+	getIngredientsFromList(listName: String): Promise<Ingredient[]>{
+		const foundList = this.mylists.find(list => list.name === listName);
+    	return Promise.resolve(foundList ? foundList.ingredients : []);
 	}
 }
