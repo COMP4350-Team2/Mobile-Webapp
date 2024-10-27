@@ -18,15 +18,14 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
-useEffect(() => {
-	if (!userAuth.isAuthenticated()) {
-		// If not authenticated, redirect to home
-		navigate("/");
-			} else {
-		userAuth.storeAccessToken!();
-console.log("token stored");
-	}
-}, [navigate, userAuth]);
+	useEffect(() => {
+		if (!userAuth.isAuthenticated()) {
+			// If not authenticated, redirect to home
+			navigate("/");
+		} else {
+			userAuth.storeAccessToken!();
+		}
+	}, [navigate, userAuth]);
 
 	const handleLogout = () => {
 		userAuth.logout();
@@ -35,7 +34,7 @@ console.log("token stored");
 
 	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type (for printing purposes)
 
-    //These two methods are just for showing the sliding modal for logging out
+	//These two methods are just for showing the sliding modal for logging out
 	const showComingSoonModal = () => {
 		setIsModalOpen(true);
 	};
@@ -58,8 +57,6 @@ console.log("token stored");
 					height: "100%", // Full height
 					textAlign: "center",
 					fontFamily: "Arial, sans-serif",
-					position: "relative",
-					zIndex: 1, // Ensure content is above the background
 					overflowY: "clip",
 				}}
 			>
@@ -134,57 +131,16 @@ console.log("token stored");
 				)}
 
 				{/* Cards Container */}
-				<div
-					style={{
-						display: "flex",
-						flexDirection: "row",
-						alignItems: "center",
-						gap: "360px",
-						marginTop: "100px",
-					}}
-				>
+				<div className="card-container">
 					{/* Card for "View My Lists" */}
-					<div
-						className="primary-color"
-						onClick={showComingSoonModal}
-						style={{
-							color: "white",
-							padding: "20px",
-							borderRadius: "15px",
-							width: "150px",
-							height: "150px",
-							cursor: "pointer",
-							boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-							transition: "transform 0.3s ease",
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "center",
-							alignItems: "center",
-						}}
-						onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-						onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-					>
+					<div className="primary-color card" onClick={showComingSoonModal} onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")} onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}>
 						My Lists
 					</div>
 
 					{/* Card for "View All Ingredients" */}
 					<div
-						className="primary-color"
+						className="primary-color card"
 						onClick={() => navigate("/all-ingredients")} // Navigate to All Ingredients page
-						style={{
-							color: "white",
-							padding: "20px",
-							borderRadius: "15px",
-							width: "150px",
-							height: "150px",
-							cursor: "pointer",
-							boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-							transition: "transform 0.3s ease",
-							display: "flex",
-							flexDirection: "column",
-							justifyContent: "center",
-							alignItems: "center",
-						}}
 						onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
 						onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
 					>
