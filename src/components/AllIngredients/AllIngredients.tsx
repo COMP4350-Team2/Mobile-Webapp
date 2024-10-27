@@ -9,23 +9,25 @@ import { useNavigate } from "react-router-dom";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
 import "./AllIngredients.css";
+import { UserAuth } from "auth/UserAuth";
 
 interface AllIngredientsProps {
 	backend: BackendInterface;
+	user: UserAuth;
 }
 
-function AllIngredients({ backend }: AllIngredientsProps) {
+function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const navigate = useNavigate();
 	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 	const [open, setOpen] = useState(false);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [amount, setAmount] = useState<number | string>("");
 	const [unit, setUnit] = useState<string>("g");
-	const [list, setList] = useState<string>("");
+	const [selectedList, setSelectedList] = useState<string>("");
+	const [allLists, setAllLists] = useState<string[]>([]);
 
-	const units: string[] = ["g", "ml", "count"];
-	const lists: string[] = [];
-
+	const units: string[] = ["g", "ml", "count", "kg", "ml"];
+	
    
    /**
         * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
@@ -46,6 +48,20 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 			});
 	}, [backend]);
 
+	useEffect(() => {
+        const fetchLists = async () => {
+            try {
+                const allLists = await user.getMyLists();
+                const listNames = allLists.map((list) => list.name); // Extracting names
+                setAllLists(listNames);
+            } catch (error) {
+                console.error("Error fetching lists:", error);
+            }
+        };
+
+        fetchLists();
+    }, [user]);
+
     /**
         * This function handles setting a certain ingredient (so that it can be added to a list)
         *
@@ -60,7 +76,7 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 		setOpen(false);
 		setAmount("");
 		setUnit("g");
-		setList("");
+		setSelectedList("");
 		setSelectedIngredient(null);
 	};
 
@@ -70,8 +86,6 @@ function AllIngredients({ backend }: AllIngredientsProps) {
         *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION 
     */
 	const handleAdd = () => {
-		// Handle adding ingredient logic here (currently does nothing)
-		console.log("Added:", { ingredient: selectedIngredient, amount, unit, list });
 		handleClose();
 	};
 
@@ -138,13 +152,17 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 							</MenuItem>
 						))}
 					</TextField>
-					{/* New dropdown for selecting a list (currently empty) */}
-					<TextField select label="Select List" value={list} onChange={(e) => setList(e.target.value)} fullWidth style={{ marginTop: "10px", backgroundColor: 'white' }}>
-						{/* Currently no options */}
-						{lists.length === 0 ? (
+
+
+					{/* New dropdown for selecting a list */}
+					<div style={{ marginBottom: '0.5px', color: 'black' }}>
+                         List Name
+                    </div>
+					<TextField select value={selectedList} onChange={(e) => setSelectedList(e.target.value)} fullWidth style={{ marginTop: "10px", backgroundColor: 'white' }}>
+						{allLists.length === 0 ? (
 							<MenuItem value="">No lists available</MenuItem>
 						) : (
-							lists.map((listItem) => (
+							allLists.map((listItem) => (
 								<MenuItem key={listItem} value={listItem}>
 									{listItem}
 								</MenuItem>

@@ -15,7 +15,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home userAuth={userAuth} />} />
 				<Route path="/logged-in" element={<LoggedIn userAuth={userAuth} />} />
-				<Route path="/all-ingredients" element={<AllIngredients backend={backend} />} /> {}
+				<Route path="/all-ingredients" element={<AllIngredients backend={backend} user = {userAuth}/>} /> {}
                 <Route path="/my-lists" element={<MyLists userAuth={userAuth} backendInterface={backend}/>} />
 				<Route path="/view-list/:listName" element={<ListNav userAuth={userAuth} backendInterface={backend} />} />
 			</Routes>
