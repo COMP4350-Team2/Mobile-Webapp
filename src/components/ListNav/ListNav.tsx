@@ -1,18 +1,18 @@
-import { AppBar, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
+import { AppBar, Container, Fab, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AiOutlineArrowLeft } from "react-icons/ai";
+import { Add } from "@mui/icons-material";
 import { UserAuth } from "auth/UserAuth";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
 
-
-interface ListNavProps{
+interface ListNavProps {
     backendInterface: BackendInterface;
     userAuth: UserAuth;
 }
 
-function ListNav({ userAuth, backendInterface }: ListNavProps){
+function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const { listName } = useParams<{ listName: string }>();
     const navigate = useNavigate();
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -32,7 +32,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps){
     }, [listName, userAuth]);
 
     return (
-        <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
+        <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh", position: "relative" }}>
             {/* App Bar */}
             <AppBar position="static" className="header-color">
                 <Toolbar>
@@ -87,7 +87,22 @@ function ListNav({ userAuth, backendInterface }: ListNavProps){
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* Floating Action Button */}
+            <Fab
+                color="primary"
+                className="primary-color"
+                style={{
+                    position: "fixed",
+                    bottom: "20px",
+                    right: "20px",
+                }}
+                onClick={() => { /* Placeholder for future functionality */ }}
+            >
+                <Add />
+            </Fab>
         </Container>
     );
 }
+
 export default ListNav;
