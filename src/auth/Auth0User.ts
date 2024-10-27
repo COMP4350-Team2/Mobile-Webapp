@@ -11,7 +11,7 @@ export class Auth0User implements UserAuth {
 	private audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? "";
 	mylists: List[] = [];
 	allIngredients: Ingredient[] = [];
-
+   
 	login() {
 		this.auth0.loginWithRedirect().then((test) => console.log(test)); // Logs the user in using Auth0 redirect
 	}

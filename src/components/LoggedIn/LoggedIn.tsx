@@ -16,7 +16,6 @@ interface LoggedInProps {
 function LoggedIn({ userAuth }: LoggedInProps) {
 	const navigate = useNavigate();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
-	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	if (!userAuth.isAuthenticated()) {
 		// If not authenticated, redirect to home
@@ -26,6 +25,7 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 		userAuth.storeAccessToken!();
 	}
 
+
 	const handleLogout = () => {
 		userAuth.logout();
 		navigate("/");
@@ -34,14 +34,6 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 	const userType = userAuth instanceof MockUser ? "Mock User" : "Auth0 User"; // Determine user type (for printing purposes)
 
 
-    //These two methods are just for showing the sliding modal for logging out
-	const showComingSoonModal = () => {
-		setIsModalOpen(true);
-	};
-
-	const closeModal = () => {
-		setIsModalOpen(false);
-	};
 
 	return (
 		<div className="sub-color" style={{ height: "100vh" }}>
@@ -145,7 +137,7 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 					{/* Card for "View My Lists" */}
 					<div
 						className="primary-color"
-						onClick={showComingSoonModal}
+						onClick={() => navigate("/my-lists")}
 						style={{
 							color: "white",
 							padding: "20px",
@@ -191,51 +183,6 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 					</div>
 				</div>
 			</div>
-
-			{/* Modal for Coming Soon */}
-			{isModalOpen && (
-				<div
-					style={{
-						position: "fixed",
-						top: 0,
-						left: 0,
-						width: "100%",
-						height: "100%",
-						backgroundColor: "rgba(0, 0, 0, 0.5)",
-						display: "flex",
-						justifyContent: "center",
-						alignItems: "center",
-						zIndex: 2000,
-					}}
-					onClick={closeModal}
-				>
-					<div
-						style={{
-							backgroundColor: "#fff",
-							padding: "30px",
-							borderRadius: "10px",
-							textAlign: "center",
-						}}
-						onClick={(e) => e.stopPropagation()} // Prevent click on modal from closing it
-					>
-						<h2>Coming Soon!</h2>
-						<p>Team Teacup is working hard to bring this feature to you. Stay tuned for our next release!</p>
-						<button
-							className="secondary-color"
-							onClick={closeModal}
-							style={{
-								color: "white",
-								padding: "10px 20px",
-								border: "none",
-								borderRadius: "5px",
-								cursor: "pointer",
-							}}
-						>
-							Close
-						</button>
-					</div>
-				</div>
-			)}
 		</div>
 	);
 }

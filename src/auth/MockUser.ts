@@ -44,4 +44,8 @@ export class MockUser implements UserAuth {
 	async getAccessToken(): Promise<string> {
 		return "";
 	}
+
+    storeAccessToken(){
+        return null;
+    }
 }
