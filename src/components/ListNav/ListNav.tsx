@@ -41,7 +41,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps){
                         onClick={() => navigate("/my-lists")}
                     />
                     <Typography variant="h6" style={{ flexGrow: 1, textAlign: "center", color: "white", fontWeight: "bold", fontSize: "1.5rem" }}>
-                        {listName} Ingredients
+                        {listName}
                     </Typography>
                 </Toolbar>
             </AppBar>
