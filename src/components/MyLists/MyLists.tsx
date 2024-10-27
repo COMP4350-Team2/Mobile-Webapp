@@ -26,7 +26,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
                 // Update the userAuth DSO with the fetched lists
                 userAuth.setMyLists?.(lists); 
                 // Set the state with the lists from userAuth
-                updateMyLists(userAuth.getMyLists()); 
+                updateMyLists(lists); 
             } catch (error) {
                 console.error("Error fetching lists:", error);
             }
