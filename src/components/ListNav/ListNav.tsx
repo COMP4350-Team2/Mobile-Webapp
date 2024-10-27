@@ -6,7 +6,7 @@ import { Add } from "@mui/icons-material";
 import { UserAuth } from "auth/UserAuth";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button} from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem} from "@mui/material";
 
 
 interface ListNavProps {
@@ -18,8 +18,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const { listName } = useParams<{ listName: string }>();
     const navigate = useNavigate();
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(false); //first dialogue for all ingredients
     const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
+    const [chosenIngredient, setChosenIngredient] = useState<Ingredient | null>(null);
+    const [amount, setAmount] = useState<number | ''>('');
+    const [unit, setUnit] = useState<string>('count');
+    const [openUnitDialog, setOpenUnitDialog] = useState(false); //second dialogue
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -41,6 +45,19 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         setOpen(true);
     }
 
+    const handleIngredientClick = (ingredient: Ingredient) =>{
+        setChosenIngredient(ingredient);
+        setOpen(false);
+        setAmount('');
+        setUnit('count');
+        setOpenUnitDialog(true); //open the second dialogue
+    }
+
+    const handleUnitDialogClose = () => {
+        setOpenUnitDialog(false);
+        setOpen(true); // reopen first dialog when closing second dialog
+    };
+    
     const handleClose = () => {
         setOpen(false);
     }
@@ -117,23 +134,23 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             </Fab>
             
             {/* Dialog for Adding Ingredients */}
-            <Dialog open={open} onClose={handleClose} PaperProps={{ className: "sub-color" }}>
+            <Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
             <DialogTitle>Select Ingredients</DialogTitle>
             <DialogContent>
             <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
             {allIngredients.map((ingredient, index) => (
                 <div
                     key={index}
-                    onClick={() => { /* Future functionality on ingredient click */ }}
+                    onClick={() => handleIngredientClick(ingredient)}
                     style={{
                         padding: '10px',
                         cursor: 'pointer',
                         borderBottom: '1px solid #ddd',
-                        backgroundColor: '#f5f5f5',
+                        backgroundColor: 'inherit',
                         transition: 'background-color 0.2s',
                     }}
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#f5f5f5'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'inherit'}
                 >
                     {ingredient.name}
                 </div>
@@ -141,12 +158,61 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             </div>
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose} color="primary">
+                <Button onClick={handleClose} className="primary-color" style= {{color : 'black'}}>
                     Close
                 </Button>
             </DialogActions>
             </Dialog>
 
+            {/* Dialog for Unit and Amount Input */}
+            <Dialog open={openUnitDialog} onClose={handleUnitDialogClose} PaperProps={{ className: "secondary-color" }}>
+                <DialogTitle>{chosenIngredient ? `Add ${chosenIngredient.name}` : 'Add Ingredient'}</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        label="Amount"
+                        type="number"
+                        value={amount}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            // Check if the input is empty or if it's a valid number
+                            if (value === "") {
+                                setAmount(""); // Set to empty string if the input is empty
+                            } else if (!isNaN(Number(value))) {
+                                setAmount(Number(value)); // Convert string to number if it's a valid number
+                            }
+                        }}                        
+                        fullWidth
+                        margin="normal"
+                        style = { {backgroundColor: 'white'}} // Set background color to white
+                    />
+                    <div style={{ marginBottom: '0.5px', color: 'black' }}>
+                         Unit
+                    </div>
+                    <TextField
+                        select
+                        //label="Unit"
+                        value={unit}
+                        onChange={(e) => setUnit(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        style = {{backgroundColor : 'white'}}
+                    >
+                        {['count', 'mg', 'kg', 'g', 'ml'].map((unitOption) => (
+                            <MenuItem key={unitOption} value={unitOption}>
+                                {unitOption}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleUnitDialogClose} className="primary-color" style = {{color: 'black'}}>
+                        Add
+                    </Button>
+                    <Button onClick={handleUnitDialogClose} className="primary-color" style = {{color: 'black'}}>
+                        Back
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Container>
     );
 }
