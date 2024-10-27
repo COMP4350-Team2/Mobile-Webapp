@@ -170,7 +170,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                 <DialogContent>
                     <TextField
                         label="Amount"
-                        type="number"
+                        type="float"
                         value={amount}
                         onChange={(e) => {
                             const value = e.target.value;

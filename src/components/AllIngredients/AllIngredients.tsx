@@ -114,7 +114,7 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 			</TableContainer>
 
 			{/* Popup Dialog for Adding Ingredients */}
-			<Dialog open={open} onClose={handleClose}>
+			<Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
 				<DialogTitle>Add Ingredient</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -126,8 +126,12 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 						onChange={(e) => setAmount(e.target.value)}
 						fullWidth
 						inputProps={{ step: "0.1", min: "0" }} // Allows only floats
+						style ={{backgroundColor: 'white'}}
 					/>
-					<TextField select label="Unit" value={unit} onChange={(e) => setUnit(e.target.value)} fullWidth style={{ marginTop: "10px" }}>
+					<div style={{ marginBottom: '0.5px', color: 'black' }}>
+                         Unit
+                    </div>
+					<TextField select value={unit} onChange={(e) => setUnit(e.target.value)} fullWidth style={{ marginTop: "10px" , backgroundColor: 'white'}}>
 						{units.map((option) => (
 							<MenuItem key={option} value={option}>
 								{option}
@@ -135,7 +139,7 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 						))}
 					</TextField>
 					{/* New dropdown for selecting a list (currently empty) */}
-					<TextField select label="Select List" value={list} onChange={(e) => setList(e.target.value)} fullWidth style={{ marginTop: "10px" }}>
+					<TextField select label="Select List" value={list} onChange={(e) => setList(e.target.value)} fullWidth style={{ marginTop: "10px", backgroundColor: 'white' }}>
 						{/* Currently no options */}
 						{lists.length === 0 ? (
 							<MenuItem value="">No lists available</MenuItem>
@@ -149,10 +153,10 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 					</TextField>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} color="primary">
+					<Button onClick={handleClose} className="primary-color" style= {{color : 'black'}}>
 						Cancel
 					</Button>
-					<Button onClick={handleAdd} color="primary">
+					<Button onClick={handleAdd} className="primary-color" style= {{color : 'black'}}>
 						Add
 					</Button>
 				</DialogActions>
