@@ -24,9 +24,8 @@ export class MockUser implements UserAuth {
 		this.isLoggedIn = false;
 	}
 
-	isAuthenticated(): boolean {
-		return this.isLoggedIn;
-	}
+	isProcessing = () => false;
+	isAuthenticated = () => this.isLoggedIn;
 
 	//placeholder method for the next sprint
 	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count" | "g" | "ml"): void {

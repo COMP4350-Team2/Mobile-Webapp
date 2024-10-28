@@ -13,7 +13,9 @@ function Home({ userAuth }: HomeProps) {
 		if (!userAuth.isAuthenticated()) {
 			userAuth.login(); // Log in the user using Auth0 or Mock User
 		}
-		navigate("/logged-in");
+		if (userAuth.isAuthenticated()) {
+			navigate("/logged-in");
+		}
 	};
 
 	return (
