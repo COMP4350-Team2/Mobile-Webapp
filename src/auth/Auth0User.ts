@@ -61,12 +61,10 @@ export class Auth0User implements UserAuth {
 	 * Then, it calls the `createUser` method, which sends a request to the `create_user` API endpoint.
 	 * This checks the database to see if the user associated with the access token already exists or needs to be added.
 	 */
-	storeAccessToken(firstLogin = false) {
+	storeAccessToken() {
 		this.getAccessToken().then((token) => {
 			this._accessToken = token;
-			if (firstLogin) {
-				this.createUser();
-			}
+			this.createUser();
 		});
 	}
 

@@ -12,9 +12,11 @@ import "./LoggedIn.css";
 
 interface LoggedInProps {
 	userAuth: UserAuth;
+	isFirstLoggin: boolean;
+	setIsFirstLoggin: (val: boolean) => void;
 }
 
-function LoggedIn({ userAuth }: LoggedInProps) {
+function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(true);
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,17 +28,18 @@ function LoggedIn({ userAuth }: LoggedInProps) {
 				await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms before rechecking
 			}
 
-			if (userAuth.isAuthenticated()) {
-				setIsLoading(false);
+			if (userAuth.isAuthenticated() && isFirstLoggin) {
 				userAuth.storeAccessToken!();
-			} else {
+				setIsFirstLoggin(false);
+			} else if (!userAuth.isAuthenticated()) {
 				navigate("/");
 			}
+			setIsLoading(false);
 		};
 
 		setIsLoading(true);
 		checkAuth();
-	}, [navigate, userAuth]);
+	}, [navigate, userAuth, isFirstLoggin, setIsFirstLoggin]);
 
 	const handleLogout = () => {
 		userAuth.logout();

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import UserAuthFactory from "./auth/UserAuthFactory";
 import AllIngredients from "./components/AllIngredients/AllIngredients";
@@ -6,6 +7,7 @@ import LoggedIn from "./components/LoggedIn/LoggedIn";
 import BackendFactory from "./services/BackendFactory";
 
 function App() {
+	const [isFirstLoggin, setIsFirstLoggin] = useState(true);
 	const userAuth = UserAuthFactory();
 	const backend = BackendFactory(userAuth);
 	const router = createBrowserRouter([
@@ -16,7 +18,7 @@ function App() {
 		},
 		{
 			path: "/logged-in",
-			element: <LoggedIn userAuth={userAuth} />,
+			element: <LoggedIn userAuth={userAuth} isFirstLoggin={isFirstLoggin} setIsFirstLoggin={(val) => setIsFirstLoggin(val)} />,
 			errorElement: <div>404 Page Not Found</div>,
 		},
 		{
