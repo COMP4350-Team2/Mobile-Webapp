@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../auth/UserAuth";
 import "./Home.css";
 
@@ -6,9 +7,14 @@ interface HomeProps {
 }
 
 function Home({ userAuth }: HomeProps) {
+	const navigate = useNavigate();
+
 	const handleLogin = () => {
 		if (!userAuth.isAuthenticated()) {
 			userAuth.login(); // Log in the user using Auth0 or Mock User
+		}
+		if (userAuth.isAuthenticated()) {
+			navigate("/logged-in");
 		}
 	};
 

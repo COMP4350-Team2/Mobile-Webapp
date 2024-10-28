@@ -4,7 +4,8 @@ import { List } from "../models/Lists";
 export interface UserAuth {
 	login: () => void;
 	logout: () => void;
-	isAuthenticated(): boolean;
+	isAuthenticated: () => boolean;
+	isProcessing: () => boolean;
 	getAccessToken: () => Promise<string>;
 	isAuth0User: () => boolean;
 	getMyLists: () => List[];

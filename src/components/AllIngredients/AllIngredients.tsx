@@ -26,11 +26,10 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 	const units: string[] = ["g", "ml", "count"];
 	const lists: string[] = [];
 
-   
-   /**
-        * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
-        * Once the result is validated, it calls setIngredients to display all available ingredients.
-    */
+	/**
+	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
+	 * Once the result is validated, it calls setIngredients to display all available ingredients.
+	 */
 	useEffect(() => {
 		backend
 			.getAllIngredients()
@@ -46,11 +45,11 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 			});
 	}, [backend]);
 
-    /**
-        * This function handles setting a certain ingredient (so that it can be added to a list)
-        *
-        * @param {Ingredient} ingredient - The ingredient object to be set
-    */
+	/**
+	 * This function handles setting a certain ingredient (so that it can be added to a list)
+	 *
+	 * @param {Ingredient} ingredient - The ingredient object to be set
+	 */
 	const handleOpen = (ingredient: Ingredient) => {
 		setSelectedIngredient(ingredient);
 		setOpen(true);
@@ -64,11 +63,10 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 		setSelectedIngredient(null);
 	};
 
-    
-    /**
-        *  Purpose: This function handles adding an ingredient to a certain list
-        *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION 
-    */
+	/**
+	 *  Purpose: This function handles adding an ingredient to a certain list
+	 *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION
+	 */
 	const handleAdd = () => {
 		// Handle adding ingredient logic here (currently does nothing)
 		console.log("Added:", { ingredient: selectedIngredient, amount, unit, list });
@@ -103,8 +101,8 @@ function AllIngredients({ backend }: AllIngredientsProps) {
 								<TableCell>{ingredient.name}</TableCell>
 								<TableCell>{ingredient.type}</TableCell>
 								<TableCell style={{ textAlign: "center" }}>
-									<IconButton onClick={() => handleOpen(ingredient)}>
-										<AiOutlinePlus className="secondary-color" />
+									<IconButton className="plus-button secondary-color" onClick={() => handleOpen(ingredient)}>
+										<AiOutlinePlus />
 									</IconButton>
 								</TableCell>
 							</TableRow>
