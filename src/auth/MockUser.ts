@@ -8,7 +8,6 @@ export class MockUser implements UserAuth {
 	private isLoggedIn: boolean = false;
 	mylists: List[] = [new List("Grocery", [new Ingredient("Tomato", "Vegetable", 4, "count"), new Ingredient("Chicken", "Meat", 500, "g")]), new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")])];
 
-	// Method to return the user's myLists (will be utilized in the next iteration)
 	getMyLists(): List[] {
 		return this.mylists;
 	}
@@ -23,18 +22,17 @@ export class MockUser implements UserAuth {
 	}
 
 	login() {
-		this.isLoggedIn = true; // Simulate successful login
+		this.isLoggedIn = true;
 	}
 
 	logout() {
-		this.isLoggedIn = false; // Simulate logout
+		this.isLoggedIn = false;
 	}
 
-	isAuthenticated(): boolean {
-		return this.isLoggedIn;
-	}
+	isProcessing = () => false;
+	isAuthenticated = () => this.isLoggedIn;
 
-    //placeholder method for the next sprint
+	//placeholder method for the next sprint
 	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count" | "g" | "ml"): void {
 		const list = this.mylists.find((list) => list.name === listName);
 		if (list) {
@@ -45,13 +43,14 @@ export class MockUser implements UserAuth {
 
 	isAuth0User = () => false;
 
+	storeAccessToken() {
+		// Does not apply
+	}
+
 	async getAccessToken(): Promise<string> {
 		return "";
 	}
 
-    storeAccessToken(){
-        return null;
-    }
 
 	getIngredientsFromList(listName: String): Promise<Ingredient[]>{
 		const foundList = this.mylists.find(list => list.name === listName);

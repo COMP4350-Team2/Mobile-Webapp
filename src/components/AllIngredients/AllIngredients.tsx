@@ -3,13 +3,13 @@
  */
 
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { UserAuth } from "auth/UserAuth";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
 import "./AllIngredients.css";
-import { UserAuth } from "auth/UserAuth";
 
 interface AllIngredientsProps {
 	backend: BackendInterface;
@@ -26,13 +26,13 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const [selectedList, setSelectedList] = useState<string>("");
 	const [allLists, setAllLists] = useState<string[]>([]);
 
-	const units: string[] = ["g", "ml", "count", "kg", "ml"];
-	
-   
-   /**
-        * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
-        * Once the result is validated, it calls setIngredients to display all available ingredients.
-    */
+	const units: string[] = ["g", "ml", "count"];
+	const lists: string[] = [];
+
+	/**
+	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
+	 * Once the result is validated, it calls setIngredients to display all available ingredients.
+	 */
 	useEffect(() => {
 		backend
 			.getAllIngredients()
@@ -62,11 +62,11 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
         fetchLists();
     }, [user]);
 
-    /**
-        * This function handles setting a certain ingredient (so that it can be added to a list)
-        *
-        * @param {Ingredient} ingredient - The ingredient object to be set
-    */
+	/**
+	 * This function handles setting a certain ingredient (so that it can be added to a list)
+	 *
+	 * @param {Ingredient} ingredient - The ingredient object to be set
+	 */
 	const handleOpen = (ingredient: Ingredient) => {
 		setSelectedIngredient(ingredient);
 		setOpen(true);
@@ -80,11 +80,10 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 		setSelectedIngredient(null);
 	};
 
-    
-    /**
-        *  Purpose: This function handles adding an ingredient to a certain list
-        *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION 
-    */
+	/**
+	 *  Purpose: This function handles adding an ingredient to a certain list
+	 *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION
+	 */
 	const handleAdd = () => {
 		handleClose();
 	};
@@ -117,8 +116,8 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 								<TableCell>{ingredient.name}</TableCell>
 								<TableCell>{ingredient.type}</TableCell>
 								<TableCell style={{ textAlign: "center" }}>
-									<IconButton onClick={() => handleOpen(ingredient)}>
-										<AiOutlinePlus className="secondary-color" />
+									<IconButton className="plus-button secondary-color" onClick={() => handleOpen(ingredient)}>
+										<AiOutlinePlus />
 									</IconButton>
 								</TableCell>
 							</TableRow>

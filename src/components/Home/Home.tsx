@@ -7,12 +7,14 @@ interface HomeProps {
 }
 
 function Home({ userAuth }: HomeProps) {
-    const navigate = useNavigate();
+	const navigate = useNavigate();
+
 	const handleLogin = () => {
 		if (!userAuth.isAuthenticated()) {
-            console.log("HERE");
 			userAuth.login(); // Log in the user using Auth0 or Mock User
-            navigate("/logged-in");
+		}
+		if (userAuth.isAuthenticated()) {
+			navigate("/logged-in");
 		}
 	};
 
