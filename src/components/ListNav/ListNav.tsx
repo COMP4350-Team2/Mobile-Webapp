@@ -1,12 +1,11 @@
-import { AppBar, Container, Fab, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 import { Add } from "@mui/icons-material";
+import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fab, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
+import { useEffect, useState } from "react";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+import { useNavigate, useParams } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem} from "@mui/material";
 
 
 interface ListNavProps {
@@ -39,8 +38,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         fetchIngredients();
     }, [listName, userAuth]);
 
-    const handleAddIngredient = () => {
-        const allIngreds = userAuth.getAllIngredients();
+    const handleAddIngredient = async () => {
+        const allIngreds = await backendInterface.getAllIngredients();
         setAllIngredients(allIngreds);
         setOpen(true);
     }
