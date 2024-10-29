@@ -5,16 +5,16 @@ import { List } from "../models/Lists";
 import { UserAuth } from "./UserAuth";
 
 export class MockUser implements UserAuth {
-	private isLoggedIn: boolean = false;
+	private isLoggedIn: boolean = true;
 	mylists: List[] = [new List("Grocery", [new Ingredient("Tomato", "Vegetable", 4, "count"), new Ingredient("Chicken", "Meat", 500, "g")]), new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")])];
 
 	getMyLists(): List[] {
 		return this.mylists;
 	}
 
-    setMyLists(lists: List[]){
-        this.mylists = lists;
-    }
+	setMyLists(lists: List[]) {
+		this.mylists = lists;
+	}
 
 	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
@@ -51,9 +51,8 @@ export class MockUser implements UserAuth {
 		return "";
 	}
 
-
-	getIngredientsFromList(listName: String): Promise<Ingredient[]>{
-		const foundList = this.mylists.find(list => list.name === listName);
-    	return Promise.resolve(foundList ? foundList.ingredients : []);
+	getIngredientsFromList(listName: String): Promise<Ingredient[]> {
+		const foundList = this.mylists.find((list) => list.name === listName);
+		return Promise.resolve(foundList ? foundList.ingredients : []);
 	}
 }
