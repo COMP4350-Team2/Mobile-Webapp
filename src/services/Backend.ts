@@ -17,7 +17,7 @@ export class Backend implements BackendInterface {
 /**
     * Purpose: This function makes a GET request to an API endpoint and retrieves a list of ingredients.
     * 
-    * @return {Promise<Ingredient[]>} A promise that resolves to a list of `Ingredient` objects.
+    * @return {Promise<Ingredient[]>} A promise that resolves to an array of `Ingredient` objects.
 */
 	async getAllIngredients(): Promise<Ingredient[]> {
 		try {
@@ -39,7 +39,11 @@ export class Backend implements BackendInterface {
 		}
 	}
 
-
+    /**
+    * Purpose: This function makes a GET request to an API endpoint and retrieves all of the User's lists
+    * 
+    * @return {Promise<List[]>} A promise that resolves to an array of `List` objects (each with Ingredients inside it)
+*/
     async getMyLists(): Promise<List[]>{
         const myLists : List[]=  [];
         try{
