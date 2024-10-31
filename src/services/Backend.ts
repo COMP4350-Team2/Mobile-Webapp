@@ -25,8 +25,14 @@ export class Backend implements BackendInterface {
 			const response = await axios.get<Ingredient[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/get_all_ingredients`, {
 				headers: { Authorization: "Bearer " + token },
 			});
-			this.userAuth.setAllIngredients!(response.data as Ingredient[]);
-			return response.data["result"] as Ingredient[];
+            if(response.status === 200){
+                this.userAuth.setAllIngredients!(response.data as Ingredient[]);
+			    return response.data["result"] as Ingredient[];
+            }
+			else{
+                console.error(`Error: Received status code ${response.status}`);
+                return [];
+            }
 		} catch (error) {
 			console.error(error);
 			return [];
@@ -41,25 +47,31 @@ export class Backend implements BackendInterface {
             const response = await axios.get<List[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/user_list_ingredients`, {
 				headers: { Authorization: "Bearer " + token },
 			});
-            const data = JSON.parse(JSON.stringify(response.data));
-            const results = data.result;
-            if (!results) {
-                console.error("Unexpected data format:", data);
+            if(response.status === 200){
+                const data = JSON.parse(JSON.stringify(response.data));
+                const results = data.result;
+                if (!results) {
+                    console.error("Unexpected data format:", data);
+                    return [];
+                }
+                results.forEach((listItem: any) => {
+                    const listName = listItem.list_name;
+                    const ingredients: Ingredient[] = (listItem.ingredients || []).map((ingredient: any) => {
+                        return new Ingredient(
+                            ingredient.ingredient_name,  // name
+                            ingredient.ingredient_type,  // type
+                            ingredient.amount,           // amount
+                            ingredient.unit              // unit
+                        );
+                    });
+                    const list = new List(listName, ingredients);
+                    myLists.push(list);
+                });
+            }
+            else{
+                console.error(`Error: Received status code ${response.status}`);
                 return [];
             }
-            results.forEach((listItem: any) => {
-                const listName = listItem.list_name;
-                const ingredients: Ingredient[] = (listItem.ingredients || []).map((ingredient: any) => {
-                    return new Ingredient(
-                        ingredient.ingredient_name,  // name
-                        ingredient.ingredient_type,  // type
-                        ingredient.amount,           // amount
-                        ingredient.unit              // unit
-                    );
-                });
-                const list = new List(listName, ingredients);
-                myLists.push(list);
-            });
         }catch(error){
             console.error(error);
             return [];
