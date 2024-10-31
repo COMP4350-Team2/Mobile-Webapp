@@ -91,7 +91,7 @@ export class Auth0User implements UserAuth {
 		try {
 			axios
 				.post<string>(
-					`${this.backendHost}/api/create_user`,
+					`${this.backendHost}/api/user`,
 					{},
 					{
 						headers: { authorization: "Bearer " + this._accessToken },
