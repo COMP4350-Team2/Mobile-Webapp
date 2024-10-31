@@ -35,7 +35,35 @@ export class Backend implements BackendInterface {
 
 
     async getMyLists(): Promise<List[]>{
-        const myLists : List[]=  [new List("Grocery", [new Ingredient("Tomato", "Produce", 5, "count"), new Ingredient("Beef", "Meat", 1.5, "kg")]), new List("Pantry", [new Ingredient("Milk", "Dairy", 2000, "ml"), new Ingredient("Eggs", "Poultry", 12, "count")])];
+        const myLists : List[]=  [];
+        try{
+            const token = await this.userAuth.getAccessToken();
+            const response = await axios.get<List[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/user_list_ingredients`, {
+				headers: { Authorization: "Bearer " + token },
+			});
+            const data = JSON.parse(JSON.stringify(response.data));
+            const results = data.result;
+            if (!results) {
+                console.error("Unexpected data format:", data);
+                return [];
+            }
+            results.forEach((listItem: any) => {
+                const listName = listItem.list_name;
+                const ingredients: Ingredient[] = (listItem.ingredients || []).map((ingredient: any) => {
+                    return new Ingredient(
+                        ingredient.ingredient_name,  // name
+                        ingredient.ingredient_type,  // type
+                        ingredient.amount,           // amount
+                        ingredient.unit              // unit
+                    );
+                });
+                const list = new List(listName, ingredients);
+                myLists.push(list);
+            });
+        }catch(error){
+            console.error(error);
+            return [];
+        }
         return myLists;
     }
 }
