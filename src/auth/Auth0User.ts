@@ -98,7 +98,7 @@ export class Auth0User implements UserAuth {
 					}
 				)
 				.then((response) => {
-					if (response.status === 200) {
+					if (response.status === 201) {
 						const responseBody = response.data["message"];
 						if (responseBody.includes("Item created successfully.")) {
 							console.log("new user");
