@@ -21,7 +21,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
     const [chosenIngredient, setChosenIngredient] = useState<Ingredient | null>(null);
     const [amount, setAmount] = useState<number | ''>('');
-    const [unit, setUnit] = useState<string>('count');
+    const [units, setUnits] = useState<string[]>([]);
+    const [selectedUnit, setSelectedUnit] = useState<string>("g");
+
     const [openUnitDialog, setOpenUnitDialog] = useState(false); //second dialogue
 
     useEffect(() => {
@@ -38,6 +40,24 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         fetchIngredients();
     }, [listName, userAuth]);
 
+
+    //the hook for fetching measurements
+    useEffect(() => {
+		const fetchUnits = async () => {
+			try {
+				const fetchedUnits = await backendInterface.getAllMeasurements();
+				setUnits(fetchedUnits);
+				if (fetchedUnits.length > 0) {
+					setSelectedUnit(fetchedUnits[0]); // Set the default unit to the first fetched unit
+				}
+			} catch (error) {
+				console.error("Error fetching units:", error);
+			}
+		};
+
+		fetchUnits();
+	}, [backendInterface]);
+
     const handleAddIngredient = async () => {
         const allIngreds = await backendInterface.getAllIngredients();
         setAllIngredients(allIngreds);
@@ -48,7 +68,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         setChosenIngredient(ingredient);
         setOpen(false);
         setAmount('');
-        setUnit('count');
+        setSelectedUnit(units.length > 0 ? units[0] : "g");
         setOpenUnitDialog(true); //open the second dialogue
     }
 
@@ -61,6 +81,37 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         setOpen(false);
     }
 
+    const handleAdd = async () => {
+        if (!chosenIngredient || !listName || amount === '' || !selectedUnit) {
+            console.error("Missing required fields: ingredient, list, amount, or unit");
+            return;
+        }
+    
+        try {
+    
+            // Clone the selected ingredient and set the amount and unit from user input
+            const ingredientToAdd = new Ingredient(
+                chosenIngredient.name,
+                chosenIngredient.type,
+                amount,
+                selectedUnit // Use the selected unit from the dropdown
+            );
+    
+            // Call the addIngredient method on the backend
+            await backendInterface.addIngredient(listName, ingredientToAdd);
+            console.log(`Added ${ingredientToAdd.name} to ${listName}`);
+    
+            // Optionally refresh the ingredient list after adding
+            const updatedIngredients = await userAuth.getIngredientsFromList(listName);
+            setIngredients(updatedIngredients);
+    
+        } catch (error) {
+            console.error("Error adding ingredient:", error);
+        } finally {
+            handleUnitDialogClose(); // Close the unit dialog
+        }
+    };
+    
     return (
         <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh", position: "relative" }}>
             {/* App Bar */}
@@ -163,8 +214,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             </DialogActions>
             </Dialog>
 
-            {/* Dialog for Unit and Amount Input */}
-            <Dialog open={openUnitDialog} onClose={handleUnitDialogClose} PaperProps={{ className: "secondary-color" }}>
+        {/* Dialog for Unit and Amount Input */}
+        <Dialog open={openUnitDialog} onClose={handleUnitDialogClose} PaperProps={{ className: "secondary-color" }}>
                 <DialogTitle>{chosenIngredient ? `Add ${chosenIngredient.name}` : 'Add Ingredient'}</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -182,7 +233,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                         }}                        
                         fullWidth
                         margin="normal"
-                        style = { {backgroundColor: 'white'}} // Set background color to white
+                        style={{ backgroundColor: 'white' }} // Set background color to white
                     />
                     <div style={{ marginBottom: '0.5px', color: 'black' }}>
                          Unit
@@ -190,13 +241,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     <TextField
                         select
                         //label="Unit"
-                        value={unit}
-                        onChange={(e) => setUnit(e.target.value)}
+                        value={selectedUnit}
+                        onChange={(e) => setSelectedUnit(e.target.value)}
                         fullWidth
                         margin="normal"
-                        style = {{backgroundColor : 'white'}}
+                        style={{ backgroundColor: 'white' }}
                     >
-                        {['count', 'mg', 'kg', 'g', 'ml'].map((unitOption) => (
+                        {units.map((unitOption) => ( // **Use fetched units**
                             <MenuItem key={unitOption} value={unitOption}>
                                 {unitOption}
                             </MenuItem>
@@ -204,10 +255,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     </TextField>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleUnitDialogClose} className="primary-color" style = {{color: 'black'}}>
+                    <Button onClick={handleAdd} className="primary-color" style={{ color: 'black' }}>
                         Add
                     </Button>
-                    <Button onClick={handleUnitDialogClose} className="primary-color" style = {{color: 'black'}}>
+                    <Button onClick={handleUnitDialogClose} className="primary-color" style={{ color: 'black' }}>
                         Back
                     </Button>
                 </DialogActions>
