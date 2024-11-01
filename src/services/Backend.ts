@@ -26,8 +26,10 @@ export class Backend implements BackendInterface {
 				headers: { Authorization: "Bearer " + token },
 			});
             if(response.status === 200){
-                this.userAuth.setAllIngredients!(response.data as Ingredient[]);
-			    return response.data["result"] as Ingredient[];
+                const ingredients = response.data.map(item => new Ingredient(item.name, item.type));
+                console.log(response.data);
+                this.userAuth.setAllIngredients!(ingredients); // Update the user's all ingredients
+                return ingredients; // Return the mapped ingredients
             }
 			else{
                 console.error(`Error: Received status code ${response.status}`);
@@ -53,7 +55,8 @@ export class Backend implements BackendInterface {
 			});
             if(response.status === 200){
                 const data = JSON.parse(JSON.stringify(response.data));
-                const results = data.result;
+                const results = data;
+                console.log(data);
                 if (!results) {
                     console.error("Unexpected data format:", data);
                     return [];
@@ -93,7 +96,7 @@ export class Backend implements BackendInterface {
     async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
         try {
             const token = await this.userAuth.getAccessToken();
-            const response = await axios.post(
+            const response = await axios.put(
                 `${process.env.REACT_APP_BACKEND_HOST}/api/user_list_ingredients/add_ingredient`,
                 {
                     list_name: listName,
@@ -116,5 +119,30 @@ export class Backend implements BackendInterface {
             console.error("Failed to add ingredient:", error);
         }
     }
+
+    /**
+ * Purpose: This function makes a GET request to an API endpoint and retrieves all measurement units.
+ * 
+ * @return {Promise<string[]>} A promise that resolves to an array of measurement unit strings. */
+async getAllMeasurements(): Promise<string[]> {
+    try {
+        const token = await this.userAuth.getAccessToken();
+        const response = await axios.get<{ unit: string }[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/get_all_measurements`, {
+            headers: { Authorization: "Bearer " + token },
+        });
+
+        if (response.status === 200) {
+            const units = response.data.map(item => item.unit);
+            return units; // Return the array of unit strings
+        } else {
+            console.error(`Error: Received status code ${response.status}`);
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching measurements:", error);
+        return [];
+    }
+}
+
 
 }

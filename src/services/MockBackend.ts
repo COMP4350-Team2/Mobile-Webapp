@@ -26,4 +26,8 @@ export class MockBackend implements BackendInterface {
 	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
        this.userAuth.addToList(listName, ingredient);
     }
+
+    getAllMeasurements(): Promise<string[]> {
+        return Promise.resolve(["g", "mg", "ml", "kg", "L", "count"]);
+    }
 }
