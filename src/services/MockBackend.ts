@@ -22,4 +22,8 @@ export class MockBackend implements BackendInterface {
     getMyLists(): Promise<List[]>{
         return new Promise<List[]>((resolve, reject) => resolve(this.userAuth.getMyLists()));
     }
+
+	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
+       this.userAuth.addToList(listName, ingredient);
+    }
 }

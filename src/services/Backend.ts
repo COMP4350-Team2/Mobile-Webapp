@@ -39,7 +39,7 @@ export class Backend implements BackendInterface {
 		}
 	}
 
-    /**
+/**
     * Purpose: This function makes a GET request to an API endpoint and retrieves all of the User's lists
     * 
     * @return {Promise<List[]>} A promise that resolves to an array of `List` objects (each with Ingredients inside it)
@@ -82,4 +82,39 @@ export class Backend implements BackendInterface {
         }
         return myLists;
     }
+
+/**
+    * Purpose: This function makes a POST request to an API endpoint to add an ingredient to a specified list.
+    * 
+    * @param {string} listName - The name of the list to which the ingredient will be added.
+    * @param {Ingredient} ingredient - The ingredient to add, including its name, amount, and unit.
+    * @return {Promise<void>} A promise that resolves when the ingredient has been added.
+*/
+    async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
+        try {
+            const token = await this.userAuth.getAccessToken();
+            const response = await axios.post(
+                `${process.env.REACT_APP_BACKEND_HOST}/api/user_list_ingredients/add_ingredient`,
+                {
+                    list_name: listName,
+                    ingredient: ingredient.name,
+                    amount: ingredient.amount,
+                    unit: ingredient.unit
+                },
+                {
+                    headers: { Authorization: "Bearer " + token }
+                }
+            );
+
+            if (response.status === 200) {
+                console.log(`Ingredient "${ingredient.name}" added successfully to list "${listName}"`);
+                this.userAuth.addToList(listName, ingredient);
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Failed to add ingredient:", error);
+        }
+    }
+
 }
