@@ -35,10 +35,8 @@ export class Ingredient {
      * @throws Will throw an error if the unit is invalid.
      */
     setUnit(unit: string): void {
-        const validUnits = ["mg", "kg", "g", "count", "l", "ml", "lb", "oz", "gal"];
-        const lowerCaseUnit = unit.toLowerCase(); // Convert to lowercase for comparison
-
-        if (validUnits.includes(lowerCaseUnit)) {
+        const validUnits = ["mg", "kg", "g", "lb", "count", "L", "mL", "oz", "gal"];
+        if (validUnits.includes(unit)) {
             this.unit = unit; 
         } else {
             throw new Error("Invalid unit. Ingredient not created.");
