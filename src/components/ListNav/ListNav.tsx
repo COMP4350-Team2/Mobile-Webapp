@@ -101,7 +101,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             await backendInterface.addIngredient(listName, ingredientToAdd);
             console.log(`Added ${ingredientToAdd.name} to ${listName}`);
     
-            // Optionally refresh the ingredient list after adding
             const updatedIngredients = await userAuth.getIngredientsFromList(listName);
             setIngredients(updatedIngredients);
     
@@ -220,7 +219,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                 <DialogContent>
                     <TextField
                         label="Amount"
-                        type="float"
+                        type="number"
                         value={amount}
                         onChange={(e) => {
                             const value = e.target.value;
