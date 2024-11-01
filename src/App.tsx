@@ -1,3 +1,5 @@
+import ListNav from "components/ListNav/ListNav";
+import MyLists from "components/MyLists/MyLists";
 import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import UserAuthFactory from "./auth/UserAuthFactory";
@@ -23,9 +25,19 @@ function App() {
 		},
 		{
 			path: "/all-ingredients",
-			element: <AllIngredients backend={backend} />,
+			element: <AllIngredients backend={backend} user = {userAuth} />,
 			errorElement: <div>404 Page Not Found</div>,
 		},
+        {
+            path: "/my-lists",
+            element: <MyLists userAuth={userAuth} backendInterface={backend}/>,
+            errorElement: <div>404 Page Not Found</div>,
+        },
+        {
+            path: "/view-list/:listName",
+            element: <ListNav userAuth={userAuth} backendInterface={backend} />,
+            errorElement: <div>404 Page Not Found</div>,
+        }
 	]);
 
 	return <RouterProvider router={router} />;

@@ -4,6 +4,7 @@
 
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
+import { List } from "../models/Lists";
 import { BackendInterface } from "./BackendInterface";
 
 export class MockBackend implements BackendInterface {
@@ -17,4 +18,16 @@ export class MockBackend implements BackendInterface {
 	getAllIngredients(): Promise<Ingredient[]> {
 		return new Promise<Ingredient[]>((resolve, reject) => resolve(this.userAuth.getAllIngredients()));
 	}
+
+    getMyLists(): Promise<List[]>{
+        return new Promise<List[]>((resolve, reject) => resolve(this.userAuth.getMyLists()));
+    }
+
+	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
+       this.userAuth.addToList(listName, ingredient);
+    }
+
+    getAllMeasurements(): Promise<string[]> {
+        return Promise.resolve(["g", "mg", "ml", "kg", "L", "count"]);
+    }
 }

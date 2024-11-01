@@ -18,6 +18,8 @@ function Home({ userAuth }: HomeProps) {
 		}
 	};
 
+
+
 	return (
 		<div className="container">
 			{/* Background Logo */}

@@ -5,13 +5,18 @@ import { List } from "../models/Lists";
 import { UserAuth } from "./UserAuth";
 
 export class MockUser implements UserAuth {
-	private isLoggedIn: boolean = false;
+	private isLoggedIn: boolean = true;
 	mylists: List[] = [new List("Grocery", [new Ingredient("Tomato", "Vegetable", 4, "count"), new Ingredient("Chicken", "Meat", 500, "g")]), new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")])];
 
 	getMyLists(): List[] {
 		return this.mylists;
 	}
 
+	setMyLists(lists: List[]) {
+		this.mylists = lists;
+	}
+
+	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
 		return [new Ingredient("Tomato", "Vegetable"), new Ingredient("Chicken", "Meat"), new Ingredient("Basil", "Herb"), new Ingredient("Cheese", "Dairy")];
 	}
@@ -27,12 +32,21 @@ export class MockUser implements UserAuth {
 	isProcessing = () => false;
 	isAuthenticated = () => this.isLoggedIn;
 
-	//placeholder method for the next sprint
-	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count" | "g" | "ml"): void {
+	
+	addToList(listName: string, ingredient: Ingredient): void {
 		const list = this.mylists.find((list) => list.name === listName);
-		if (list) {
-			const newIngredient = new Ingredient(ingredient.name, ingredient.type, amount, unit);
-			list.ingredients.push(newIngredient);
+		if (!list) {
+			return;
+		}
+		const found = list.ingredients.some((i) => {
+			if (i.equalTo(ingredient)) {
+				i.amount = (i.amount || 0) + (ingredient.amount || 0);
+				return true;
+			}
+			return false;
+		});
+		if (!found) {
+			list.ingredients.push(new Ingredient(ingredient.name, ingredient.type, ingredient.amount, ingredient.unit));
 		}
 	}
 
@@ -44,5 +58,10 @@ export class MockUser implements UserAuth {
 
 	async getAccessToken(): Promise<string> {
 		return "";
+	}
+
+	getIngredientsFromList(listName: String): Promise<Ingredient[]> {
+		const foundList = this.mylists.find((list) => list.name === listName);
+		return Promise.resolve(foundList ? foundList.ingredients : []);
 	}
 }

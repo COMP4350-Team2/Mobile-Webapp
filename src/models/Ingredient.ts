@@ -5,13 +5,14 @@ export class Ingredient {
     name: string;
     type: string;
     amount?: number;
-    unit?: "mg" | "kg" | "g" | "count" | "ml";
+    //unit?: "mg" | "kg" | "g" | "count" | "mL";
+    unit?: string;
 
-    constructor(name: string, type: string, amount?: number, unit?: "mg" | "kg" | "g" | "count" | "ml") {
+    constructor(name: string, type: string, amount?: number, unit?: string) {
         this.name = name;
         this.type = type;
         this.amount = amount;
-        this.unit = unit;
+        this.setUnit(unit || "g"); //default to g
     }
 
     /**
@@ -25,5 +26,22 @@ export class Ingredient {
     equalTo(other: Ingredient): boolean {
         return this.name === other.name && this.unit === other.unit;
     }
+
+    /**
+     * Purpose: Method to set the unit of the ingredient.
+     * Validates if the provided unit is one of the allowed units.
+     *
+     * @param {string} unit - The unit to set for the ingredient.
+     * @throws Will throw an error if the unit is invalid.
+     */
+    setUnit(unit: string): void {
+        const validUnits = ["mg", "kg", "g", "lb", "count", "L", "mL", "oz", "gal"];
+        if (validUnits.includes(unit)) {
+            this.unit = unit; 
+        } else {
+            throw new Error("Invalid unit. Ingredient not created.");
+        }   
+    }
+
 }
 
