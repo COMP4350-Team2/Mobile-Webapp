@@ -45,19 +45,25 @@ export class Auth0User implements UserAuth {
 	 * Purpose: Adds a specified ingredient (with amount) to one of the user's lists.
 	 *
 	 * Example: If a user wants to add 5 tomatoes to their Grocery list:
-	 * `addToList("Grocery", tomato, 5, "count");`
+	 * `addToList("Grocery", Ingredient);`
 	 *
 	 * @param {string} listName - The name of the list (e.g., "Grocery").
 	 * @param {Ingredient} ingredient - The ingredient object to be added.
-	 * @param {number} amount - The amount of the ingredient to be added.
-	 * @param {string} unit - The unit of the ingredient, which can be "mg", "kg", or "count".
 	 */
-	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") {
+	addToList(listName: string, ingredient: Ingredient): void {
 		const list = this.mylists.find((list) => list.name === listName);
-
-		if (list) {
-			const newIngredient = new Ingredient(ingredient.name, ingredient.type, amount, unit);
-			list.ingredients.push(newIngredient);
+		if (!list) {
+			return;
+		}
+		const found = list.ingredients.some((i) => {
+			if (i.equalTo(ingredient)) {
+				i.amount = (i.amount || 0) + (ingredient.amount || 0);
+				return true;
+			}
+			return false;
+		});
+		if (!found) {
+			list.ingredients.push(new Ingredient(ingredient.name, ingredient.type, ingredient.amount, ingredient.unit));
 		}
 	}
 

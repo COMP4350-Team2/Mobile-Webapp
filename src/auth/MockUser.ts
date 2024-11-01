@@ -32,12 +32,21 @@ export class MockUser implements UserAuth {
 	isProcessing = () => false;
 	isAuthenticated = () => this.isLoggedIn;
 
-	//placeholder method for the next sprint
-	addToList(listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count" | "g" | "ml"): void {
+	
+	addToList(listName: string, ingredient: Ingredient): void {
 		const list = this.mylists.find((list) => list.name === listName);
-		if (list) {
-			const newIngredient = new Ingredient(ingredient.name, ingredient.type, amount, unit);
-			list.ingredients.push(newIngredient);
+		if (!list) {
+			return;
+		}
+		const found = list.ingredients.some((i) => {
+			if (i.equalTo(ingredient)) {
+				i.amount = (i.amount || 0) + (ingredient.amount || 0);
+				return true;
+			}
+			return false;
+		});
+		if (!found) {
+			list.ingredients.push(new Ingredient(ingredient.name, ingredient.type, ingredient.amount, ingredient.unit));
 		}
 	}
 

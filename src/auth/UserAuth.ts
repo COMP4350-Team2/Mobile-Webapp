@@ -10,7 +10,7 @@ export interface UserAuth {
 	isAuth0User: () => boolean;
 	getMyLists: () => List[];
 	getAllIngredients: () => Ingredient[];
-	addToList: (listName: string, ingredient: Ingredient, amount?: number, unit?: "mg" | "kg" | "count") => void;
+	addToList: (listName: string, ingredient: Ingredient) => void;
 	storeAccessToken?: () => void;
 	setAllIngredients?: (list: Ingredient[]) => void;
     setMyLists?: (lists: List[]) => void;
