@@ -26,7 +26,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const [selectedList, setSelectedList] = useState<string>("");
 	const [allLists, setAllLists] = useState<string[]>([]);
 
-	const units: string[] = ["g", "ml", "count"];
+	const units: string[] = ["g", "ml", "count", "mg", "kg"];
 	const lists: string[] = [];
 
 	/**
@@ -84,8 +84,28 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	 *  Purpose: This function handles adding an ingredient to a certain list
 	 *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION
 	 */
-	const handleAdd = () => {
-		handleClose();
+	const handleAdd = async() => {
+		if (!selectedIngredient || !selectedList) {
+			console.error("Missing required fields: ingredient or list");
+			return;
+		}
+	
+		try {
+			// Clone the selected ingredient and set the amount and unit
+			const ingredientToAdd = new Ingredient(
+				selectedIngredient.name,
+				selectedIngredient.type,
+				selectedIngredient.amount,
+				selectedIngredient.unit
+			);
+			await backend.addIngredient(selectedList, ingredientToAdd);
+			console.log(`Added ${ingredientToAdd.name} to ${selectedList}`);
+
+		} catch (error) {
+			console.error("Error adding ingredient:", error);
+		} finally {
+			handleClose();
+		}
 	};
 
 	return (
