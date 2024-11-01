@@ -88,13 +88,11 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         }
     
         try {
-    
-            // Clone the selected ingredient and set the amount and unit from user input
             const ingredientToAdd = new Ingredient(
                 chosenIngredient.name,
                 chosenIngredient.type,
                 amount,
-                selectedUnit // Use the selected unit from the dropdown
+                selectedUnit 
             );
     
             // Call the addIngredient method on the backend
@@ -223,11 +221,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                         value={amount}
                         onChange={(e) => {
                             const value = e.target.value;
-                            // Check if the input is empty or if it's a valid number
                             if (value === "") {
-                                setAmount(""); // Set to empty string if the input is empty
+                                setAmount(""); 
                             } else if (!isNaN(Number(value))) {
-                                setAmount(Number(value)); // Convert string to number if it's a valid number
+                                setAmount(Number(value));
                             }
                         }}                        
                         fullWidth

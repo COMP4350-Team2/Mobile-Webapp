@@ -108,15 +108,13 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
         }
     
         try {
-            // Parse amount to float
             const parsedAmount = parseFloat(amount as string);
-    
-            // Clone the selected ingredient and set the amount and unit from user input
+
             const ingredientToAdd = new Ingredient(
                 selectedIngredient.name,
                 selectedIngredient.type,
                 parsedAmount,
-                selectedUnit // Use the selected unit from the dropdown
+                selectedUnit 
             );
             // Call the addIngredient method on the backend
             await backend.addIngredient(selectedList, ingredientToAdd);
