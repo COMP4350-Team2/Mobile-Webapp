@@ -50,22 +50,6 @@ export class Auth0User implements UserAuth {
 	 * @param {string} listName - The name of the list (e.g., "Grocery").
 	 * @param {Ingredient} ingredient - The ingredient object to be added.
 	 */
-	// addToList(listName: string, ingredient: Ingredient): void {
-	// 	const list = this.mylists.find((list) => list.name === listName);
-	// 	if (!list) {
-	// 		return;
-	// 	}
-	// 	const found = list.ingredients.some((i) => {
-	// 		if (i.equalTo(ingredient)) {
-	// 			i.amount = (i.amount || 0) + (ingredient.amount || 0);
-	// 			return true;
-	// 		}
-	// 		return false;
-	// 	});
-	// 	if (!found) {
-	// 		list.ingredients.push(new Ingredient(ingredient.name, ingredient.type, ingredient.amount, ingredient.unit));
-	// 	}
-	// }
 	addToList(listName: string, ingredient: Ingredient): void {
 		const list = this.mylists.find(list => list.name === listName);
 		if (list) {
@@ -104,7 +88,7 @@ export class Auth0User implements UserAuth {
 		try {
 			axios
 				.post<string>(
-					`${this.backendHost}/api/user`,
+					`${this.backendHost}${process.env.REACT_APP_API_CREATE_USER}`,
 					{},
 					{
 						headers: { authorization: "Bearer " + this._accessToken },
