@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, Delete } from "@mui/icons-material";
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fab, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import { useEffect, useState } from "react";
@@ -23,8 +23,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [amount, setAmount] = useState<number | ''>('');
     const [units, setUnits] = useState<string[]>([]);
     const [selectedUnit, setSelectedUnit] = useState<string>("g");
-
+    const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null); // Ingredient to delete
     const [openUnitDialog, setOpenUnitDialog] = useState(false); //second dialogue
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // Confirm deletion dialog
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -71,6 +72,29 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         setSelectedUnit(units.length > 0 ? units[0] : "g");
         setOpenUnitDialog(true); //open the second dialogue
     }
+
+    const handleDeleteIngredient = async () => {
+        if (ingredientToDelete && listName) {
+            await backendInterface.deleteIngredientFromList(listName, ingredientToDelete);
+            const updatedIngredients = await userAuth.getIngredientsFromList(listName);
+            setIngredients(updatedIngredients);
+            handleCloseConfirmDialog();
+        }
+    };
+
+    const handleOpenConfirmDialog = (ingredient: Ingredient) => {
+        setIngredientToDelete(ingredient);
+        setOpenConfirmDialog(true);
+    };
+
+    const handleCloseConfirmDialog = () => {
+        setOpenConfirmDialog(false);
+        setTimeout(() => {
+            setIngredientToDelete(null);
+        }, 100); //to handle some rendering issues when closing the box
+    };
+
+
 
     const handleUnitDialogClose = () => {
         setOpenUnitDialog(false);
@@ -123,7 +147,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     </Typography>
                 </Toolbar>
             </AppBar>
-
+            
             {/* Ingredient Table */}
             <TableContainer component={Paper} style={{ marginTop: "20px" }}>
                 <Table>
@@ -133,6 +157,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                             <TableCell style={{ fontWeight: "bold" }}>Type</TableCell>
                             <TableCell style={{ fontWeight: "bold" }}>Amount</TableCell>
                             <TableCell style={{ fontWeight: "bold" }}>Unit</TableCell>
+                            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell> {/* New column for actions */}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -155,16 +180,55 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                                     <TableCell>{ingredient.type}</TableCell>
                                     <TableCell>{ingredient.amount ?? "N/A"}</TableCell>
                                     <TableCell>{ingredient.unit ?? "N/A"}</TableCell>
+                                    <TableCell>
+                                        <Button
+                                            color="error"
+                                            onClick={() => handleOpenConfirmDialog(ingredient)} // Open confirm dialog
+                                        >
+                                            <Delete />
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell style={{ fontSize: "1.1rem", color: "#555" }} colSpan={4}>No ingredients available</TableCell>
+                                <TableCell style={{ fontSize: "1.1rem", color: "#555" }} colSpan={5}>No ingredients available</TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* Confirm Delete Dialog */}
+            <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog} PaperProps={{ className: "secondary-color" }}>
+                <DialogTitle>Confirm Deletion</DialogTitle>
+                <DialogContent>
+                {ingredientToDelete ? (
+                <span>Are you sure you want to delete {ingredientToDelete.name} from your list?</span>) : null}
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={handleCloseConfirmDialog}
+                        className="primary-color" 
+                        style={{ color: 'black' }} 
+                    >
+                        No
+                    </Button>
+                    <Button
+                        onClick={handleDeleteIngredient}
+                        sx={{
+                            backgroundColor: 'error.main', 
+                            color: 'black',
+                            '&:hover': {
+                                backgroundColor: 'error.dark', 
+                            },
+                        }}
+                    >
+                        Yes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
 
             {/* Floating Action Button */}
             <Fab
