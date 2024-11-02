@@ -68,5 +68,23 @@ export class MockUser implements UserAuth {
 		list.ingredients.splice(ingredientIndex, 1);
 		console.log(`Removed ${ingredient.name} from ${listName}.`);
 	}
+
+    updateIngredient(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): void {
+        const list = this.mylists.find(list => list.name === listName);
+        if (!list) {
+            console.error(`List with name ${listName} not found.`);
+            return;
+        }
+        const ingredientToUpdate = list.ingredients.find((ingredient) => ingredient.equalTo(oldIngredient));
+        if (!ingredientToUpdate) {
+            console.error(`Ingredient ${oldIngredient.name} not found in list ${listName}.`);
+            return;
+        }
+        this.removeIngredient(listName, ingredientToUpdate);
+        list.addOrUpdateIngredient(newIngredient);
+    }
+    
+    
 	
+
 }
