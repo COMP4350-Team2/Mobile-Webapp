@@ -12,4 +12,20 @@ export class List {
         this.name = name;
         this.ingredients = ingredients;
     }
+
+    /*This method checks if an Ingredient already exists within a list (so that it can update the amount)
+    or if it needs to be added as a new Ingredient to the list */
+    addOrUpdateIngredient(newIngredient: Ingredient): void {
+        const existingIngredient = this.ingredients.find(i => i.equalTo(newIngredient));
+        if (existingIngredient) {
+            existingIngredient.amount = (existingIngredient.amount || 0) + (newIngredient.amount || 0);
+        } else {
+            this.ingredients.push(new Ingredient(
+                newIngredient.name,
+                newIngredient.type,
+                newIngredient.amount,
+                newIngredient.unit
+            ));
+        }
+    }
 }
