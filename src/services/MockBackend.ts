@@ -30,4 +30,9 @@ export class MockBackend implements BackendInterface {
     getAllMeasurements(): Promise<string[]> {
         return Promise.resolve(["g", "mg", "ml", "kg", "L", "count"]);
     }
+
+	async deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void> {
+		this.userAuth.removeIngredient(listName, ingredient);
+	}
+	
 }
