@@ -1,4 +1,4 @@
-import { Add, Delete } from "@mui/icons-material";
+import { Add, Delete, Edit } from "@mui/icons-material";
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fab, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import { useEffect, useState } from "react";
@@ -26,6 +26,11 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null); // Ingredient to delete
     const [openUnitDialog, setOpenUnitDialog] = useState(false); //second dialogue
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // Confirm deletion dialog
+    const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
+    const [openEditDialog, setOpenEditDialog] = useState(false);
+    const [editAmount, setEditAmount] = useState<number | ''>('');
+    const [editUnit, setEditUnit] = useState<string>("g");
+
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -133,6 +138,50 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         }
     };
     
+    const handleUpdateIngredient = async () => {
+        if (!ingredientToEdit || !listName || editAmount === '' || !editUnit) {
+            console.error("Missing required fields: ingredient, list, amount, or unit");
+            return;
+        }
+    
+        try {
+            const updatedIngredient = new Ingredient(
+                ingredientToEdit.name,
+                ingredientToEdit.type,
+                editAmount,
+                editUnit
+            );
+    
+            await backendInterface.updateIngred(listName, ingredientToEdit, updatedIngredient);
+            console.log(`Updated ${updatedIngredient.name} in ${listName}`);
+    
+            // Fetch updated ingredients for the list to refresh the UI
+            const updatedIngredients = await userAuth.getIngredientsFromList(listName);
+            setIngredients(updatedIngredients);
+    
+        } catch (error) {
+            console.error("Error updating ingredient:", error);
+        } finally {
+            handleCloseEditDialog(); // Close the edit dialog
+        }
+    };
+    
+
+    const handleOpenEditDialog = (ingredient: Ingredient) => {
+        setIngredientToEdit(ingredient);
+        setEditAmount(ingredient.amount ?? ''); // Set initial amount
+        setEditUnit(ingredient.unit ?? "g"); // Set initial unit
+        setOpenEditDialog(true);
+    };
+    
+    const handleCloseEditDialog = () => {
+        setOpenEditDialog(false);
+        setTimeout(() => {
+            setIngredientToEdit(null);
+        }, 100); // Small delay to avoid rendering issues
+    };
+    
+    
     return (
         <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh", position: "relative" }}>
             {/* App Bar */}
@@ -187,6 +236,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                                         >
                                             <Delete />
                                         </Button>
+                                            <Button color="primary" onClick={() => handleOpenEditDialog(ingredient)}>
+                                            <Edit />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))
@@ -228,7 +280,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     </Button>
                 </DialogActions>
             </Dialog>
-
 
             {/* Floating Action Button */}
             <Fab
@@ -274,6 +325,55 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                 </Button>
             </DialogActions>
             </Dialog>
+
+        {/*Dialogue for editing amounts*/ }
+        <Dialog open={openEditDialog} onClose={handleCloseEditDialog} PaperProps={{ className: "secondary-color" }}>
+            <DialogTitle>{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : 'Edit Ingredient'}</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label="Amount"
+                    type="number"
+                    value={editAmount}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        if (value === "") {
+                            setEditAmount("");
+                        } else if (!isNaN(Number(value))) {
+                            setEditAmount(Number(value));
+                        }
+                    }}
+                    fullWidth
+                    margin="normal"
+                    style={{ backgroundColor: 'white' }}
+                />
+                <div style={{ marginBottom: '0.5px', color: 'black' }}>
+                    Unit
+                </div>
+                <TextField
+                    select
+                    value={editUnit}
+                    onChange={(e) => setEditUnit(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    style={{ backgroundColor: 'white' }}
+                >
+                    {units.map((unitOption) => (
+                        <MenuItem key={unitOption} value={unitOption}>
+                            {unitOption}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseEditDialog} className="primary-color" style={{ color: 'black' }}>
+                    Close
+                </Button>
+                <Button onClick={handleUpdateIngredient} className="primary-color" style={{ color: 'black' }}>
+                    Update
+                </Button>
+            </DialogActions>
+            </Dialog>
+
 
         {/* Dialog for Unit and Amount Input */}
         <Dialog open={openUnitDialog} onClose={handleUnitDialogClose} PaperProps={{ className: "secondary-color" }}>
