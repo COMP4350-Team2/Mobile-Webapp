@@ -50,22 +50,29 @@ export class Auth0User implements UserAuth {
 	 * @param {string} listName - The name of the list (e.g., "Grocery").
 	 * @param {Ingredient} ingredient - The ingredient object to be added.
 	 */
+	// addToList(listName: string, ingredient: Ingredient): void {
+	// 	const list = this.mylists.find((list) => list.name === listName);
+	// 	if (!list) {
+	// 		return;
+	// 	}
+	// 	const found = list.ingredients.some((i) => {
+	// 		if (i.equalTo(ingredient)) {
+	// 			i.amount = (i.amount || 0) + (ingredient.amount || 0);
+	// 			return true;
+	// 		}
+	// 		return false;
+	// 	});
+	// 	if (!found) {
+	// 		list.ingredients.push(new Ingredient(ingredient.name, ingredient.type, ingredient.amount, ingredient.unit));
+	// 	}
+	// }
 	addToList(listName: string, ingredient: Ingredient): void {
-		const list = this.mylists.find((list) => list.name === listName);
-		if (!list) {
-			return;
-		}
-		const found = list.ingredients.some((i) => {
-			if (i.equalTo(ingredient)) {
-				i.amount = (i.amount || 0) + (ingredient.amount || 0);
-				return true;
-			}
-			return false;
-		});
-		if (!found) {
-			list.ingredients.push(new Ingredient(ingredient.name, ingredient.type, ingredient.amount, ingredient.unit));
+		const list = this.mylists.find(list => list.name === listName);
+		if (list) {
+			list.addOrUpdateIngredient(ingredient);
 		}
 	}
+	
 
 	/**
 	 * Purpose: Retrieves the user's JWT access token using `getAccessToken` and stores it in the user authentication object.
@@ -142,5 +149,18 @@ export class Auth0User implements UserAuth {
 	getIngredientsFromList(listName: String): Promise<Ingredient[]>{
 		const foundList = this.mylists.find(list => list.name === listName);
     	return Promise.resolve(foundList ? foundList.ingredients : []);
+	}
+
+	removeIngredient(listName: string, ingredient: Ingredient): void {
+		const list = this.mylists.find((list) => list.name === listName);
+		if (!list) {
+			console.error(`List with name ${listName} not found.`);
+			return;
+		}
+		// Find the index of the ingredient to remove
+		const ingredientIndex = list.ingredients.findIndex((i) => i.equalTo(ingredient));
+		// Remove the ingredient from the list
+		list.ingredients.splice(ingredientIndex, 1);
+		console.log(`Removed ${ingredient.name} from ${listName}.`);
 	}
 }
