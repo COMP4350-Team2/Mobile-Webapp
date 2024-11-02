@@ -6,4 +6,5 @@ export interface BackendInterface {
     getMyLists: () => Promise<List[]>;
     addIngredient: (listName: string, ingredient: Ingredient) => Promise<void>;
     getAllMeasurements(): Promise<string[]>;
+    deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void>;
 }

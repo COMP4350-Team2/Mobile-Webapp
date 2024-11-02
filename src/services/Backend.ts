@@ -22,7 +22,7 @@ export class Backend implements BackendInterface {
 	async getAllIngredients(): Promise<Ingredient[]> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.get<Ingredient[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/get_all_ingredients`, {
+			const response = await axios.get<Ingredient[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_INGREDIENTS}`, {
 				headers: { Authorization: "Bearer " + token },
 			});
             if(response.status === 200){
@@ -50,7 +50,7 @@ export class Backend implements BackendInterface {
         const myLists : List[]=  [];
         try{
             const token = await this.userAuth.getAccessToken();
-            const response = await axios.get<List[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/user_list_ingredients`, {
+            const response = await axios.get<List[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_USER_LISTS}`, {
 				headers: { Authorization: "Bearer " + token },
 			});
             if(response.status === 200){
@@ -87,7 +87,7 @@ export class Backend implements BackendInterface {
     }
 
 /**
-    * Purpose: This function makes a POST request to an API endpoint to add an ingredient to a specified list.
+    * Purpose: This function makes a PUT request to an API endpoint to add an ingredient to a specified list.
     * 
     * @param {string} listName - The name of the list to which the ingredient will be added.
     * @param {Ingredient} ingredient - The ingredient to add, including its name, amount, and unit.
@@ -97,7 +97,7 @@ export class Backend implements BackendInterface {
         try {
             const token = await this.userAuth.getAccessToken();
             const response = await axios.put(
-                `${process.env.REACT_APP_BACKEND_HOST}/api/user_list_ingredients/add_ingredient`,
+                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
                 {
                     list_name: listName,
                     ingredient: ingredient.name,
@@ -120,14 +120,49 @@ export class Backend implements BackendInterface {
         }
     }
 
-    /**
- * Purpose: This function makes a GET request to an API endpoint and retrieves all measurement units.
- * 
- * @return {Promise<string[]>} A promise that resolves to an array of measurement unit strings. */
+/**
+     * Purpose: This function makes a PUT request to an API endpoint to remove an ingredient from a specified list.
+     * 
+     * @param {string} listName - The name of the list from which the ingredient will be removed.
+     * @param {Ingredient} ingredient - The ingredient to delete, identified by its name and unit.
+     * @return {Promise<void>} A promise that resolves when the ingredient has been deleted.
+*/
+    async deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void> {
+        try {
+            const token = await this.userAuth.getAccessToken();
+            const response = await axios.put(
+                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
+                {
+                    list_name: listName,
+                    ingredient: ingredient.name,
+                    unit: ingredient.unit
+                },
+                {
+                    headers: { Authorization: "Bearer " + token }
+                }
+            );
+
+            if (response.status === 200) {
+                console.log(`Ingredient "${ingredient.name}" removed successfully from list "${listName}"`);
+                this.userAuth.removeIngredient(listName, ingredient); //updating the DSO for state management
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Failed to delete ingredient:", error);
+        }
+    }
+
+
+/**
+     * Purpose: This function makes a GET request to an API endpoint and retrieves all measurement units.
+     * 
+     * @return {Promise<string[]>} A promise that resolves to an array of measurement unit strings. 
+ */
 async getAllMeasurements(): Promise<string[]> {
     try {
         const token = await this.userAuth.getAccessToken();
-        const response = await axios.get<{ unit: string }[]>(`${process.env.REACT_APP_BACKEND_HOST}/api/get_all_measurements`, {
+        const response = await axios.get<{ unit: string }[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_MEASUREMENTS}`, {
             headers: { Authorization: "Bearer " + token },
         });
 
