@@ -20,12 +20,7 @@ export class List {
         if (existingIngredient) {
             existingIngredient.amount = (existingIngredient.amount || 0) + (newIngredient.amount || 0);
         } else {
-            this.ingredients.push(new Ingredient(
-                newIngredient.name,
-                newIngredient.type,
-                newIngredient.amount,
-                newIngredient.unit
-            ));
+            this.ingredients.push(newIngredient);
         }
     }
 }

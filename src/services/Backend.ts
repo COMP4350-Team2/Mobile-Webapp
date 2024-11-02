@@ -159,25 +159,65 @@ export class Backend implements BackendInterface {
      * 
      * @return {Promise<string[]>} A promise that resolves to an array of measurement unit strings. 
  */
-async getAllMeasurements(): Promise<string[]> {
-    try {
-        const token = await this.userAuth.getAccessToken();
-        const response = await axios.get<{ unit: string }[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_MEASUREMENTS}`, {
-            headers: { Authorization: "Bearer " + token },
-        });
+    async getAllMeasurements(): Promise<string[]> {
+        try {
+            const token = await this.userAuth.getAccessToken();
+            const response = await axios.get<{ unit: string }[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_MEASUREMENTS}`, {
+                headers: { Authorization: "Bearer " + token },
+            });
 
-        if (response.status === 200) {
-            const units = response.data.map(item => item.unit);
-            return units; // Return the array of unit strings
-        } else {
-            console.error(`Error: Received status code ${response.status}`);
+            if (response.status === 200) {
+                const units = response.data.map(item => item.unit);
+                return units; // Return the array of unit strings
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
+                return [];
+            }
+        } catch (error) {
+            console.error("Error fetching measurements:", error);
             return [];
         }
-    } catch (error) {
-        console.error("Error fetching measurements:", error);
-        return [];
     }
-}
+
+/**
+     * Purpose: This function makes a PUT request to an API endpoint to update an ingredient in a specified list.
+     * 
+     * @param {string} listName - The name of the list where the ingredient update should happen.
+     * @param {Ingredient} oldIngredient - The ingredient to be updated, identified by its name and unit.
+     * @param {Ingredient} newIngredient - The new ingredient details including name, amount, and unit.
+     * @return {Promise<void>} A promise that resolves when the ingredient has been updated.
+ */
+    async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
+        try {
+            const token = await this.userAuth.getAccessToken();
+            
+            const response = await axios.put(
+                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
+                {
+                    list_name: listName,
+                    old_ingredient: oldIngredient.name,
+                    old_unit: oldIngredient.unit,
+                    new_ingredient: newIngredient.name,
+                    new_amount: newIngredient.amount,
+                    new_unit: newIngredient.unit
+                },
+                {
+                    headers: { Authorization: "Bearer " + token }
+                }
+            );
+
+            if (response.status === 200) {
+                console.log(`Ingredient "${oldIngredient.name}" updated successfully in list "${listName}"`);
+                this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Failed to update ingredient:", error);
+        }
+    }
+
+
 
 
 }

@@ -35,4 +35,7 @@ export class MockBackend implements BackendInterface {
 		this.userAuth.removeIngredient(listName, ingredient);
 	}
 	
+    async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
+        this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
+    }
 }
