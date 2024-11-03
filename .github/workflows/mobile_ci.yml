@@ -5,9 +5,9 @@ on:
     branches:
       - main  # Trigger on pull requests to the main branch
 
-   release:
+  release:
     types: [published]
-    
+
 jobs:
   Testing:
     runs-on: ubuntu-latest
