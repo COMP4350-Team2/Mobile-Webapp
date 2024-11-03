@@ -24,6 +24,7 @@ import { useNavigate } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/List";
+import Loading from "../Loading/Loading";
 
 interface MyListsProps {
 	userAuth: UserAuth;
@@ -32,6 +33,7 @@ interface MyListsProps {
 
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
+	const [isLoading, setIsLoading] = useState(true);
 	const [myLists, updateMyLists] = useState<List[]>([]);
 	const [openNewListDialog, setOpenNewListDialog] = useState(false);
 	const [newListName, setNewListName] = useState("");
@@ -48,10 +50,12 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				userAuth.setMyLists?.(lists);
 				// Set the state with the lists from userAuth
 				updateMyLists(lists);
+				setIsLoading(false);
 			} catch (error) {
 				console.error("Error fetching lists:", error);
 			}
 		};
+		setIsLoading(true);
 		fetchLists();
 	}, [userAuth, backendInterface]);
 
@@ -135,15 +139,78 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				</Toolbar>
 			</AppBar>
 
-			{/* Create List Button */}
-			<Button
-				variant="contained"
-				color="primary"
-				style={{ margin: "20px" }}
-				onClick={handleOpenNewListDialog}
-			>
-				Create List
-			</Button>
+			{/* Main Content */}
+			{isLoading ? (
+				<Loading />
+			) : (
+				<>
+					{/* Create List Button */}
+					<Button
+						variant="contained"
+						color="primary"
+						style={{ margin: "20px" }}
+						onClick={handleOpenNewListDialog}
+					>
+						Create List
+					</Button>
+
+					<TableContainer
+						component={Paper}
+						style={{ marginTop: "20px" }}
+					>
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell style={{ fontWeight: "bold" }}>List Name</TableCell>
+									<TableCell></TableCell> {/* column for action */}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{myLists.length > 0 ? (
+									myLists.map((list, index) => (
+										<TableRow
+											key={index}
+											onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}
+											sx={{
+												cursor: "pointer",
+												backgroundColor: "white",
+												"&:hover": {
+													backgroundColor: "#f5f5f5",
+												},
+											}}
+											style={{
+												borderBottom: "1px solid #ddd",
+											}}
+										>
+											<TableCell style={{ padding: "12px 16px" }}>{list.name}</TableCell>
+											<TableCell>
+												<Button
+													color="error"
+													onClick={(event) => {
+														event.stopPropagation(); // Prevents the row's onClick from triggering
+														handleConfirmDelete(list);
+													}}
+												>
+													<Delete />
+												</Button>
+											</TableCell>
+										</TableRow>
+									))
+								) : (
+									<TableRow>
+										<TableCell
+											style={{ fontSize: "1.1rem", color: "#555" }}
+											colSpan={1}
+										>
+											No lists available
+										</TableCell>
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</>
+			)}
 
 			{/* Dialog for creating a new list*/}
 			<Dialog
@@ -175,7 +242,6 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						onClick={handleCloseNewListDialog}
 						className="primary-color"
-						style={{ color: "black" }}
 					>
 						Cancel
 					</Button>
@@ -183,70 +249,12 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 						onClick={handleCreateList}
 						color="primary"
 						disabled={!newListName.trim()}
-						className="primary-color" // Apply primary color
-						style={{ color: "black" }}
+						className="primary-color"
 					>
 						Create
 					</Button>
 				</DialogActions>
 			</Dialog>
-
-			{/* Main Content */}
-			<TableContainer
-				component={Paper}
-				style={{ marginTop: "20px" }}
-			>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell style={{ fontWeight: "bold" }}>List Name</TableCell>
-							<TableCell></TableCell> {/* column for action */}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{myLists.length > 0 ? (
-							myLists.map((list, index) => (
-								<TableRow
-									key={index}
-									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}
-									sx={{
-										cursor: "pointer",
-										backgroundColor: "white",
-										"&:hover": {
-											backgroundColor: "#f5f5f5",
-										},
-									}}
-									style={{
-										borderBottom: "1px solid #ddd",
-									}}
-								>
-									<TableCell style={{ padding: "12px 16px" }}>{list.name}</TableCell>
-									<TableCell>
-										<Button
-											color="error"
-											onClick={(event) => {
-												event.stopPropagation(); // Prevents the row's onClick from triggering
-												handleConfirmDelete(list);
-											}}
-										>
-											<Delete />
-										</Button>
-									</TableCell>
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									style={{ fontSize: "1.1rem", color: "#555" }}
-									colSpan={1}
-								>
-									No lists available
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</TableContainer>
 
 			{/* Confirm Delete Dialog */}
 			<Dialog
