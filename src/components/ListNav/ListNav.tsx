@@ -153,7 +153,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         }
         
         if (editAmount <= 0) {
-            setAmountError("Please enter a valid amount greater than 0.");
+            setAmountError("Please enter a valid amount.");
             return;
         } else {
             setAmountError(''); // Clear error if valid
@@ -355,6 +355,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                             setEditAmount("");
                         } else if (!isNaN(Number(value))) {
                             setEditAmount(Number(value));
+                            setAmountError('');
                         }
                     }}
                     fullWidth
@@ -406,6 +407,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                                 setAmount(""); 
                             } else if (!isNaN(Number(value))) {
                                 setAmount(Number(value));
+                                setAmountError('');
                             }
                         }}                        
                         fullWidth
