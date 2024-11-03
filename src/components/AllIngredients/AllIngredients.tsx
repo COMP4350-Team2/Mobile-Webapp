@@ -4,6 +4,7 @@
 
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
+import isNumber from 'is-number';
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -29,6 +30,8 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
     const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
 
     const [amountError, setAmountError] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>("");
+
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
 	 * Once the result is validated, it calls setIngredients to display all available ingredients.
@@ -102,7 +105,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 
 	/**
 	 *  Purpose: This function handles adding an ingredient to a certain list
-	 *  @param {void} - SUBJECT TO CHANGE AFTER IMPLEMENTATION
 	 */
     const handleAdd = async () => {
         if (!selectedIngredient || !selectedList) {
@@ -112,7 +114,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
         
         try {
             const parsedAmount = parseFloat(amount as string);
-            if (parsedAmount <= 0) {
+            if (parsedAmount <= 0 && isNumber(amount)) {
                 setAmountError("Please enter a valid amount.");
                 return;
             }
@@ -131,6 +133,9 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
         } 
     };
     
+    const filteredIngredients = ingredients.filter(ingredient =>
+        ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
 	return (
 		<Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
@@ -144,6 +149,23 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 				</Toolbar>
 			</AppBar>
 
+            {/* Search Bar */}
+            <div style={{ paddingTop: '20px', display: 'flex', justifyContent: 'flex-start' }}>
+                <TextField
+
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    size="small" 
+                    style={{ width: '350px', backgroundColor: 'white' }} 
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    placeholder="Search Ingredients"
+                />
+            </div>
+
+
 			{/* Main Content */}
 			<TableContainer component={Paper} style={{ marginTop: "20px" }}>
 				<Table>
@@ -154,19 +176,20 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 							<TableCell style={{ fontWeight: "bold", textAlign: "center" }}>Action</TableCell>
 						</TableRow>
 					</TableHead>
-					<TableBody>
-						{ingredients.map((ingredient) => (
-							<TableRow key={ingredient.name}>
-								<TableCell>{ingredient.name}</TableCell>
-								<TableCell>{ingredient.type}</TableCell>
-								<TableCell style={{ textAlign: "center" }}>
-									<IconButton className="plus-button secondary-color" onClick={() => handleOpen(ingredient)}>
-										<AiOutlinePlus />
-									</IconButton>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
+                    <TableBody>
+                        {filteredIngredients.map((ingredient) => (
+                            <TableRow key={ingredient.name}>
+                                <TableCell>{ingredient.name}</TableCell>
+                                <TableCell>{ingredient.type}</TableCell>
+                                <TableCell style={{ textAlign: "center" }}>
+                                    <IconButton className="plus-button secondary-color" onClick={() => handleOpen(ingredient)}>
+                                        <AiOutlinePlus />
+                                    </IconButton>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+
 				</Table>
 			</TableContainer>
 
@@ -183,10 +206,10 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 						onChange={(e) => {
                             const value = e.target.value
                             setAmount(value);
-                            if(parseFloat(value)> 0){setAmountError('')} }
+                            if(parseFloat(value)> 0 && isNumber(value)){setAmountError('')} }
                         }
 						fullWidth
-						inputProps={{ step: "0.1", min: "0" }} // Allows only floats
+						inputProps={{ step: "0.1", min: "0" }} 
 						style={{ backgroundColor: 'white' }}
 					/>
                     {amountError && <div style={{ color: 'red' }}>{amountError}</div>}

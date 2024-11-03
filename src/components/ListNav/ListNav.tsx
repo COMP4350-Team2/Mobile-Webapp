@@ -1,12 +1,12 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Fab, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
+import isNumber from 'is-number';
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
-
 
 interface ListNavProps {
     backendInterface: BackendInterface;
@@ -23,14 +23,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [amount, setAmount] = useState<number | ''>('');
     const [units, setUnits] = useState<string[]>([]);
     const [selectedUnit, setSelectedUnit] = useState<string>("g");
-    const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null); // Ingredient to delete
-    const [openUnitDialog, setOpenUnitDialog] = useState(false); //second dialogue
-    const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // Confirm deletion dialog
+    const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null); 
+    const [openUnitDialog, setOpenUnitDialog] = useState(false);
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false); 
     const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [editAmount, setEditAmount] = useState<number | ''>('');
     const [editUnit, setEditUnit] = useState<string>("g");
     const [amountError, setAmountError] = useState<string>('');
+    const [searchQuery, setSearchQuery] = useState<string>("");
+    const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
 
 
     useEffect(() => {
@@ -109,6 +111,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     
     const handleClose = () => {
         setOpen(false);
+        setDialogSearchQuery("");
     }
 
     const handleAdd = async () => {
@@ -117,7 +120,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             return;
         }
         
-        if (amount <= 0) {
+        if (!isNumber(amount) || Number(amount) <= 0) {
             setAmountError("Please enter a valid amount.");
             return;
         } else {
@@ -142,7 +145,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         } catch (error) {
             console.error("Error adding ingredient:", error);
         } finally {
-            handleUnitDialogClose(); // Close the unit dialog
+            handleUnitDialogClose(); 
         }
     };
     
@@ -152,11 +155,11 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             return;
         }
         
-        if (editAmount <= 0) {
+        if (!isNumber(editAmount) || Number(editAmount) <= 0) {
             setAmountError("Please enter a valid amount.");
             return;
         } else {
-            setAmountError(''); // Clear error if valid
+            setAmountError(''); 
         }
 
         try {
@@ -184,8 +187,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
     const handleOpenEditDialog = (ingredient: Ingredient) => {
         setIngredientToEdit(ingredient);
-        setEditAmount(ingredient.amount ?? ''); // Set initial amount
-        setEditUnit(ingredient.unit ?? "g"); // Set initial unit
+        setEditAmount(ingredient.amount ?? ''); 
+        setEditUnit(ingredient.unit ?? "g"); 
         setOpenEditDialog(true);
     };
     
@@ -196,6 +199,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         }, 100); // Small delay to avoid rendering issues
     };
     
+    const filteredIngredients = ingredients.filter(ingredient =>
+        ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    const filteredAllIngredients = allIngredients.filter(ingredient =>
+        ingredient.name.toLowerCase().includes(dialogSearchQuery.toLowerCase())
+    );
+
     
     return (
         <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh", position: "relative" }}>
@@ -212,6 +223,22 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                 </Toolbar>
             </AppBar>
             
+            {/* Search Bar */}
+            <div style={{ paddingTop: '20px', display: 'flex', justifyContent: 'flex-start' }}>
+                <TextField
+
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    size="small" 
+                    style={{ width: '350px', backgroundColor: 'white' }}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                    placeholder="Search Ingredients"
+                />
+            </div>
+
             {/* Ingredient Table */}
             <TableContainer component={Paper} style={{ marginTop: "20px" }}>
                 <Table>
@@ -221,12 +248,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                             <TableCell style={{ fontWeight: "bold" }}>Type</TableCell>
                             <TableCell style={{ fontWeight: "bold" }}>Amount</TableCell>
                             <TableCell style={{ fontWeight: "bold" }}>Unit</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell> {/* New column for actions */}
+                            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell> 
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {ingredients.length > 0 ? (
-                            ingredients.map((ingredient, index) => (
+                            filteredIngredients.map((ingredient, index) => (
                                 <TableRow
                                     key={index}
                                     sx={{
@@ -314,25 +341,37 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             <Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
             <DialogTitle>Select Ingredients</DialogTitle>
             <DialogContent>
-            <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            {allIngredients.map((ingredient, index) => (
-                <div
-                    key={index}
-                    onClick={() => handleIngredientClick(ingredient)}
-                    style={{
-                        padding: '10px',
-                        cursor: 'pointer',
-                        borderBottom: '1px solid #ddd',
-                        backgroundColor: 'inherit',
-                        transition: 'background-color 0.2s',
+                {/* Search Bar for Dialog */}
+                <TextField
+                    variant="outlined"
+                    value={dialogSearchQuery}
+                    onChange={(e) => setDialogSearchQuery(e.target.value)}
+                    size="small"
+                    style={{ width: '100%', backgroundColor: 'white', marginBottom: '10px' }}
+                    InputLabelProps={{
+                        shrink: true,
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'inherit'}
-                >
-                    {ingredient.name}
+                    placeholder="Search Ingredients"
+                />
+                <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                {filteredAllIngredients.map((ingredient, index) => (
+                    <div
+                        key={index}
+                        onClick={() => handleIngredientClick(ingredient)}
+                        style={{
+                            padding: '10px',
+                            cursor: 'pointer',
+                            borderBottom: '1px solid #ddd',
+                            backgroundColor: 'inherit',
+                            transition: 'background-color 0.2s',
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'inherit'}
+                    >
+                        {ingredient.name}
+                    </div>
+                    ))}
                 </div>
-                ))}
-            </div>
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose} className="primary-color" style= {{color : 'black'}}>
@@ -353,9 +392,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                         const value = e.target.value;
                         if (value === "") {
                             setEditAmount("");
-                        } else if (!isNaN(Number(value))) {
+                            setAmountError('');
+                        } else if (isNumber(value)) {
                             setEditAmount(Number(value));
                             setAmountError('');
+                        }
+                        else {
+                            setAmountError("Please enter a valid amount.");
                         }
                     }}
                     fullWidth
@@ -393,7 +436,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             </Dialog>
 
 
-        {/* Dialog for Unit and Amount Input */}
+        {/* Dialog for adding ingredient*/}
         <Dialog open={openUnitDialog} onClose={handleUnitDialogClose} PaperProps={{ className: "secondary-color" }}>
                 <DialogTitle>{chosenIngredient ? `Add ${chosenIngredient.name}` : 'Add Ingredient'}</DialogTitle>
                 <DialogContent>
@@ -405,14 +448,15 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                             const value = e.target.value;
                             if (value === "") {
                                 setAmount(""); 
-                            } else if (!isNaN(Number(value))) {
+                                setAmountError('');
+                            } else if (isNumber(value)) {
                                 setAmount(Number(value));
                                 setAmountError('');
                             }
                         }}                        
                         fullWidth
                         margin="normal"
-                        style={{ backgroundColor: 'white' }} // Set background color to white
+                        style={{ backgroundColor: 'white' }} 
                     />
                     {amountError && <div style={{ color: 'red' }}>{amountError}</div>}
                     <div style={{ marginBottom: '0.5px', color: 'black' }}>
@@ -420,14 +464,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     </div>
                     <TextField
                         select
-                        //label="Unit"
                         value={selectedUnit}
                         onChange={(e) => setSelectedUnit(e.target.value)}
                         fullWidth
                         margin="normal"
                         style={{ backgroundColor: 'white' }}
                     >
-                        {units.map((unitOption) => ( // **Use fetched units**
+                        {units.map((unitOption) => ( 
                             <MenuItem key={unitOption} value={unitOption}>
                                 {unitOption}
                             </MenuItem>
