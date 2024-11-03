@@ -231,6 +231,34 @@ export class Backend implements BackendInterface {
 	}
 
 	/**
+	 * Purpose: This function makes a POST request to an API endpoint to create a new list for the user.
+	 *
+	 * @param {List} toAdd - The List object to be created, containing the list name and any initial ingredients.
+	 * @return {Promise<void>} A promise that resolves when the list has been successfully created.
+	 */
+	async createNewList(toAdd: List): Promise<void> {
+		try {
+			const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.post(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_CREATE_LIST}${toAdd.name}`,
+				{},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+			if (response.status === 201) {
+				this.userAuth.createList(toAdd);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Failed to create new list:", error);
+		}
+	}
+
+	/**
 	 * Purpose: This function makes a PUT request to an API endpoint to update an ingredient in a specified list.
 	 *
 	 * @param {string} listName - The name of the list where the ingredient update should happen.

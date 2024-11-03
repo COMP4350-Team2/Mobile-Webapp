@@ -14,6 +14,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	TextField,
 	Toolbar,
 	Typography,
 } from "@mui/material";
@@ -32,7 +33,10 @@ interface MyListsProps {
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
 	const [myLists, updateMyLists] = useState<List[]>([]);
-	const [dialogOpenned, setDialogOpen] = useState(false);
+	const [openNewListDialog, setOpenNewListDialog] = useState(false);
+	const [newListName, setNewListName] = useState("");
+	const [nameError, setNameError] = useState<string | null>(null);
+	const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 	const [activeList, setActiveList] = useState<List | null>(null);
 
 	useEffect(() => {
@@ -51,19 +55,51 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		fetchLists();
 	}, [userAuth, backendInterface]);
 
-	const openConfirmDialog = (list: List) => {
-		setActiveList(list);
-		setDialogOpen(true);
+	const handleOpenNewListDialog = () => setOpenNewListDialog(true);
+
+	const handleCloseNewListDialog = () => {
+		setOpenNewListDialog(false);
+		setNewListName("");
 	};
 
-	const closeConfirmDialog = () => {
-		setDialogOpen(false);
+	const handleCreateList = async () => {
+		const trimmedName = newListName.trim();
+
+		if (trimmedName) {
+			const listExists = myLists.some((list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase());
+
+			if (listExists) {
+				setNameError("Please enter a unique list name");
+			} else {
+				setNameError(null);
+				const newList = new List(trimmedName);
+				try {
+					await backendInterface.createNewList(newList);
+					// Refetch lists to update state after backend operation succeeds
+					const updatedLists = await backendInterface.getMyLists();
+					userAuth.setMyLists?.(updatedLists);
+					updateMyLists(updatedLists);
+				} catch (error) {
+					console.error("Error creating new list:", error);
+				}
+				handleCloseNewListDialog();
+			}
+		}
+	};
+
+	const handleConfirmDelete = (list: List) => {
+		setActiveList(list);
+		setOpenConfirmDeleteDialog(true);
+	};
+
+	const closeConfirmDeleteDialog = () => {
+		setOpenConfirmDeleteDialog(false);
 		setActiveList(null);
 	};
 
 	const deleteList = async () => {
 		await backendInterface.deleteList(activeList?.name ?? "");
-		closeConfirmDialog();
+		closeConfirmDeleteDialog();
 	};
 
 	return (
@@ -98,6 +134,62 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				</Toolbar>
 			</AppBar>
 
+			{/* Create List Button */}
+			<Button
+				variant="contained"
+				color="primary"
+				style={{ margin: "20px" }}
+				onClick={handleOpenNewListDialog}
+			>
+				Create List
+			</Button>
+
+			{/* Dialog for creating a new list*/}
+			<Dialog
+				open={openNewListDialog}
+				onClose={handleCloseNewListDialog}
+				PaperProps={{ className: "secondary-color" }}
+			>
+				<DialogTitle>Create New List</DialogTitle>
+				<DialogContent>
+					{/* Input field for the new list name */}
+					<TextField
+						variant="outlined"
+						value={newListName}
+						onChange={(e) => setNewListName(e.target.value)}
+						size="small"
+						style={{
+							width: "100%",
+							backgroundColor: "white",
+							marginBottom: "10px",
+						}}
+						InputLabelProps={{
+							shrink: true,
+						}}
+						placeholder="List Name"
+					/>
+					{nameError && <div style={{ color: "red" }}>{nameError}</div>}
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleCloseNewListDialog}
+						className="primary-color"
+						style={{ color: "black" }}
+					>
+						Cancel
+					</Button>
+					<Button
+						onClick={handleCreateList}
+						color="primary"
+						disabled={!newListName.trim()}
+						className="primary-color" // Apply primary color
+						style={{ color: "black" }}
+					>
+						Create
+					</Button>
+				</DialogActions>
+			</Dialog>
+
 			{/* Main Content */}
 			<TableContainer
 				component={Paper}
@@ -114,7 +206,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 						{myLists.length > 0 ? (
 							myLists.map((list, index) => (
 								<TableRow
-									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)} // we will pass the list name onto the next page
+									key={index}
+									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}
 									sx={{
 										cursor: "pointer",
 										backgroundColor: "white",
@@ -132,7 +225,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 											color="error"
 											onClick={(event) => {
 												event.stopPropagation(); // Prevents the row's onClick from triggering
-												openConfirmDialog(list);
+												handleConfirmDelete(list);
 											}}
 										>
 											<Delete />
@@ -156,8 +249,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 
 			{/* Confirm Delete Dialog */}
 			<Dialog
-				open={dialogOpenned}
-				onClose={closeConfirmDialog}
+				open={openConfirmDeleteDialog}
+				onClose={closeConfirmDeleteDialog}
 				PaperProps={{ className: "secondary-color" }}
 			>
 				<DialogTitle style={{ color: "white" }}>Confirm Deletion</DialogTitle>
@@ -166,7 +259,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				</DialogContent>
 				<DialogActions>
 					<Button
-						onClick={closeConfirmDialog}
+						onClick={closeConfirmDeleteDialog}
 						className="primary-color"
 						style={{ color: "white" }}
 					>

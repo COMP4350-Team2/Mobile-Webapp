@@ -21,4 +21,5 @@ export interface UserAuth {
 	getIngredientsFromList: (listName: String) => Promise<Ingredient[]>;
 	removeIngredient: (listName: string, ingredient: Ingredient) => void;
 	updateIngredient: (listName: string, oldIngredient: Ingredient, newIngredient: Ingredient) => void;
+	createList: (toAdd: List) => void;
 }

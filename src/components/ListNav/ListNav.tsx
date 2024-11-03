@@ -21,6 +21,7 @@ import {
 	Typography,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
+import isNumber from "is-number";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
@@ -42,14 +43,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const [amount, setAmount] = useState<number | "">("");
 	const [units, setUnits] = useState<string[]>([]);
 	const [selectedUnit, setSelectedUnit] = useState<string>("g");
-	const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null); // Ingredient to delete
-	const [openUnitDialog, setOpenUnitDialog] = useState(false); //second dialogue
-	const [openConfirmDialog, setOpenConfirmDialog] = useState(false); // Confirm deletion dialog
+	const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null);
+	const [openUnitDialog, setOpenUnitDialog] = useState(false);
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 	const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
 	const [openEditDialog, setOpenEditDialog] = useState(false);
 	const [editAmount, setEditAmount] = useState<number | "">("");
 	const [editUnit, setEditUnit] = useState<string>("g");
 	const [amountError, setAmountError] = useState<string>("");
+	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
 
 	useEffect(() => {
 		const fetchIngredients = async () => {
@@ -124,6 +127,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 	const handleClose = () => {
 		setOpen(false);
+		setDialogSearchQuery("");
 	};
 
 	const handleAdd = async () => {
@@ -132,7 +136,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			return;
 		}
 
-		if (amount <= 0) {
+		if (!isNumber(amount) || Number(amount) <= 0) {
 			setAmountError("Please enter a valid amount.");
 			return;
 		} else {
@@ -151,7 +155,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		} catch (error) {
 			console.error("Error adding ingredient:", error);
 		} finally {
-			handleUnitDialogClose(); // Close the unit dialog
+			handleUnitDialogClose();
 		}
 	};
 
@@ -161,11 +165,11 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			return;
 		}
 
-		if (editAmount <= 0) {
+		if (!isNumber(editAmount) || Number(editAmount) <= 0) {
 			setAmountError("Please enter a valid amount.");
 			return;
 		} else {
-			setAmountError(""); // Clear error if valid
+			setAmountError("");
 		}
 
 		try {
@@ -191,8 +195,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 	const handleOpenEditDialog = (ingredient: Ingredient) => {
 		setIngredientToEdit(ingredient);
-		setEditAmount(ingredient.amount ?? ""); // Set initial amount
-		setEditUnit(ingredient.unit ?? "g"); // Set initial unit
+		setEditAmount(ingredient.amount ?? "");
+		setEditUnit(ingredient.unit ?? "g");
 		setOpenEditDialog(true);
 	};
 
@@ -202,6 +206,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			setIngredientToEdit(null);
 		}, 100); // Small delay to avoid rendering issues
 	};
+
+	const filteredIngredients = ingredients.filter((ingredient) =>
+		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
+	const filteredAllIngredients = allIngredients.filter((ingredient) =>
+		ingredient.name.toLowerCase().includes(dialogSearchQuery.toLowerCase())
+	);
 
 	return (
 		<Container
@@ -235,6 +247,21 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				</Toolbar>
 			</AppBar>
 
+			{/* Search Bar */}
+			<div style={{ paddingTop: "20px", display: "flex", justifyContent: "flex-start" }}>
+				<TextField
+					variant="outlined"
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					size="small"
+					style={{ width: "350px", backgroundColor: "white" }}
+					InputLabelProps={{
+						shrink: true,
+					}}
+					placeholder="Search Ingredients"
+				/>
+			</div>
+
 			{/* Ingredient Table */}
 			<TableContainer
 				component={Paper}
@@ -247,12 +274,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							<TableCell style={{ fontWeight: "bold" }}>Type</TableCell>
 							<TableCell style={{ fontWeight: "bold" }}>Amount</TableCell>
 							<TableCell style={{ fontWeight: "bold" }}>Unit</TableCell>
-							<TableCell style={{ fontWeight: "bold" }}>Actions</TableCell> {/* New column for actions */}
+							<TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{ingredients.length > 0 ? (
-							ingredients.map((ingredient, index) => (
+							filteredIngredients.map((ingredient, index) => (
 								<TableRow
 									key={index}
 									sx={{
@@ -357,8 +384,20 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			>
 				<DialogTitle>Select Ingredients</DialogTitle>
 				<DialogContent>
+					{/* Search Bar for Dialog */}
+					<TextField
+						variant="outlined"
+						value={dialogSearchQuery}
+						onChange={(e) => setDialogSearchQuery(e.target.value)}
+						size="small"
+						style={{ width: "100%", backgroundColor: "white", marginBottom: "10px" }}
+						InputLabelProps={{
+							shrink: true,
+						}}
+						placeholder="Search Ingredients"
+					/>
 					<div style={{ maxHeight: "400px", overflowY: "auto" }}>
-						{allIngredients.map((ingredient, index) => (
+						{filteredAllIngredients.map((ingredient, index) => (
 							<div
 								key={index}
 								onClick={() => handleIngredientClick(ingredient)}
@@ -404,9 +443,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							const value = e.target.value;
 							if (value === "") {
 								setEditAmount("");
-							} else if (!isNaN(Number(value))) {
+								setAmountError("");
+							} else if (isNumber(value)) {
 								setEditAmount(Number(value));
 								setAmountError("");
+							} else {
+								setAmountError("Please enter a valid amount.");
 							}
 						}}
 						fullWidth
@@ -452,7 +494,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				</DialogActions>
 			</Dialog>
 
-			{/* Dialog for Unit and Amount Input */}
+			{/* Dialog for adding ingredient*/}
 			<Dialog
 				open={openUnitDialog}
 				onClose={handleUnitDialogClose}
@@ -468,38 +510,34 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							const value = e.target.value;
 							if (value === "") {
 								setAmount("");
-							} else if (!isNaN(Number(value))) {
+								setAmountError("");
+							} else if (isNumber(value)) {
 								setAmount(Number(value));
 								setAmountError("");
 							}
 						}}
 						fullWidth
 						margin="normal"
-						style={{ backgroundColor: "white" }} // Set background color to white
+						style={{ backgroundColor: "white" }}
 					/>
 					{amountError && <div style={{ color: "red" }}>{amountError}</div>}
 					<div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
 					<TextField
 						select
-						//label="Unit"
 						value={selectedUnit}
 						onChange={(e) => setSelectedUnit(e.target.value)}
 						fullWidth
 						margin="normal"
 						style={{ backgroundColor: "white" }}
 					>
-						{units.map(
-							(
-								unitOption // **Use fetched units**
-							) => (
-								<MenuItem
-									key={unitOption}
-									value={unitOption}
-								>
-									{unitOption}
-								</MenuItem>
-							)
-						)}
+						{units.map((unitOption) => (
+							<MenuItem
+								key={unitOption}
+								value={unitOption}
+							>
+								{unitOption}
+							</MenuItem>
+						))}
 					</TextField>
 				</DialogContent>
 				<DialogActions>

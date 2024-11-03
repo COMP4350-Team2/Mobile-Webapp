@@ -99,4 +99,8 @@ export class MockUser implements UserAuth {
 		this.removeIngredient(listName, ingredientToUpdate);
 		list.addOrUpdateIngredient(newIngredient);
 	}
+
+	createList(toAdd: List): void {
+		this.mylists.push(toAdd);
+	}
 }
