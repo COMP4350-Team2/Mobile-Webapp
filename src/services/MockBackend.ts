@@ -43,4 +43,21 @@ export class MockBackend implements BackendInterface {
         toAdd.ingredients =[];
         this.userAuth.createList(toAdd);
     }
+
+    async moveIngredient(from: string, to: string, ingredient: Ingredient) {
+        const allLists= await this.getMyLists();
+        const fromList = allLists.find(list => list.name === from);
+        const toList = allLists.find(list => list.name === to);
+
+        if (!fromList) {
+            console.error(`Source list "${from}" not found.`);
+            return;
+        }
+        if (!toList) {
+            console.error(`Target list "${to}" not found.`);
+            return;
+        }
+        toList.addOrUpdateIngredient(ingredient);
+        fromList.removeIngredient(ingredient);  
+    }
 }

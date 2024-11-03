@@ -246,5 +246,60 @@ export class Backend implements BackendInterface {
     }
 
 
+    async moveIngredient(from: string, to: string, ingredient: Ingredient) {
+        try{
+            const token = await this.userAuth.getAccessToken();
+            //first, we try to add the ingredient to the new list
+            const addResponse = await axios.put(
+                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
+                {
+                    list_name: to,
+                    ingredient: ingredient.name,
+                    amount: ingredient.amount,
+                    unit: ingredient.unit
+                },
+                {
+                    headers: { Authorization: "Bearer " + token }
+                }
+            );
+            if (addResponse.status === 200) { //only if the ingredient gets added to the new list, we will remove it from the old list
+                console.log(`Ingredient "${ingredient.name}" added successfully to list "${to}"`);
+                const removeResponse = await axios.put(
+                    `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
+                    {
+                        list_name: from,
+                        ingredient: ingredient.name,
+                        unit: ingredient.unit
+                    },
+                    {
+                        headers: { Authorization: "Bearer " + token }
+                    }
+                );
+                if(removeResponse.status === 200){
+                    console.log(`Ingredient "${ingredient.name}" removed successfully from list "${from}"`);
+                    this.userAuth.addToList(to, ingredient);
+                    this.userAuth.removeIngredient(from, ingredient); //updating the DSO for state management
+                }else { //if the ingredient wasnt removed successfully from the old list, we remove it from our new list
+                    await axios.put(
+                        `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
+                        {
+                            list_name: to,
+                            ingredient: ingredient.name,
+                            unit: ingredient.unit
+                        },
+                        {
+                            headers: { Authorization: "Bearer " + token }
+                        }
+                    );
+                    console.error(`Error: Received status code ${removeResponse.status}`);
+                }
+            } 
+            else{
+                console.error(`Error: Received status code ${addResponse.status}`);
+            }
+        }catch(error){
+            console.error("Failed to move ignredient:", error);
+        }
+    }
 
 }
