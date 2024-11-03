@@ -98,7 +98,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	};
 
 	const deleteList = async () => {
-		await backendInterface.deleteList(activeList?.name ?? "");
+		const newList = await backendInterface.deleteList(activeList?.name ?? "");
+		updateMyLists(newList);
 		closeConfirmDeleteDialog();
 	};
 

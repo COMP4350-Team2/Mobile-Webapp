@@ -99,9 +99,8 @@ export class Backend implements BackendInterface {
 	async deleteList(listName: string): Promise<List[]> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.put<any[]>(
-				`${process.env.REACT_APP_BACKEND_HOST}/v2/user_list_ingredients/${listName}`,
-				{},
+			const response = await axios.delete<any[]>(
+				`${process.env.REACT_APP_BACKEND_HOST}user_list_ingredients/${listName}`,
 				{
 					headers: { Authorization: "Bearer " + token },
 				}
@@ -127,10 +126,9 @@ export class Backend implements BackendInterface {
 					return list;
 				});
 			}
+			return [];
 		} catch (error) {
 			console.error(error);
-			return [];
-		} finally {
 			return [];
 		}
 	}
