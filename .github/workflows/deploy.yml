@@ -19,11 +19,20 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel
 
+      - name: Get existing deployments
+        id: get_deployments
+        run: |
+          deployments=$(vercel deployments ls --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm)
+          echo "Deployments: $deployments"
+          echo "::set-output name=deployments::$deployments"
+
+      - name: Delete old deployment if exists
+        if: steps.get_deployments.outputs.deployments != ''
+        run: |
+          old_deployment_id=$(echo "${{ steps.get_deployments.outputs.deployments }}" | grep -oP '^\S+' | head -n 1)
+          echo "Deleting old deployment with ID: $old_deployment_id"
+          vercel rm $old_deployment_id --yes --token ${{ secrets.VERCEL_TOKEN }}
+
       - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v20
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-args: '--prod'
-          vercel-org-id: ${{ secrets.ORG_ID }}
-          vercel-project-id: ${{ secrets.PROJECT_ID }}
+        run: |
+          vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm
