@@ -30,6 +30,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [editAmount, setEditAmount] = useState<number | ''>('');
     const [editUnit, setEditUnit] = useState<string>("g");
+    const [amountError, setAmountError] = useState<string>('');
 
 
     useEffect(() => {
@@ -115,7 +116,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             console.error("Missing required fields: ingredient, list, amount, or unit");
             return;
         }
-    
+        
+        if (amount <= 0) {
+            setAmountError("Please enter a valid amount greater than 0.");
+            return;
+        } else {
+            setAmountError(''); 
+        }
+
         try {
             const ingredientToAdd = new Ingredient(
                 chosenIngredient.name,
@@ -143,7 +151,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             console.error("Missing required fields: ingredient, list, amount, or unit");
             return;
         }
-    
+        
+        if (editAmount <= 0) {
+            setAmountError("Please enter a valid amount.");
+            return;
+        } else {
+            setAmountError(''); // Clear error if valid
+        }
+
         try {
             const updatedIngredient = new Ingredient(
                 ingredientToEdit.name,
@@ -340,12 +355,15 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                             setEditAmount("");
                         } else if (!isNaN(Number(value))) {
                             setEditAmount(Number(value));
+                            setAmountError('');
                         }
                     }}
                     fullWidth
                     margin="normal"
                     style={{ backgroundColor: 'white' }}
                 />
+                {amountError && <div style={{ color: 'red' }}>{amountError}</div>}
+
                 <div style={{ marginBottom: '0.5px', color: 'black' }}>
                     Unit
                 </div>
@@ -389,12 +407,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                                 setAmount(""); 
                             } else if (!isNaN(Number(value))) {
                                 setAmount(Number(value));
+                                setAmountError('');
                             }
                         }}                        
                         fullWidth
                         margin="normal"
                         style={{ backgroundColor: 'white' }} // Set background color to white
                     />
+                    {amountError && <div style={{ color: 'red' }}>{amountError}</div>}
                     <div style={{ marginBottom: '0.5px', color: 'black' }}>
                          Unit
                     </div>
