@@ -7,6 +7,7 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
+import { List } from "../../models/Lists";
 
 interface ListNavProps {
     backendInterface: BackendInterface;
@@ -33,6 +34,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [amountError, setAmountError] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
+    const [userLists, setUserLists] = useState<List[]>([]); // To store the user's lists
+    const [availableLists, setAvailableLists] = useState<string[]>([]);
+    const [openMoveDialog, setOpenMoveDialog] = useState(false);
+    const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
 
 
     useEffect(() => {
@@ -66,6 +71,22 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 		fetchUnits();
 	}, [backendInterface]);
+    
+    useEffect(() => {
+        const fetchUserLists = async () => {
+            try {
+                const lists = await userAuth.getMyLists(); 
+                const filteredLists = lists.filter(list => list.name !== listName); 
+                setUserLists(filteredLists);
+                setAvailableLists(filteredLists.map(list => list.name)); 
+            } catch (error) {
+                console.error("Error fetching user lists:", error);
+            }
+        };
+    
+        fetchUserLists();
+    }, [listName, userAuth]);
+    
 
     const handleAddIngredient = async () => {
         const allIngreds = await backendInterface.getAllIngredients();
@@ -184,6 +205,22 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         }
     };
     
+    const handleMoveIngredients = async (toListName: string) => {
+        if (!ingredientToMove || !listName) return; // Ensure ingredient and current list are set
+    
+        try {
+            await backendInterface.moveIngredient(listName, toListName, ingredientToMove); // Move ingredient
+            console.log(`Moved ${ingredientToMove.name} from ${listName} to ${toListName}`);
+    
+            const updatedIngredients = await userAuth.getIngredientsFromList(listName);
+            setIngredients(updatedIngredients);
+    
+        } catch (error) {
+            console.error("Error moving ingredient:", error);
+        } finally {
+            handleCloseMoveDialog(); 
+        }
+    };
 
     const handleOpenEditDialog = (ingredient: Ingredient) => {
         setIngredientToEdit(ingredient);
@@ -198,7 +235,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             setIngredientToEdit(null);
         }, 100); // Small delay to avoid rendering issues
     };
-    
+    const handleOpenMoveDialog = (ingredient: Ingredient) => {
+        setIngredientToMove(ingredient);
+        setOpenMoveDialog(true);
+    };
+
+    const handleCloseMoveDialog = () =>{
+        setOpenMoveDialog(false);
+        setIngredientToMove(null);
+    } 
+
     const filteredIngredients = ingredients.filter(ingredient =>
         ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -272,15 +318,29 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                                     <TableCell>{ingredient.amount ?? "N/A"}</TableCell>
                                     <TableCell>{ingredient.unit ?? "N/A"}</TableCell>
                                     <TableCell>
+                                    <div style={{ display: "flex", gap: "8px", transform: "translateX(-55px)" }}>
                                         <Button
                                             color="error"
-                                            onClick={() => handleOpenConfirmDialog(ingredient)} // Open confirm dialog
+                                            onClick={() => handleOpenConfirmDialog(ingredient)} 
                                         >
                                             <Delete />
                                         </Button>
-                                            <Button color="primary" onClick={() => handleOpenEditDialog(ingredient)}>
+                                            <Button color="primary" 
+                                            onClick={() => handleOpenEditDialog(ingredient)}
+                                            style={{ transform: "translateX(-15px)" }}>
                                             <Edit />
                                         </Button>
+
+                                        <Button
+                                            className="secondary-color"
+                                            onClick={() =>handleOpenMoveDialog(ingredient)} 
+                                            style={{ transform: "translateX(-15px)" }}
+                                            sx={{ color: "black" }}
+                                            size = "small"
+                                        >
+                                            Move
+                                        </Button>
+                                    </div>
                                     </TableCell>
                                 </TableRow>
                             ))
@@ -483,6 +543,39 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     </Button>
                     <Button onClick={handleUnitDialogClose} className="primary-color" style={{ color: 'black' }}>
                         Back
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/*Dialogue that opens when you click Move */}
+            <Dialog open={openMoveDialog} onClose={handleCloseMoveDialog} PaperProps={{ className: "secondary-color" }}>
+                <DialogTitle>Select List to Move</DialogTitle>
+                <DialogContent>
+                    {/* List of available lists */}
+                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                        {availableLists.map((listName, index) => (
+                            <div
+                                key={index}
+                                onClick={() => {
+                                    handleMoveIngredients(listName)
+                                }}
+                                style={{
+                                    padding: '10px',
+                                    cursor: 'pointer',
+                                    borderBottom: '1px solid #ddd',
+                                    transition: 'background-color 0.2s',
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
+                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'inherit'}
+                            >
+                                {listName}
+                            </div>
+                        ))}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseMoveDialog} className="primary-color" style={{ color: 'black' }}>
+                        Close
                     </Button>
                 </DialogActions>
             </Dialog>
