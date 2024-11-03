@@ -31,7 +31,7 @@ jobs:
       - name: Delete old deployment if exists
         if: steps.get_deployments.outputs.deployments != ''
         run: |
-          old_deployment_id=$(echo "${{ steps.get_deployments.outputs.deployments }}" | jq -r '.deployments[0].uid')
+          old_deployment_id=$(echo '{"deployments":[{"uid":"dpl_26cnb4Ms1XfZfzDyyXBE5TZYqMpu","name":"mobile-webapp","url":"mobile-webapp-b9kjdul1g-teacup-mobiles-projects.vercel.app","created":1730602778037,"source":"cli","readyState":"READY","type":"LAMBDAS","creator":{"uid":"v0hZe7srosUlQtc2ye0Gh5BT"},"inspectorUrl":"https://vercel.com/teacup-mobiles-projects/mobile-webapp/26cnb4Ms1XfZfzDyyXBE5TZYqMpu"}]}' | jq -r '.deployments[0].uid')
           echo "Deleting old deployment with ID: $old_deployment_id"
           curl -X DELETE -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             "https://api.vercel.com/v1/deployments/$old_deployment_id"
