@@ -118,7 +118,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
         }
         
         if (amount <= 0) {
-            setAmountError("Please enter a valid amount greater than 0.");
+            setAmountError("Please enter a valid amount.");
             return;
         } else {
             setAmountError(''); 
