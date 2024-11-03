@@ -38,4 +38,9 @@ export class MockBackend implements BackendInterface {
     async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
         this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
     }
+
+    async createNewList(toAdd: List): Promise<void> {
+        toAdd.ingredients =[];
+        this.userAuth.createList(toAdd);
+    }
 }

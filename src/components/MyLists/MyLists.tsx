@@ -1,7 +1,4 @@
-/**
-  * This page will be used in our Sprint 2. As it stands, it doesn't do anything.
- */
-import { AppBar, Container, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +14,11 @@ interface MyListsProps{
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
     const [myLists, updateMyLists] = useState<List[]>([]);
+    const [open, setOpen] = useState(false); 
+    const [newListName, setNewListName] = useState("");
+    const [nameError, setNameError] = useState<string | null>(null);
 
+    
     useEffect(() => {
         const fetchLists = async () => {
             try {
@@ -34,6 +35,41 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
         fetchLists();
     }, [userAuth, backendInterface]);
 
+    const handleOpenDialog = () => setOpen(true);
+
+    const handleCloseDialog = () => {
+        setOpen(false);
+        setNewListName("");
+    };
+
+    const handleCreateList = async () => {
+        const trimmedName = newListName.trim();
+        
+        if (trimmedName) {
+            const listExists = myLists.some(
+                (list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase()
+            );
+    
+            if (listExists) {
+                setNameError("Please enter a unique list name");
+            } else {
+                setNameError(null);
+                const newList = new List(trimmedName);
+                try {
+                    await backendInterface.createNewList(newList);
+                    // Refetch lists to update state after backend operation succeeds
+                    const updatedLists = await backendInterface.getMyLists();
+                    userAuth.setMyLists?.(updatedLists);
+                    updateMyLists(updatedLists); 
+                } catch (error) {
+                    console.error("Error creating new list:", error);
+                }
+                handleCloseDialog();
+            }
+        }
+    };
+    
+
 	return (
 		<Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
 			{/* App Bar */}
@@ -49,6 +85,60 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				</Toolbar>
 			</AppBar>
 
+            {/* Create List Button */}
+			<Button
+				variant="contained"
+				color="primary"
+				style={{ margin: "20px" }}
+				onClick={handleOpenDialog}
+			>
+				Create List
+			</Button>
+
+			{/* Dialog for creating a new list*/}
+            <Dialog 
+                open={open} 
+                onClose={handleCloseDialog} 
+                PaperProps={{ className: "secondary-color" }} 
+            >
+                <DialogTitle>Create New List</DialogTitle>
+                <DialogContent>
+                    {/* Input field for the new list name */}
+                    <TextField
+                        variant="outlined"
+                        value={newListName}
+                        onChange={(e) => setNewListName(e.target.value)}
+                        size="small" 
+                        style={{ 
+                            width: '100%', 
+                            backgroundColor: 'white', 
+                            marginBottom: '10px' 
+                        }}
+                        InputLabelProps={{
+                            shrink: true,
+                        }}
+                        placeholder="List Name"
+                    />
+                {nameError && <div style={{ color: 'red' }}>{nameError}</div>}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} className="primary-color" style={{ color: 'black' }}>
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={handleCreateList} 
+                        color="primary" 
+                        disabled={!newListName.trim()} 
+                        className="primary-color" // Apply primary color
+                        style={{ color: 'black' }}
+                    >
+                        Create
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+
+
 			{/* Main Content */}
 			<TableContainer component={Paper} style={{ marginTop: "20px" }}>
 				<Table>
@@ -62,7 +152,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 							myLists.map((list, index) => (
 								<TableRow
 									key={index}
-									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)} // we will pass the list name onto the next page
+									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)} 
 									sx={{
 										cursor: "pointer",
 										backgroundColor: "white",
