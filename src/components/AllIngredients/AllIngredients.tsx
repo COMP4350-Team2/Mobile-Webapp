@@ -28,6 +28,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
     const [units, setUnits] = useState<string[]>([]);
     const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
 
+    const [amountError, setAmountError] = useState<string>('');
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
 	 * Once the result is validated, it calls setIngredients to display all available ingredients.
@@ -87,6 +88,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const handleOpen = (ingredient: Ingredient) => {
 		setSelectedIngredient(ingredient);
 		setOpen(true);
+        setAmountError(""); 
 	};
 
 	const handleClose = () => {
@@ -95,6 +97,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 		setSelectedUnit(units.length > 0 ? units[0] : "g");
 		setSelectedList("");
 		setSelectedIngredient(null);
+        setAmountError("");
 	};
 
 	/**
@@ -106,10 +109,13 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             console.error("Missing required fields: ingredient or list");
             return;
         }
-    
+        
         try {
             const parsedAmount = parseFloat(amount as string);
-
+            if (parsedAmount <= 0) {
+                setAmountError("Please enter a valid amount.");
+                return;
+            }
             const ingredientToAdd = new Ingredient(
                 selectedIngredient.name,
                 selectedIngredient.type,
@@ -119,12 +125,10 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             // Call the addIngredient method on the backend
             await backend.addIngredient(selectedList, ingredientToAdd);
             console.log(`Added ${ingredientToAdd.name} to ${selectedList}`);
-    
+            handleClose();
         } catch (error) {
             console.error("Error adding ingredient:", error);
-        } finally {
-            handleClose();
-        }
+        } 
     };
     
 
@@ -176,11 +180,16 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 						label="Amount"
 						type="number"
 						value={amount}
-						onChange={(e) => setAmount(e.target.value)}
+						onChange={(e) => {
+                            const value = e.target.value
+                            setAmount(value);
+                            if(parseFloat(value)> 0){setAmountError('')} }
+                        }
 						fullWidth
 						inputProps={{ step: "0.1", min: "0" }} // Allows only floats
 						style={{ backgroundColor: 'white' }}
 					/>
+                    {amountError && <div style={{ color: 'red' }}>{amountError}</div>}
 					<div style={{ marginBottom: '0.5px', color: 'black' }}>
 						Unit
 					</div>
@@ -220,6 +229,8 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 			</Dialog>
 		</Container>
 	);
+
+
 }
 
 export default AllIngredients;
