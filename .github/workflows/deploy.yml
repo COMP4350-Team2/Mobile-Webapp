@@ -1,9 +1,8 @@
 name: Deploy to Vercel
 
 on:
-  push:
-    branches:
-      - main  # Change this if your main branch is named differently
+  release:
+    types: [published]
 
 jobs:
   deploy:
