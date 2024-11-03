@@ -7,4 +7,5 @@ export interface BackendInterface {
     addIngredient: (listName: string, ingredient: Ingredient) => Promise<void>;
     getAllMeasurements(): Promise<string[]>;
     deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void>;
+    updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void>;
 }
