@@ -1,0 +1,11 @@
+# Here, the application is defined as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 8080:3000
+    image: hienng/cupboard_mobile_webapp:latest
