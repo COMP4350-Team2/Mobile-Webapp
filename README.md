@@ -101,7 +101,7 @@ The instructions for running these tests in **Production** and **Mock** are stat
 ## Docker Commands
 
 build docker image
-`docker build -t mobile_webapp .`
+`docker build -t hienng/cupboard_mobile_webapp .`
 
 push to dockerhub using default tag (latest)
 `docker push hienng/cupboard_mobile_webapp`
