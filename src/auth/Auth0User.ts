@@ -64,7 +64,6 @@ export class Auth0User implements UserAuth {
 					if (response.status === 201) {
 						const responseBody = response.data["message"];
 						if (responseBody.includes("Item created successfully.")) {
-							console.log("new user");
 						} else if (responseBody.includes("Item already exists.")) {
 							console.log("existing user");
 						} else {
@@ -136,7 +135,7 @@ export class Auth0User implements UserAuth {
 		return res;
 	}
 
-	getIngredientsFromList(listName: String): Promise<Ingredient[]> {
+	getIngredientsFromList(listName: String): Promise<Ingredient[]>  {
 		const foundList = this.mylists.find((list) => list.name === listName);
 		return Promise.resolve(foundList ? foundList.ingredients : []);
 	}
@@ -147,11 +146,7 @@ export class Auth0User implements UserAuth {
 			console.error(`List with name ${listName} not found.`);
 			return;
 		}
-		// Find the index of the ingredient to remove
-		const ingredientIndex = list.ingredients.findIndex((i) => i.equalTo(ingredient));
-		// Remove the ingredient from the list
-		list.ingredients.splice(ingredientIndex, 1);
-		console.log(`Removed ${ingredient.name} from ${listName}.`);
+		list.removeIngredient(ingredient);
 	}
 
 	updateIngredient(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): void {

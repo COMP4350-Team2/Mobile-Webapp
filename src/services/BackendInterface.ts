@@ -10,4 +10,5 @@ export interface BackendInterface {
 	deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void>;
 	updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void>;
 	createNewList(toAdd: List): Promise<void>;
+    moveIngredient(from: string, to: string, ingredient: Ingredient)
 }

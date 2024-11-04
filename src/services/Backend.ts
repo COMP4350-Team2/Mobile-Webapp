@@ -30,7 +30,6 @@ export class Backend implements BackendInterface {
 			);
 			if (response.status === 200) {
 				const ingredients = response.data.map((item) => new Ingredient(item.name, item.type));
-				console.log(response.data);
 				this.userAuth.setAllIngredients!(ingredients); // Update the user's all ingredients
 				return ingredients; // Return the mapped ingredients
 			} else {
@@ -61,7 +60,6 @@ export class Backend implements BackendInterface {
 			if (response.status === 200) {
 				const data = JSON.parse(JSON.stringify(response.data));
 				const results = data;
-				console.log(data);
 				if (!results) {
 					console.error("Unexpected data format:", data);
 					return [];
@@ -157,7 +155,6 @@ export class Backend implements BackendInterface {
 			);
 
 			if (response.status === 200) {
-				console.log(`Ingredient "${ingredient.name}" added successfully to list "${listName}"`);
 				this.userAuth.addToList(listName, ingredient);
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
@@ -190,7 +187,6 @@ export class Backend implements BackendInterface {
 			);
 
 			if (response.status === 200) {
-				console.log(`Ingredient "${ingredient.name}" removed successfully from list "${listName}"`);
 				this.userAuth.removeIngredient(listName, ingredient); //updating the DSO for state management
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
@@ -283,14 +279,68 @@ export class Backend implements BackendInterface {
 				}
 			);
 
-			if (response.status === 200) {
-				console.log(`Ingredient "${oldIngredient.name}" updated successfully in list "${listName}"`);
-				this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
-			} else {
-				console.error(`Error: Received status code ${response.status}`);
-			}
-		} catch (error) {
-			console.error("Failed to update ingredient:", error);
-		}
-	}
+            if (response.status === 200) {
+                this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Failed to update ingredient:", error);
+        }
+    }
+
+    async moveIngredient(from: string, to: string, ingredient: Ingredient) {
+        try{
+            const token = await this.userAuth.getAccessToken();
+            //first, we try to add the ingredient to the new list
+            const addResponse = await axios.put(
+                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
+                {
+                    list_name: to,
+                    ingredient: ingredient.name,
+                    amount: ingredient.amount,
+                    unit: ingredient.unit
+                },
+                {
+                    headers: { Authorization: "Bearer " + token }
+                }
+            );
+            if (addResponse.status === 200) { //only if the ingredient gets added to the new list, we will remove it from the old list
+                const removeResponse = await axios.put(
+                    `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
+                    {
+                        list_name: from,
+                        ingredient: ingredient.name,
+                        unit: ingredient.unit
+                    },
+                    {
+                        headers: { Authorization: "Bearer " + token }
+                    }
+                );
+                if(removeResponse.status === 200){
+                    this.userAuth.addToList(to, ingredient);
+                    this.userAuth.removeIngredient(from, ingredient); //updating the DSO for state management
+                }else { //if the ingredient wasnt removed successfully from the old list, we remove it from our new list
+                    await axios.put(
+                        `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
+                        {
+                            list_name: to,
+                            ingredient: ingredient.name,
+                            unit: ingredient.unit
+                        },
+                        {
+                            headers: { Authorization: "Bearer " + token }
+                        }
+                    );
+                    console.error(`Error: Received status code ${removeResponse.status}`);
+                }
+            } 
+            else{
+                console.error(`Error: Received status code ${addResponse.status}`);
+            }
+        }catch(error){
+            console.error("Failed to move ingredient:", error);
+        }
+    }
+
 }

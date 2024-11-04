@@ -1,22 +1,22 @@
 import { Delete } from "@mui/icons-material";
 import {
-	AppBar,
-	Button,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
-	Toolbar,
-	Typography,
+    AppBar,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
+    Toolbar,
+    Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
@@ -290,6 +290,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			</Dialog>
 		</Container>
 	);
+    
 }
 
 export default MyLists;

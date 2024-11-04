@@ -126,7 +126,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             );
             // Call the addIngredient method on the backend
             await backend.addIngredient(selectedList, ingredientToAdd);
-            console.log(`Added ${ingredientToAdd.name} to ${selectedList}`);
             handleClose();
         } catch (error) {
             console.error("Error adding ingredient:", error);

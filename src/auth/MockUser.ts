@@ -78,11 +78,7 @@ export class MockUser implements UserAuth {
 			console.error(`List with name ${listName} not found.`);
 			return;
 		}
-		// Find the index of the ingredient to remove
-		const ingredientIndex = list.ingredients.findIndex((i) => i.equalTo(ingredient));
-		// Remove the ingredient from the list
-		list.ingredients.splice(ingredientIndex, 1);
-		console.log(`Removed ${ingredient.name} from ${listName}.`);
+        list.removeIngredient(ingredient);
 	}
 
 	updateIngredient(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): void {
