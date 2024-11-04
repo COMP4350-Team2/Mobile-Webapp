@@ -51,6 +51,8 @@ jobs:
           tags: ${{ env.TEST_TAG }}
       - name: Test
         run: |
+          docker ps
+          docker stop
           docker run --rm ${{ env.TEST_TAG }}
       - name: Build and push
         uses: docker/build-push-action@v6
