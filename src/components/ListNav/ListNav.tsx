@@ -27,7 +27,6 @@ import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate, useParams } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
-import { List } from "../../models/List";
 
 interface ListNavProps {
 	backendInterface: BackendInterface;
@@ -54,7 +53,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [amountError, setAmountError] = useState<string>('');
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
-    const [userLists, setUserLists] = useState<List[]>([]); // To store the user's lists
     const [availableLists, setAvailableLists] = useState<string[]>([]);
     const [openMoveDialog, setOpenMoveDialog] = useState(false);
     const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
@@ -97,7 +95,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             try {
                 const lists = await userAuth.getMyLists(); 
                 const filteredLists = lists.filter(list => list.name !== listName); 
-                setUserLists(filteredLists);
                 setAvailableLists(filteredLists.map(list => list.name)); 
             } catch (error) {
                 console.error("Error fetching user lists:", error);
