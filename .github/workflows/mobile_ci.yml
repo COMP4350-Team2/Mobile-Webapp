@@ -8,6 +8,10 @@ on:
   release:
     types: [published]
 
+env:
+  TEST_TAG: ${{ secrets.DOCKER_USERNAME }}/cupboard_mobile_webapp:test
+  LATEST_TAG: ${{ secrets.DOCKER_USERNAME }}/cupboard_mobile_webapp:latest
+
 jobs:
   Testing:
     runs-on: ubuntu-latest
@@ -36,17 +40,20 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build and test
+
+      - name: Build and export to Docker
         uses: docker/build-push-action@v6
         with:
-          target: test
           load: true
+          tags: ${{ env.TEST_TAG }}
+      - name: Test
+        run: |
+          docker run --rm ${{ env.TEST_TAG }}
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64,linux/arm64/v8
           push: true
-          target: prod
-          tags: ${{ secrets.DOCKER_USERNAME }}/cupboard_mobile_webapp:latest
+          tags: ${{ env.LATEST_TAG }}
