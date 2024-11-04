@@ -6,6 +6,7 @@
   "homepage": ".",
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.5",
