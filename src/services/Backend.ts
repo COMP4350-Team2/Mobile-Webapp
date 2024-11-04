@@ -4,7 +4,7 @@
 import axios from "axios";
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
-import { List } from "../models/Lists";
+import { List } from "../models/List";
 import { BackendInterface } from "./BackendInterface";
 
 export class Backend implements BackendInterface {
@@ -22,16 +22,17 @@ export class Backend implements BackendInterface {
 	async getAllIngredients(): Promise<Ingredient[]> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.get<Ingredient[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_INGREDIENTS}`, {
-				headers: { Authorization: "Bearer " + token },
-			});
+			const response = await axios.get<Ingredient[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_INGREDIENTS}`, 
+                {
+				    headers: { Authorization: "Bearer " + token },
+			    }
+        );
             if(response.status === 200){
                 const ingredients = response.data.map(item => new Ingredient(item.name, item.type));
                 console.log(response.data);
                 this.userAuth.setAllIngredients!(ingredients); // Update the user's all ingredients
                 return ingredients; // Return the mapped ingredients
-            }
-			else{
+            } else {
                 console.error(`Error: Received status code ${response.status}`);
                 return [];
             }
@@ -46,14 +47,17 @@ export class Backend implements BackendInterface {
     * 
     * @return {Promise<List[]>} A promise that resolves to an array of `List` objects (each with Ingredients inside it)
 */
-    async getMyLists(): Promise<List[]>{
-        const myLists : List[]=  [];
-        try{
+    async getMyLists(): Promise<List[]> {
+        const myLists: List[] = [];
+        try {
             const token = await this.userAuth.getAccessToken();
-            const response = await axios.get<List[]>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_USER_LISTS}`, {
-				headers: { Authorization: "Bearer " + token },
-			});
-            if(response.status === 200){
+            const response = await axios.get<List[]>(
+                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_USER_LISTS}`,
+                {
+                    headers: { Authorization: "Bearer " + token },
+                }
+            );
+            if (response.status === 200) {
                 const data = JSON.parse(JSON.stringify(response.data));
                 const results = data;
                 console.log(data);
@@ -65,27 +69,68 @@ export class Backend implements BackendInterface {
                     const listName = listItem.list_name;
                     const ingredients: Ingredient[] = (listItem.ingredients || []).map((ingredient: any) => {
                         return new Ingredient(
-                            ingredient.ingredient_name,  // name
-                            ingredient.ingredient_type,  // type
-                            ingredient.amount,           // amount
-                            ingredient.unit              // unit
+                            ingredient.ingredient_name, // name
+                            ingredient.ingredient_type, // type
+                            ingredient.amount, // amount
+                            ingredient.unit // unit
                         );
                     });
                     const list = new List(listName, ingredients);
                     myLists.push(list);
                 });
-            }
-            else{
+                return myLists;
+            } else {
                 console.error(`Error: Received status code ${response.status}`);
                 return [];
             }
-        }catch(error){
+        } catch (error) {
             console.error(error);
             return [];
         }
-        return myLists;
     }
 
+    /**
+	 * Delete a list from the array of user's lists
+	 *
+	 * @param {string} listName - The name of the list to be deleted.
+	 * @return {Promise<List[]>} The updated list of user's ingredient lists.
+	 */
+	async deleteList(listName: string): Promise<List[]> {
+		try {
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.put<any[]>(
+				`${process.env.REACT_APP_BACKEND_HOST}/v2/user_list_ingredients/${listName}`,
+				{},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+            if (response.status === 200) {
+				this.userAuth.deleteList(listName);
+
+				// Map the API response data to List[] with Ingredient objects
+				return response.data.map((item: any) => {
+					// Map each ingredient in the response to an Ingredient instance
+					const ingredients = item.ingredients.map(
+						(ingredient: any) =>
+							new Ingredient(
+								ingredient.ingredient_name,
+								ingredient.ingredient_type,
+								ingredient.amount,
+								ingredient.unit
+							)
+					);
+                    const list = new List(item.list_name, ingredients);
+					return list;
+				});
+			}
+		} catch (error) {
+			console.error(error);
+			return [];
+		} finally {
+			return [];
+		}
+	}
 /**
     * Purpose: This function makes a PUT request to an API endpoint to add an ingredient to a specified list.
     * 

@@ -1,12 +1,18 @@
 /*This class is for our Mock User object. It follows the same methods as Auth0User but returns hardcoded values instead*/
 
 import { Ingredient } from "../models/Ingredient";
-import { List } from "../models/Lists";
+import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
 
 export class MockUser implements UserAuth {
 	private isLoggedIn: boolean = true;
-	mylists: List[] = [new List("Grocery", [new Ingredient("Tomato", "Vegetable", 4, "count"), new Ingredient("Chicken", "Meat", 500, "g")]), new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")])];
+    mylists: List[] = [
+		new List("Grocery", [
+			new Ingredient("Tomato", "Vegetable", 4, "count"),
+			new Ingredient("Chicken", "Meat", 500, "g"),
+		]),
+		new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")]),
+	];
 
 	getMyLists(): List[] {
 		return this.mylists;
@@ -16,9 +22,29 @@ export class MockUser implements UserAuth {
 		this.mylists = lists;
 	}
 
+    deleteList(name: string) {
+		const index = this.mylists.findIndex((list) => list.name === name);
+
+		if (index !== -1) {
+			this.mylists.splice(index, 1);
+		}
+	}
+    
 	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
-		return [new Ingredient("Tomato", "Vegetable"), new Ingredient("Chicken", "Meat"), new Ingredient("Basil", "Herb"), new Ingredient("Cheese", "Dairy")];
+		return [
+			new Ingredient("Tomato", "Vegetable"),
+			new Ingredient("Chicken", "Meat"),
+			new Ingredient("Basil", "Herb"),
+			new Ingredient("Cheese", "Dairy"),
+		];
+	}
+
+    addToList(listName: string, ingredient: Ingredient): void {
+		const list = this.mylists.find(list => list.name === listName);
+		if (list) {
+			list.addOrUpdateIngredient(ingredient);
+		}
 	}
 
 	login() {
@@ -32,14 +58,6 @@ export class MockUser implements UserAuth {
 	isProcessing = () => false;
 	isAuthenticated = () => this.isLoggedIn;
 
-	
-	addToList(listName: string, ingredient: Ingredient): void {
-		const list = this.mylists.find(list => list.name === listName);
-		if (list) {
-			list.addOrUpdateIngredient(ingredient);
-		}
-	}
-	
 
 	isAuth0User = () => false;
 

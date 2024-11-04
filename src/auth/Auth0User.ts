@@ -1,7 +1,7 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { Ingredient } from "../models/Ingredient";
-import { List } from "../models/Lists";
+import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
 
 
@@ -32,6 +32,14 @@ export class Auth0User implements UserAuth {
     setMyLists(lists: List[]){
         this.mylists = lists;
     }
+
+    deleteList(name: string) {
+		const index = this.mylists.findIndex((list) => list.name === name);
+
+		if (index !== -1) {
+			this.mylists.splice(index, 1);
+		}
+	}
 
 	getAllIngredients(): Ingredient[] {
 		return this.allIngredients;
@@ -130,7 +138,7 @@ export class Auth0User implements UserAuth {
 		return res;
 	}
 
-	getIngredientsFromList(listName: String): Promise<Ingredient[]>{
+	getIngredientsFromList(listName: String): Promise<Ingredient[]> {
 		const foundList = this.mylists.find(list => list.name === listName);
     	return Promise.resolve(foundList ? foundList.ingredients : []);
 	}

@@ -1,10 +1,30 @@
-import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import { Delete } from "@mui/icons-material";
+import {
+    AppBar,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
+    Toolbar,
+    Typography,
+} from "@mui/material";
+import Loading from "components/Loading/Loading";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
-import { List } from "../../models/Lists";
+import { List } from "../../models/List";
 
 interface MyListsProps{
     userAuth: UserAuth;
@@ -13,10 +33,14 @@ interface MyListsProps{
 
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(true);
     const [myLists, updateMyLists] = useState<List[]>([]);
-    const [open, setOpen] = useState(false); 
+    const [openNewListDialog, setOpenNewListDialog] = useState(false); 
     const [newListName, setNewListName] = useState("");
     const [nameError, setNameError] = useState<string | null>(null);
+    const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
+	const [activeList, setActiveList] = useState<List | null>(null);
+
 
     
     useEffect(() => {
@@ -35,20 +59,19 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
         fetchLists();
     }, [userAuth, backendInterface]);
 
-    const handleOpenDialog = () => setOpen(true);
+    const handleOpenNewListDialog = () => setOpenNewListDialog(true);
 
-    const handleCloseDialog = () => {
-        setOpen(false);
-        setNewListName("");
-    };
+	const handleCloseNewListDialog = () => {
+		setOpenNewListDialog(false);
+		setNewListName("");
+	}
 
     const handleCreateList = async () => {
         const trimmedName = newListName.trim();
         
         if (trimmedName) {
             const listExists = myLists.some(
-                (list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase()
-            );
+                (list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase());
     
             if (listExists) {
                 setNameError("Please enter a unique list name");
@@ -64,119 +87,211 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
                 } catch (error) {
                     console.error("Error creating new list:", error);
                 }
-                handleCloseDialog();
+                handleCloseNewListDialog();
             }
         }
     };
     
+    const handleConfirmDelete = (list: List) => {
+		setActiveList(list);
+		setOpenConfirmDeleteDialog(true);
+	};
+
+	const closeConfirmDeleteDialog = () => {
+		setOpenConfirmDeleteDialog(false);
+		setActiveList(null);
+	};
+
+	const deleteList = async () => {
+		const newList = await backendInterface.deleteList(activeList?.name ?? "");
+		updateMyLists(newList);
+		closeConfirmDeleteDialog();
+	};
 
 	return (
-		<Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
+		<Container
+			maxWidth={false}
+			disableGutters
+			className="sub-color"
+			style={{ height: "100vh" }}
+		>
 			{/* App Bar */}
-			<AppBar position="static" className="header-color">
+			<AppBar
+				position="static"
+				className="header-color"
+			>
 				<Toolbar>
 					<AiOutlineArrowLeft
 						style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
 						onClick={() => navigate("/logged-in")}
 					/>
-					<Typography variant="h6" style={{ flexGrow: 1, textAlign: "center", color: "white", fontWeight: "bold", fontSize: "1.5rem" }}>
+					<Typography
+						variant="h6"
+						style={{
+							flexGrow: 1,
+							textAlign: "center",
+							color: "white",
+							fontWeight: "bold",
+							fontSize: "1.5rem",
+						}}
+					>
 						My Lists
 					</Typography>
 				</Toolbar>
 			</AppBar>
 
-            {/* Create List Button */}
-			<Button
-				variant="contained"
-				color="primary"
-				style={{ margin: "20px" }}
-				onClick={handleOpenDialog}
-			>
-				Create List
-			</Button>
+			{/* Main Content */}
+			{isLoading ? (
+				<Loading />
+			) : (
+				<>
+					{/* Create List Button */}
+					<Button
+						variant="contained"
+						color="primary"
+						style={{ margin: "20px" }}
+						onClick={handleOpenNewListDialog}
+					>
+						Create List
+					</Button>
+
+					<TableContainer
+						component={Paper}
+						style={{ marginTop: "20px" }}
+					>
+						<Table>
+							<TableHead>
+								<TableRow>
+									<TableCell style={{ fontWeight: "bold" }}>List Name</TableCell>
+									<TableCell></TableCell> {/* column for action */}
+								</TableRow>
+							</TableHead>
+							<TableBody>
+								{myLists.length > 0 ? (
+									myLists.map((list, index) => (
+										<TableRow
+											key={index}
+											onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}
+											sx={{
+												cursor: "pointer",
+												backgroundColor: "white",
+												"&:hover": {
+													backgroundColor: "#f5f5f5",
+												},
+											}}
+											style={{
+												borderBottom: "1px solid #ddd",
+											}}
+										>
+											<TableCell style={{ padding: "12px 16px" }}>{list.name}</TableCell>
+											<TableCell>
+												<Button
+													color="error"
+													onClick={(event) => {
+														event.stopPropagation(); // Prevents the row's onClick from triggering
+														handleConfirmDelete(list);
+													}}
+												>
+													<Delete />
+												</Button>
+											</TableCell>
+										</TableRow>
+									))
+								) : (
+									<TableRow>
+										<TableCell
+											style={{ fontSize: "1.1rem", color: "#555" }}
+											colSpan={1}
+										>
+											No lists available
+										</TableCell>
+									</TableRow>
+								)}
+							</TableBody>
+						</Table>
+					</TableContainer>
+				</>
+			)}
 
 			{/* Dialog for creating a new list*/}
-            <Dialog 
-                open={open} 
-                onClose={handleCloseDialog} 
-                PaperProps={{ className: "secondary-color" }} 
-            >
-                <DialogTitle>Create New List</DialogTitle>
-                <DialogContent>
-                    {/* Input field for the new list name */}
-                    <TextField
-                        variant="outlined"
-                        value={newListName}
-                        onChange={(e) => setNewListName(e.target.value)}
-                        size="small" 
-                        style={{ 
-                            width: '100%', 
-                            backgroundColor: 'white', 
-                            marginBottom: '10px' 
-                        }}
-                        InputLabelProps={{
-                            shrink: true,
-                        }}
-                        placeholder="List Name"
-                    />
-                {nameError && <div style={{ color: 'red' }}>{nameError}</div>}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseDialog} className="primary-color" style={{ color: 'black' }}>
-                        Cancel
-                    </Button>
-                    <Button 
-                        onClick={handleCreateList} 
-                        color="primary" 
-                        disabled={!newListName.trim()} 
-                        className="primary-color" // Apply primary color
-                        style={{ color: 'black' }}
-                    >
-                        Create
-                    </Button>
-                </DialogActions>
-            </Dialog>
+			<Dialog
+				open={openNewListDialog}
+				onClose={handleCloseNewListDialog}
+				PaperProps={{ className: "secondary-color" }}
+			>
+				<DialogTitle>Create New List</DialogTitle>
+				<DialogContent>
+					{/* Input field for the new list name */}
+					<TextField
+						variant="outlined"
+						value={newListName}
+						onChange={(e) => setNewListName(e.target.value)}
+						size="small"
+						style={{
+							width: "100%",
+							backgroundColor: "white",
+							marginBottom: "10px",
+						}}
+						InputLabelProps={{
+							shrink: true,
+						}}
+						placeholder="List Name"
+					/>
+					{nameError && <div style={{ color: "red" }}>{nameError}</div>}
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleCloseNewListDialog}
+						className="primary-color"
+					>
+						Cancel
+					</Button>
+					<Button
+						onClick={handleCreateList}
+						color="primary"
+						disabled={!newListName.trim()}
+						className="primary-color"
+					>
+						Create
+					</Button>
+				</DialogActions>
+			</Dialog>
 
-
-
-			{/* Main Content */}
-			<TableContainer component={Paper} style={{ marginTop: "20px" }}>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell style={{ fontWeight: "bold" }}>List Name</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{myLists.length > 0 ? (
-							myLists.map((list, index) => (
-								<TableRow
-									key={index}
-									onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)} 
-									sx={{
-										cursor: "pointer",
-										backgroundColor: "white",
-										"&:hover": {
-											backgroundColor: "#f5f5f5", 
-										},
-									}}
-									style={{
-										borderBottom: "1px solid #ddd",
-									}}
-								>
-									<TableCell style={{ padding: "12px 16px" }}>{list.name}</TableCell>
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell style={{ fontSize: "1.1rem", color: "#555" }} colSpan={1}>No lists available</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
-			</TableContainer>
+			{/* Confirm Delete Dialog */}
+			<Dialog
+				open={openConfirmDeleteDialog}
+				onClose={closeConfirmDeleteDialog}
+				PaperProps={{ className: "secondary-color" }}
+			>
+				<DialogTitle style={{ color: "white" }}>Confirm Deletion</DialogTitle>
+				<DialogContent style={{ color: "white" }}>
+					{activeList ? <span>Are you sure you want to delete list {activeList.name}?</span> : null}
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={closeConfirmDeleteDialog}
+						className="primary-color"
+						style={{ color: "white" }}
+					>
+						No
+					</Button>
+					<Button
+						onClick={deleteList}
+						sx={{
+							backgroundColor: "error.main",
+							color: "white",
+							"&:hover": {
+								backgroundColor: "error.dark",
+							},
+						}}
+					>
+						Yes
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</Container>
 	);
+    
 }
 
 export default MyLists;

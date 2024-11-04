@@ -50,12 +50,15 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 
 
     return (
-        <div className="sub-color" style={{ height: "100vh" }}>
+        <div 
+            className="sub-color" 
+            style={{ height: "100vh" }}
+        >
             {/* Background Logo */}
             <div className="logo-background" />
     
             {/* Main Content */}
-            {isLoading ? (
+            {isLoading && true? (
                 <Loading />
             ) : (
                 <div
@@ -71,7 +74,10 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
                     }}
                 >
                     {/* Top Right User Profile Icon */}
-                    <div className="secondary-color profile-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <div 
+                        className="secondary-color profile-button" 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    >
                         <FaUserCircle style={{ fontSize: "36px", color: "white" }} />
                     </div>
     
