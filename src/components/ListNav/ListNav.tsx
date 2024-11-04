@@ -58,6 +58,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     const [availableLists, setAvailableLists] = useState<string[]>([]);
     const [openMoveDialog, setOpenMoveDialog] = useState(false);
     const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
+    const [formError, setFormError] = useState('');
 
 
 	useEffect(() => {
@@ -153,8 +154,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	};
 
 	const handleAdd = async () => {
+        setAmountError('');
+        setFormError('');
+        
 		if (!chosenIngredient || !listName || amount === "" || !selectedUnit) {
 			console.error("Missing required fields: ingredient, list, amount, or unit");
+            setFormError("Please fill out all the fields.");
 			return;
 		}
 
@@ -170,8 +175,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 			// Call the addIngredient method on the backend
 			await backendInterface.addIngredient(listName, ingredientToAdd);
-			console.log(`Added ${ingredientToAdd.name} to ${listName}`);
-
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
 		} catch (error) {
@@ -203,7 +206,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             );
     
             await backendInterface.updateIngred(listName, ingredientToEdit, updatedIngredient);
-            console.log(`Updated ${updatedIngredient.name} in ${listName}`);
     
             // Fetch updated ingredients for the list to refresh the UI
             const updatedIngredients = await userAuth.getIngredientsFromList(listName);
@@ -221,7 +223,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
     
         try {
             await backendInterface.moveIngredient(listName, toListName, ingredientToMove); // Move ingredient
-            console.log(`Moved ${ingredientToMove.name} from ${listName} to ${toListName}`);
     
             const updatedIngredients = await userAuth.getIngredientsFromList(listName);
             setIngredients(updatedIngredients);
@@ -572,6 +573,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                             </MenuItem>
                         ))}
                     </TextField>
+                    {formError && <div style={{ color: 'red' }}>{formError}</div>}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleAdd} className="primary-color" style={{ color: 'black' }}>

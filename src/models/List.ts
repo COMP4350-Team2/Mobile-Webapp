@@ -27,11 +27,9 @@ export class List {
     removeIngredient(ingredient: Ingredient): void {
         const ingredientIndex = this.ingredients.findIndex(i => i.equalTo(ingredient));
         if (ingredientIndex === -1) {
-            console.error(`Ingredient ${ingredient.name} not found in ${this.name}.`);
             return;
         }
         this.ingredients.splice(ingredientIndex, 1);
-        console.log(`Removed ${ingredient.name} from ${this.name}.`);
     }
 
 }

@@ -30,7 +30,6 @@ export class Backend implements BackendInterface {
 			);
 			if (response.status === 200) {
 				const ingredients = response.data.map((item) => new Ingredient(item.name, item.type));
-				console.log(response.data);
 				this.userAuth.setAllIngredients!(ingredients); // Update the user's all ingredients
 				return ingredients; // Return the mapped ingredients
 			} else {
@@ -61,7 +60,6 @@ export class Backend implements BackendInterface {
 			if (response.status === 200) {
 				const data = JSON.parse(JSON.stringify(response.data));
 				const results = data;
-				console.log(data);
 				if (!results) {
 					console.error("Unexpected data format:", data);
 					return [];
@@ -157,7 +155,6 @@ export class Backend implements BackendInterface {
 			);
 
 			if (response.status === 200) {
-				console.log(`Ingredient "${ingredient.name}" added successfully to list "${listName}"`);
 				this.userAuth.addToList(listName, ingredient);
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
@@ -190,7 +187,6 @@ export class Backend implements BackendInterface {
 			);
 
 			if (response.status === 200) {
-				console.log(`Ingredient "${ingredient.name}" removed successfully from list "${listName}"`);
 				this.userAuth.removeIngredient(listName, ingredient); //updating the DSO for state management
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
@@ -284,7 +280,6 @@ export class Backend implements BackendInterface {
 			);
 
             if (response.status === 200) {
-                console.log(`Ingredient "${oldIngredient.name}" updated successfully in list "${listName}"`);
                 this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
             } else {
                 console.error(`Error: Received status code ${response.status}`);
@@ -311,7 +306,6 @@ export class Backend implements BackendInterface {
                 }
             );
             if (addResponse.status === 200) { //only if the ingredient gets added to the new list, we will remove it from the old list
-                console.log(`Ingredient "${ingredient.name}" added successfully to list "${to}"`);
                 const removeResponse = await axios.put(
                     `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
                     {
@@ -324,7 +318,6 @@ export class Backend implements BackendInterface {
                     }
                 );
                 if(removeResponse.status === 200){
-                    console.log(`Ingredient "${ingredient.name}" removed successfully from list "${from}"`);
                     this.userAuth.addToList(to, ingredient);
                     this.userAuth.removeIngredient(from, ingredient); //updating the DSO for state management
                 }else { //if the ingredient wasnt removed successfully from the old list, we remove it from our new list
@@ -346,7 +339,7 @@ export class Backend implements BackendInterface {
                 console.error(`Error: Received status code ${addResponse.status}`);
             }
         }catch(error){
-            console.error("Failed to move ignredient:", error);
+            console.error("Failed to move ingredient:", error);
         }
     }
 
