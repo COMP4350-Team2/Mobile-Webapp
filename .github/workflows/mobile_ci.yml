@@ -43,10 +43,12 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and push
+      - name: Prepare build
         uses: actions/checkout@v4
         with:
           ref: hn/COM-164/Dockerizing-mobile-frontend
+          
+      - name: Build and push
         run: |
           docker build -t ${{ env.IMAGE }} .
           docker push ${{ env.IMAGE }}
