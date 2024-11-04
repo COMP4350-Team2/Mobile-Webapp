@@ -43,7 +43,7 @@ jobs:
       - name: Build and push
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: hn/COM-164/Dovkerizin-mobile-frontend
       - run: |
           docker build -t hienng/cupboard_mobile_webapp .
           docker push hienng/cupboard_mobile_webapp
