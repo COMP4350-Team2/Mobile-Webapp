@@ -41,7 +41,9 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: actions/checkout@v4
         with:
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/cupboard_mobile_webapp:latest
+          ref: main
+      - run: |
+          docker build -t hienng/cupboard_mobile_webapp .
+          docker push hienng/cupboard_mobile_webapp
