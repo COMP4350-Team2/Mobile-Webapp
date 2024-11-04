@@ -8,6 +8,9 @@ on:
   release:
     types: [published]
 
+env:
+  IMAGE: ${{ secrets.DOCKER_USERNAME }}/cupboard_mobile_webapp:latest
+
 jobs:
   Testing:
     runs-on: ubuntu-latest
@@ -44,6 +47,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: hn/COM-164/Dockerizing-mobile-frontend
-      - run: |
-          docker build -t hienng/cupboard_mobile_webapp .
-          docker push hienng/cupboard_mobile_webapp
+        run: |
+          docker build -t ${{ env.IMAGE }} .
+          docker push ${{ env.IMAGE }}
