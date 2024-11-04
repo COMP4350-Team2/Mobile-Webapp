@@ -19,30 +19,30 @@ export class MockBackend implements BackendInterface {
 		return new Promise<Ingredient[]>((resolve) => resolve(this.userAuth.getAllIngredients()));
 	}
 
-    async getMyLists(): Promise<List[]>{
-        return new Promise<List[]>((resolve) => resolve(this.userAuth.getMyLists()));
-    }
+	async getMyLists(): Promise<List[]> {
+		return new Promise<List[]>((resolve) => resolve(this.userAuth.getMyLists()));
+	}
 
-    async deleteList(listName: string): Promise<List[]> {
+	async deleteList(listName: string): Promise<List[]> {
 		this.userAuth.deleteList(listName);
 		return Promise.resolve(this.userAuth.getMyLists());
 	}
 
 	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
-       this.userAuth.addToList(listName, ingredient);
-    }
+		this.userAuth.addToList(listName, ingredient);
+	}
 
-    getAllMeasurements(): Promise<string[]> {
-        return Promise.resolve(["g", "mg", "ml", "kg", "L", "count"]);
-    }
+	getAllMeasurements(): Promise<string[]> {
+		return Promise.resolve(["g", "mg", "ml", "kg", "L", "count"]);
+	}
 
 	async deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void> {
 		this.userAuth.removeIngredient(listName, ingredient);
 	}
-	
-    async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
-        this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
-    }
+
+	async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
+		this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
+	}
 
     async createNewList(toAdd: List): Promise<void> {
         toAdd.ingredients =[];

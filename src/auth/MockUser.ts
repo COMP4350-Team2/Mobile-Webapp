@@ -6,46 +6,13 @@ import { UserAuth } from "./UserAuth";
 
 export class MockUser implements UserAuth {
 	private isLoggedIn: boolean = true;
-    mylists: List[] = [
+	mylists: List[] = [
 		new List("Grocery", [
 			new Ingredient("Tomato", "Vegetable", 4, "count"),
 			new Ingredient("Chicken", "Meat", 500, "g"),
 		]),
 		new List("Pantry", [new Ingredient("Basil", "Herb", 3, "count"), new Ingredient("Cheese", "Dairy", 500, "g")]),
 	];
-
-	getMyLists(): List[] {
-		return this.mylists;
-	}
-
-	setMyLists(lists: List[]) {
-		this.mylists = lists;
-	}
-
-    deleteList(name: string) {
-		const index = this.mylists.findIndex((list) => list.name === name);
-
-		if (index !== -1) {
-			this.mylists.splice(index, 1);
-		}
-	}
-    
-	// Method to return all ingredients
-	getAllIngredients(): Ingredient[] {
-		return [
-			new Ingredient("Tomato", "Vegetable"),
-			new Ingredient("Chicken", "Meat"),
-			new Ingredient("Basil", "Herb"),
-			new Ingredient("Cheese", "Dairy"),
-		];
-	}
-
-    addToList(listName: string, ingredient: Ingredient): void {
-		const list = this.mylists.find(list => list.name === listName);
-		if (list) {
-			list.addOrUpdateIngredient(ingredient);
-		}
-	}
 
 	login() {
 		this.isLoggedIn = true;
@@ -57,8 +24,6 @@ export class MockUser implements UserAuth {
 
 	isProcessing = () => false;
 	isAuthenticated = () => this.isLoggedIn;
-
-
 	isAuth0User = () => false;
 
 	storeAccessToken() {
@@ -67,6 +32,39 @@ export class MockUser implements UserAuth {
 
 	async getAccessToken(): Promise<string> {
 		return "";
+	}
+
+	getMyLists(): List[] {
+		return this.mylists;
+	}
+
+	setMyLists(lists: List[]) {
+		this.mylists = lists;
+	}
+
+	deleteList(name: string) {
+		const index = this.mylists.findIndex((list) => list.name === name);
+
+		if (index !== -1) {
+			this.mylists.splice(index, 1);
+		}
+	}
+
+	// Method to return all ingredients
+	getAllIngredients(): Ingredient[] {
+		return [
+			new Ingredient("Tomato", "Vegetable"),
+			new Ingredient("Chicken", "Meat"),
+			new Ingredient("Basil", "Herb"),
+			new Ingredient("Cheese", "Dairy"),
+		];
+	}
+
+	addToList(listName: string, ingredient: Ingredient): void {
+		const list = this.mylists.find((list) => list.name === listName);
+		if (list) {
+			list.addOrUpdateIngredient(ingredient);
+		}
 	}
 
 	getIngredientsFromList(listName: String): Promise<Ingredient[]> {
@@ -83,23 +81,22 @@ export class MockUser implements UserAuth {
         list.removeIngredient(ingredient);
 	}
 
-    updateIngredient(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): void {
-        const list = this.mylists.find(list => list.name === listName);
-        if (!list) {
-            console.error(`List with name ${listName} not found.`);
-            return;
-        }
-        const ingredientToUpdate = list.ingredients.find((ingredient) => ingredient.equalTo(oldIngredient));
-        if (!ingredientToUpdate) {
-            console.error(`Ingredient ${oldIngredient.name} not found in list ${listName}.`);
-            return;
-        }
-        this.removeIngredient(listName, ingredientToUpdate);
-        list.addOrUpdateIngredient(newIngredient);
-    }
+	updateIngredient(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): void {
+		const list = this.mylists.find((list) => list.name === listName);
+		if (!list) {
+			console.error(`List with name ${listName} not found.`);
+			return;
+		}
+		const ingredientToUpdate = list.ingredients.find((ingredient) => ingredient.equalTo(oldIngredient));
+		if (!ingredientToUpdate) {
+			console.error(`Ingredient ${oldIngredient.name} not found in list ${listName}.`);
+			return;
+		}
+		this.removeIngredient(listName, ingredientToUpdate);
+		list.addOrUpdateIngredient(newIngredient);
+	}
 
-    createList(toAdd: List): void {
-        this.mylists.push(toAdd);   
-    }
-
+	createList(toAdd: List): void {
+		this.mylists.push(toAdd);
+	}
 }

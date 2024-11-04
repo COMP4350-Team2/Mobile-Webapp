@@ -18,81 +18,80 @@ import {
     Toolbar,
     Typography,
 } from "@mui/material";
-import Loading from "components/Loading/Loading";
 import { useEffect, useState } from "react";
 import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/List";
+import Loading from "../Loading/Loading";
 
-interface MyListsProps{
-    userAuth: UserAuth;
-    backendInterface: BackendInterface;
+interface MyListsProps {
+	userAuth: UserAuth;
+	backendInterface: BackendInterface;
 }
 
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(true);
-    const [myLists, updateMyLists] = useState<List[]>([]);
-    const [openNewListDialog, setOpenNewListDialog] = useState(false); 
-    const [newListName, setNewListName] = useState("");
-    const [nameError, setNameError] = useState<string | null>(null);
-    const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
+	const [myLists, updateMyLists] = useState<List[]>([]);
+	const [openNewListDialog, setOpenNewListDialog] = useState(false);
+	const [newListName, setNewListName] = useState("");
+	const [nameError, setNameError] = useState<string | null>(null);
+	const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 	const [activeList, setActiveList] = useState<List | null>(null);
 
+	useEffect(() => {
+		const fetchLists = async () => {
+			try {
+				// Fetch the lists from the backend
+				const lists = await backendInterface.getMyLists();
+				// Update the userAuth DSO with the fetched lists
+				userAuth.setMyLists?.(lists);
+				// Set the state with the lists from userAuth
+				updateMyLists(lists);
+				setIsLoading(false);
+			} catch (error) {
+				console.error("Error fetching lists:", error);
+			}
+		};
+		setIsLoading(true);
+		fetchLists();
+	}, [userAuth, backendInterface]);
 
-    
-    useEffect(() => {
-        const fetchLists = async () => {
-            try {
-                // Fetch the lists from the backend
-                const lists = await backendInterface.getMyLists();
-                // Update the userAuth DSO with the fetched lists
-                userAuth.setMyLists?.(lists); 
-                // Set the state with the lists from userAuth
-                updateMyLists(lists); 
-            } catch (error) {
-                console.error("Error fetching lists:", error);
-            }
-        };
-        fetchLists();
-    }, [userAuth, backendInterface]);
-
-    const handleOpenNewListDialog = () => setOpenNewListDialog(true);
+	const handleOpenNewListDialog = () => setOpenNewListDialog(true);
 
 	const handleCloseNewListDialog = () => {
 		setOpenNewListDialog(false);
 		setNewListName("");
-	}
+	};
 
-    const handleCreateList = async () => {
-        const trimmedName = newListName.trim();
-        
-        if (trimmedName) {
-            const listExists = myLists.some(
-                (list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase());
-    
-            if (listExists) {
-                setNameError("Please enter a unique list name");
-            } else {
-                setNameError(null);
-                const newList = new List(trimmedName);
-                try {
-                    await backendInterface.createNewList(newList);
-                    // Refetch lists to update state after backend operation succeeds
-                    const updatedLists = await backendInterface.getMyLists();
-                    userAuth.setMyLists?.(updatedLists);
-                    updateMyLists(updatedLists); 
-                } catch (error) {
-                    console.error("Error creating new list:", error);
-                }
-                handleCloseNewListDialog();
-            }
-        }
-    };
-    
-    const handleConfirmDelete = (list: List) => {
+	const handleCreateList = async () => {
+		const trimmedName = newListName.trim();
+
+		if (trimmedName) {
+			const listExists = myLists.some((list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase());
+
+			if (listExists) {
+				setNameError("Please enter a unique list name");
+			} else {
+				setNameError(null);
+				const newList = new List(trimmedName);
+				try {
+					await backendInterface.createNewList(newList);
+					// Refetch lists to update state after backend operation succeeds
+					const updatedLists = await backendInterface.getMyLists();
+					userAuth.setMyLists?.(updatedLists);
+					updateMyLists(updatedLists);
+				} catch (error) {
+					console.error("Error creating new list:", error);
+				}
+				handleCloseNewListDialog();
+			}
+		}
+	};
+
+	const handleConfirmDelete = (list: List) => {
 		setActiveList(list);
 		setOpenConfirmDeleteDialog(true);
 	};
@@ -295,4 +294,3 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 }
 
 export default MyLists;
-
