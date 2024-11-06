@@ -3,7 +3,7 @@
 ## Technologies To Be Used
 
 - **Language:** TypeScript
-- **Library:** REACT, Tailwind
+- **Library:** REACT
 
 ## Links To Other Repos
 
