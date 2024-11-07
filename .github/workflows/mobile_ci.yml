@@ -51,4 +51,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cupboard_mobile_webapp:latest
+          tags: ${{ env.IMAGE }}
