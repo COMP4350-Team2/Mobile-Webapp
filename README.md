@@ -197,3 +197,6 @@ push to dockerhub using default tag (latest)
 
 pull to dockerhub using default tag (latest)
 `docker pull hienng/cupboard_mobile_webapp`
+
+start the app using the pulled image
+`docker compose up`
