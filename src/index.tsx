@@ -6,6 +6,7 @@ import "./index.css";
 
 const domain = process.env.REACT_APP_AUTH0_DOMAIN ?? "";
 const clientId = process.env.REACT_APP_CLIENT_ID ?? "";
+const auth_audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? ""
 
 const container = document.getElementById("root")!;
 const root = createRoot(container); // Create root for React 18
@@ -16,7 +17,7 @@ root.render(
 		clientId={clientId}
 		authorizationParams={{
 			redirect_uri: `${window.location.origin}/logged-in`,
-			audience: "https://cupboard/api",
+			audience: auth_audience,
 			scope: "read:post",
 		}}
 	>
