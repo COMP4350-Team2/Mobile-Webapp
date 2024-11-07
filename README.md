@@ -200,3 +200,5 @@ pull to dockerhub using default tag (latest)
 
 start the app using the pulled image
 `docker compose up`
+
+The application will be available at http://localhost:8080.
