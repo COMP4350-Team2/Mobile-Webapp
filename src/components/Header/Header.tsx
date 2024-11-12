@@ -1,11 +1,18 @@
-import { AppBar, Toolbar, Typography } from "@mui/material";
-import { useMemo } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { AppBar, IconButton, Input, InputAdornment, Toolbar, Typography } from "@mui/material";
+import React, { useMemo } from "react";
+import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
+import { useLocation } from "react-router-dom";
 import "./Header.css";
 
-interface HeaderProps {}
+interface HeaderProp {
+	searchQuery: string;
+	searchQueryChange: (val: string) => void;
+}
 
-function Header() {
+function Header({ searchQuery, searchQueryChange }: HeaderProp) {
+	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [searchBarOpenned, toggleSearchBar] = React.useState(false);
+	const open = Boolean(anchorEl);
 	const location = useLocation();
 
 	const routeNames = useMemo(
@@ -36,13 +43,27 @@ function Header() {
 		return "404 Page Not Found";
 	}, [location.pathname, routeNames]);
 
+	const toggleMenu = (event: React.MouseEvent<HTMLElement>) => {
+		// Add code to handle opening/closing menu here
+	};
+
 	return (
-		<div className="full-screen">
+		<>
 			<AppBar
 				position="static"
 				className="header-color"
 			>
 				<Toolbar>
+					<IconButton
+						aria-label="menu"
+						aria-controls={open ? "long-menu" : undefined}
+						aria-expanded={open ? "true" : undefined}
+						aria-haspopup="true"
+						onClick={toggleMenu}
+						sx={{ color: "white" }}
+					>
+						<AiOutlineMenu />
+					</IconButton>
 					<Typography
 						variant="h6"
 						style={{
@@ -53,10 +74,33 @@ function Header() {
 					>
 						{activeScreenName}
 					</Typography>
+					<IconButton
+						aria-label="menu"
+						aria-controls={open ? "long-menu" : undefined}
+						aria-expanded={open ? "true" : undefined}
+						aria-haspopup="true"
+						onClick={() => toggleSearchBar(!searchBarOpenned)}
+						sx={{ color: "white" }}
+					>
+						<AiOutlineSearch />
+					</IconButton>
 				</Toolbar>
 			</AppBar>
-			<Outlet />
-		</div>
+
+			{searchBarOpenned ? (
+				<Input
+					value={searchQuery}
+					onChange={(e) => searchQueryChange(e.target.value)}
+					className="search-bar"
+					placeholder="Search Item"
+					startAdornment={
+						<InputAdornment position="start">
+							<AiOutlineSearch className="search-bar-icon" />
+						</InputAdornment>
+					}
+				/>
+			) : null}
+		</>
 	);
 }
 

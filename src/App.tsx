@@ -5,8 +5,8 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
 import UserAuthFactory from "./auth/UserAuthFactory";
 import AllIngredients from "./components/AllIngredients/AllIngredients";
-import Header from "./components/Header/Header";
 import Home from "./components/Home/Home";
+import Layout from "./components/Layout/Layout";
 import LoggedIn from "./components/LoggedIn/LoggedIn";
 import BackendFactory from "./services/BackendFactory";
 
@@ -22,11 +22,7 @@ function App() {
 			errorElement: <div>404 Page Not Found</div>,
 		},
 		{
-			element: (
-				<>
-					<Header></Header>
-				</>
-			),
+			element: <Layout />,
 			children: [
 				{
 					path: "/logged-in",

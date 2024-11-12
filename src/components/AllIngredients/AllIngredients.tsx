@@ -24,8 +24,10 @@ import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
+import { useOutletContext } from "react-router-dom";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
+import { LayoutContext } from "../Layout/Layout";
 import "./AllIngredients.css";
 
 interface AllIngredientsProps {
@@ -34,18 +36,17 @@ interface AllIngredientsProps {
 }
 
 function AllIngredients({ backend, user }: AllIngredientsProps) {
+	const { searchQuery } = useOutletContext<LayoutContext>();
+
 	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 	const [open, setOpen] = useState(false);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
 	const [amount, setAmount] = useState<number | string>("");
 	const [selectedList, setSelectedList] = useState<string>("");
 	const [allLists, setAllLists] = useState<string[]>([]);
-
 	const [units, setUnits] = useState<string[]>([]);
 	const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
-
 	const [amountError, setAmountError] = useState<string>("");
-	const [searchQuery, setSearchQuery] = useState<string>("");
 
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
@@ -158,21 +159,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 			className="sub-color"
 			style={{ height: "100%" }}
 		>
-			{/* Search Bar */}
-			<div style={{ paddingTop: "20px", display: "flex", justifyContent: "flex-start" }}>
-				<TextField
-					variant="outlined"
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					size="small"
-					style={{ width: "350px", backgroundColor: "white" }}
-					InputLabelProps={{
-						shrink: true,
-					}}
-					placeholder="Search Ingredients"
-				/>
-			</div>
-
 			{/* Main Content */}
 			<TableContainer
 				component={Paper}

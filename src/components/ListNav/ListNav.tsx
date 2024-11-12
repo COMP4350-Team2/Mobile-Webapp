@@ -20,9 +20,10 @@ import {
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
+import { LayoutContext } from "../Layout/Layout";
 
 interface ListNavProps {
 	backendInterface: BackendInterface;
@@ -31,6 +32,8 @@ interface ListNavProps {
 
 function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const { listName } = useParams<{ listName: string }>();
+	const { searchQuery } = useOutletContext<LayoutContext>();
+
 	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 	const [open, setOpen] = useState(false); //first dialogue for all ingredients
 	const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
@@ -46,7 +49,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const [editAmount, setEditAmount] = useState<number | "">("");
 	const [editUnit, setEditUnit] = useState<string>("g");
 	const [amountError, setAmountError] = useState<string>("");
-	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
 	const [availableLists, setAvailableLists] = useState<string[]>([]);
 	const [openMoveDialog, setOpenMoveDialog] = useState(false);
@@ -255,21 +257,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			className="sub-color"
 			style={{ height: "100%", position: "relative" }}
 		>
-			{/* Search Bar */}
-			<div style={{ paddingTop: "20px", display: "flex", justifyContent: "flex-start" }}>
-				<TextField
-					variant="outlined"
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.target.value)}
-					size="small"
-					style={{ width: "350px", backgroundColor: "white" }}
-					InputLabelProps={{
-						shrink: true,
-					}}
-					placeholder="Search Ingredients"
-				/>
-			</div>
-
 			{/* Ingredient Table */}
 			<TableContainer
 				component={Paper}
