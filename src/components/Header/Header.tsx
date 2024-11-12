@@ -25,6 +25,8 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 		[]
 	);
 
+	const searchInapplicableScreens = ["Logged In", "My Lists"];
+
 	// Determine the active screen name based on the current path
 	const activeScreenName = useMemo(() => {
 		const path = location.pathname;
@@ -74,16 +76,21 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 					>
 						{activeScreenName}
 					</Typography>
-					<IconButton
-						aria-label="menu"
-						aria-controls={open ? "long-menu" : undefined}
-						aria-expanded={open ? "true" : undefined}
-						aria-haspopup="true"
-						onClick={() => toggleSearchBar(!searchBarOpenned)}
-						sx={{ color: "white" }}
-					>
-						<AiOutlineSearch />
-					</IconButton>
+					{!searchInapplicableScreens.includes(activeScreenName) ? (
+						<IconButton
+							aria-label="menu"
+							aria-controls={open ? "long-menu" : undefined}
+							aria-expanded={open ? "true" : undefined}
+							aria-haspopup="true"
+							onClick={() => toggleSearchBar(!searchBarOpenned)}
+							sx={{ color: "white" }}
+						>
+							<AiOutlineSearch />
+						</IconButton>
+					) : (
+						// empty space to avoid disturbing position of other element in the header
+						<div style={{ width: "24px" }} />
+					)}
 				</Toolbar>
 			</AppBar>
 
