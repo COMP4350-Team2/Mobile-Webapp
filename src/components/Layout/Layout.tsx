@@ -8,7 +8,6 @@ export interface LayoutContext {
 }
 
 function Layout() {
-	const searchBarOpenned = true;
 	const [searchQuery, searchQueryChange] = React.useState("");
 
 	return (

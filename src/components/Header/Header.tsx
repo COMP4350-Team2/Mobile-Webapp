@@ -33,7 +33,7 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 
 		// Match path with route names. Adjust dynamic routes if needed
 		for (const [route, name] of Object.entries(routeNames)) {
-			if (route === path || new RegExp(`^${route.replace(/:\w+/g, "([\\w%]+)")}$`).test(path)) {
+			if (route === path || new RegExp(`^${route.replace(/:\w+/g, "([\\w%-]+)")}$`).test(path)) {
 				if (name.includes(":")) {
 					// Replace the dynamic part (e.g., ":listName") with the actual value from the path
 					return decodeURIComponent(path.split("/").pop()!);
@@ -58,7 +58,7 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 				<Toolbar>
 					<IconButton
 						aria-label="menu"
-						aria-controls={open ? "long-menu" : undefined}
+						aria-controls={open ? "menu" : undefined}
 						aria-expanded={open ? "true" : undefined}
 						aria-haspopup="true"
 						onClick={toggleMenu}
@@ -79,8 +79,8 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 					{!searchInapplicableScreens.includes(activeScreenName) ? (
 						<IconButton
 							aria-label="menu"
-							aria-controls={open ? "long-menu" : undefined}
-							aria-expanded={open ? "true" : undefined}
+							aria-controls={open ? "search-bar" : undefined}
+							aria-expanded={open ? "true" : "false"}
 							aria-haspopup="true"
 							onClick={() => toggleSearchBar(!searchBarOpenned)}
 							sx={{ color: "white" }}
