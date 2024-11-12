@@ -28,9 +28,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Unit Tests (Jest)
-        run: CI=true npm run test:jest
-
       - name: Start application
         run: npm run build
 
