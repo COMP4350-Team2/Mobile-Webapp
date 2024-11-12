@@ -33,7 +33,7 @@
   "scripts": {
   "start": "react-scripts start",
   "build": "react-scripts build",
-  "test": "npm run test:all",          
+  "test": "react-scripts-test",          
   "test:jest": "jest --passWithNoTests",
   "test:react-scripts": "react-scripts test --passWithNoTests", 
   "eject": "react-scripts eject"
