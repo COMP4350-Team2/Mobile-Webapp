@@ -50,7 +50,7 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 	return (
 		<div
 			className="sub-color"
-			style={{ height: "100vh" }}
+			style={{ height: "100%" }}
 		>
 			{/* Background Logo */}
 			<div className="logo-background" />
@@ -125,9 +125,7 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 								</span>
 							</div>
 
-							<div style={{ color: "white", fontSize: "1.2rem", marginBottom: "20px" }}>
-								User Type: {userType}
-							</div>
+							<div style={{ color: "white", fontSize: "1.2rem", marginBottom: "20px" }}>User Type: {userType}</div>
 
 							<button
 								className="primary-color logout-button"

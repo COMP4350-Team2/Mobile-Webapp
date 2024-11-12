@@ -2,12 +2,28 @@
  * This page displays all the ingredients available to the user
  */
 
-import { AppBar, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, MenuItem, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Toolbar, Typography } from "@mui/material";
+import {
+	Button,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	IconButton,
+	MenuItem,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
+} from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
-import isNumber from 'is-number';
+import isNumber from "is-number";
 import { useEffect, useState } from "react";
-import { AiOutlineArrowLeft, AiOutlinePlus } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { AiOutlinePlus } from "react-icons/ai";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
 import "./AllIngredients.css";
@@ -18,7 +34,6 @@ interface AllIngredientsProps {
 }
 
 function AllIngredients({ backend, user }: AllIngredientsProps) {
-	const navigate = useNavigate();
 	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 	const [open, setOpen] = useState(false);
 	const [selectedIngredient, setSelectedIngredient] = useState<Ingredient | null>(null);
@@ -26,11 +41,11 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const [selectedList, setSelectedList] = useState<string>("");
 	const [allLists, setAllLists] = useState<string[]>([]);
 
-    const [units, setUnits] = useState<string[]>([]);
-    const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
+	const [units, setUnits] = useState<string[]>([]);
+	const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
 
-    const [amountError, setAmountError] = useState<string>('');
-    const [searchQuery, setSearchQuery] = useState<string>("");
+	const [amountError, setAmountError] = useState<string>("");
+	const [searchQuery, setSearchQuery] = useState<string>("");
 
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
@@ -51,23 +66,23 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 			});
 	}, [backend]);
 
-    //the hook for rendering all the user's lists
+	//the hook for rendering all the user's lists
 	useEffect(() => {
-        const fetchLists = async () => {
-            try {
-                const allLists = await backend.getMyLists();
-                const listNames = allLists.map((list) => list.name); // Extracting names
-                setAllLists(listNames);
-            } catch (error) {
-                console.error("Error fetching lists:", error);
-            }
-        };
+		const fetchLists = async () => {
+			try {
+				const allLists = await backend.getMyLists();
+				const listNames = allLists.map((list) => list.name); // Extracting names
+				setAllLists(listNames);
+			} catch (error) {
+				console.error("Error fetching lists:", error);
+			}
+		};
 
-        fetchLists();
-    }, [backend]);
+		fetchLists();
+	}, [backend]);
 
-    //the hook for fetching measurements
-    useEffect(() => {
+	//the hook for fetching measurements
+	useEffect(() => {
 		const fetchUnits = async () => {
 			try {
 				const fetchedUnits = await backend.getAllMeasurements();
@@ -91,7 +106,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const handleOpen = (ingredient: Ingredient) => {
 		setSelectedIngredient(ingredient);
 		setOpen(true);
-        setAmountError(""); 
+		setAmountError("");
 	};
 
 	const handleClose = () => {
@@ -100,73 +115,69 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 		setSelectedUnit(units.length > 0 ? units[0] : "g");
 		setSelectedList("");
 		setSelectedIngredient(null);
-        setAmountError("");
+		setAmountError("");
 	};
 
 	/**
 	 *  Purpose: This function handles adding an ingredient to a certain list
 	 */
-    const handleAdd = async () => {
-        if (!selectedIngredient || !selectedList) {
-            console.error("Missing required fields: ingredient or list");
-            return;
-        }
-        
-        try {
-            const parsedAmount = parseFloat(amount as string);
-            if (parsedAmount <= 0 && isNumber(amount)) {
-                setAmountError("Please enter a valid amount.");
-                return;
-            }
-            const ingredientToAdd = new Ingredient(
-                selectedIngredient.name,
-                selectedIngredient.type,
-                parsedAmount,
-                selectedUnit 
-            );
-            // Call the addIngredient method on the backend
-            await backend.addIngredient(selectedList, ingredientToAdd);
-            handleClose();
-        } catch (error) {
-            console.error("Error adding ingredient:", error);
-        } 
-    };
-    
-    const filteredIngredients = ingredients.filter(ingredient =>
-        ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+	const handleAdd = async () => {
+		if (!selectedIngredient || !selectedList) {
+			console.error("Missing required fields: ingredient or list");
+			return;
+		}
+
+		try {
+			const parsedAmount = parseFloat(amount as string);
+			if (parsedAmount <= 0 && isNumber(amount)) {
+				setAmountError("Please enter a valid amount.");
+				return;
+			}
+			const ingredientToAdd = new Ingredient(
+				selectedIngredient.name,
+				selectedIngredient.type,
+				parsedAmount,
+				selectedUnit
+			);
+			// Call the addIngredient method on the backend
+			await backend.addIngredient(selectedList, ingredientToAdd);
+			handleClose();
+		} catch (error) {
+			console.error("Error adding ingredient:", error);
+		}
+	};
+
+	const filteredIngredients = ingredients.filter((ingredient) =>
+		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 
 	return (
-		<Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh" }}>
-			{/* App Bar */}
-			<AppBar position="static" className="header-color">
-				<Toolbar>
-					<AiOutlineArrowLeft style={{ fontSize: "24px", color: "white", cursor: "pointer" }} onClick={() => navigate("/logged-in")} />
-					<Typography variant="h6" style={{ flexGrow: 1, textAlign: "center" }}>
-						All Ingredients
-					</Typography>
-				</Toolbar>
-			</AppBar>
-
-            {/* Search Bar */}
-            <div style={{ paddingTop: '20px', display: 'flex', justifyContent: 'flex-start' }}>
-                <TextField
-
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    size="small" 
-                    style={{ width: '350px', backgroundColor: 'white' }} 
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    placeholder="Search Ingredients"
-                />
-            </div>
-
+		<Container
+			maxWidth={false}
+			disableGutters
+			className="sub-color"
+			style={{ height: "100%" }}
+		>
+			{/* Search Bar */}
+			<div style={{ paddingTop: "20px", display: "flex", justifyContent: "flex-start" }}>
+				<TextField
+					variant="outlined"
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					size="small"
+					style={{ width: "350px", backgroundColor: "white" }}
+					InputLabelProps={{
+						shrink: true,
+					}}
+					placeholder="Search Ingredients"
+				/>
+			</div>
 
 			{/* Main Content */}
-			<TableContainer component={Paper} style={{ marginTop: "20px" }}>
+			<TableContainer
+				component={Paper}
+				style={{ marginTop: "20px" }}
+			>
 				<Table>
 					<TableHead>
 						<TableRow>
@@ -175,25 +186,31 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 							<TableCell style={{ fontWeight: "bold", textAlign: "center" }}>Action</TableCell>
 						</TableRow>
 					</TableHead>
-                    <TableBody>
-                        {filteredIngredients.map((ingredient) => (
-                            <TableRow key={ingredient.name}>
-                                <TableCell>{ingredient.name}</TableCell>
-                                <TableCell>{ingredient.type}</TableCell>
-                                <TableCell style={{ textAlign: "center" }}>
-                                    <IconButton className="plus-button secondary-color" onClick={() => handleOpen(ingredient)}>
-                                        <AiOutlinePlus />
-                                    </IconButton>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-
+					<TableBody>
+						{filteredIngredients.map((ingredient) => (
+							<TableRow key={ingredient.name}>
+								<TableCell>{ingredient.name}</TableCell>
+								<TableCell>{ingredient.type}</TableCell>
+								<TableCell style={{ textAlign: "center" }}>
+									<IconButton
+										className="plus-button secondary-color"
+										onClick={() => handleOpen(ingredient)}
+									>
+										<AiOutlinePlus />
+									</IconButton>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
 				</Table>
 			</TableContainer>
 
-            {/* Popup Dialog for Adding Ingredients */}
-			<Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
+			{/* Popup Dialog for Adding Ingredients */}
+			<Dialog
+				open={open}
+				onClose={handleClose}
+				PaperProps={{ className: "secondary-color" }}
+			>
 				<DialogTitle>Add Ingredient</DialogTitle>
 				<DialogContent>
 					<TextField
@@ -203,37 +220,52 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 						type="number"
 						value={amount}
 						onChange={(e) => {
-                            const value = e.target.value
-                            setAmount(value);
-                            if(parseFloat(value)> 0 && isNumber(value)){setAmountError('')} }
-                        }
+							const value = e.target.value;
+							setAmount(value);
+							if (parseFloat(value) > 0 && isNumber(value)) {
+								setAmountError("");
+							}
+						}}
 						fullWidth
-						inputProps={{ step: "0.1", min: "0" }} 
-						style={{ backgroundColor: 'white' }}
+						inputProps={{ step: "0.1", min: "0" }}
+						style={{ backgroundColor: "white" }}
 					/>
-                    {amountError && <div style={{ color: 'red' }}>{amountError}</div>}
-					<div style={{ marginBottom: '0.5px', color: 'black' }}>
-						Unit
-					</div>
-					<TextField select value={selectedUnit} onChange={(e) => setSelectedUnit(e.target.value)} fullWidth style={{ marginTop: "10px", backgroundColor: 'white' }}>
+					{amountError && <div style={{ color: "red" }}>{amountError}</div>}
+					<div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
+					<TextField
+						select
+						value={selectedUnit}
+						onChange={(e) => setSelectedUnit(e.target.value)}
+						fullWidth
+						style={{ marginTop: "10px", backgroundColor: "white" }}
+					>
 						{units.map((option) => (
-							<MenuItem key={option} value={option}>
+							<MenuItem
+								key={option}
+								value={option}
+							>
 								{option}
 							</MenuItem>
 						))}
 					</TextField>
 
-
 					{/* New dropdown for selecting a list */}
-					<div style={{ marginBottom: '0.5px', color: 'black' }}>
-                         List Name
-                    </div>
-					<TextField select value={selectedList} onChange={(e) => setSelectedList(e.target.value)} fullWidth style={{ marginTop: "10px", backgroundColor: 'white' }}>
+					<div style={{ marginBottom: "0.5px", color: "black" }}>List Name</div>
+					<TextField
+						select
+						value={selectedList}
+						onChange={(e) => setSelectedList(e.target.value)}
+						fullWidth
+						style={{ marginTop: "10px", backgroundColor: "white" }}
+					>
 						{allLists.length === 0 ? (
 							<MenuItem value="">No lists available</MenuItem>
 						) : (
 							allLists.map((listItem) => (
-								<MenuItem key={listItem} value={listItem}>
+								<MenuItem
+									key={listItem}
+									value={listItem}
+								>
 									{listItem}
 								</MenuItem>
 							))
@@ -241,18 +273,24 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 					</TextField>
 				</DialogContent>
 				<DialogActions>
-					<Button onClick={handleClose} className="primary-color" style= {{color : 'black'}}>
+					<Button
+						onClick={handleClose}
+						className="primary-color"
+						style={{ color: "black" }}
+					>
 						Cancel
 					</Button>
-					<Button onClick={handleAdd} className="primary-color" style= {{color : 'black'}}>
+					<Button
+						onClick={handleAdd}
+						className="primary-color"
+						style={{ color: "black" }}
+					>
 						Add
 					</Button>
 				</DialogActions>
 			</Dialog>
 		</Container>
 	);
-
-
 }
 
 export default AllIngredients;

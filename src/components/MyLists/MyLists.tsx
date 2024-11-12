@@ -1,25 +1,21 @@
 import { Delete } from "@mui/icons-material";
 import {
-    AppBar,
-    Button,
-    Container,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
-    Toolbar,
-    Typography,
+	Button,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
@@ -112,33 +108,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			maxWidth={false}
 			disableGutters
 			className="sub-color"
-			style={{ height: "100vh" }}
+			style={{ height: "100%" }}
 		>
-			{/* App Bar */}
-			<AppBar
-				position="static"
-				className="header-color"
-			>
-				<Toolbar>
-					<AiOutlineArrowLeft
-						style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
-						onClick={() => navigate("/logged-in")}
-					/>
-					<Typography
-						variant="h6"
-						style={{
-							flexGrow: 1,
-							textAlign: "center",
-							color: "white",
-							fontWeight: "bold",
-							fontSize: "1.5rem",
-						}}
-					>
-						My Lists
-					</Typography>
-				</Toolbar>
-			</AppBar>
-
 			{/* Main Content */}
 			{isLoading ? (
 				<Loading />
@@ -290,7 +261,6 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			</Dialog>
 		</Container>
 	);
-    
 }
 
 export default MyLists;

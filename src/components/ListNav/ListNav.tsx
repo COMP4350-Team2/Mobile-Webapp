@@ -1,30 +1,26 @@
 import { Add, Delete, Edit } from "@mui/icons-material";
 import {
-    AppBar,
-    Button,
-    Container,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Fab,
-    MenuItem,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
-    Toolbar,
-    Typography,
+	Button,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Fab,
+	MenuItem,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
 import { useEffect, useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
 
@@ -34,30 +30,28 @@ interface ListNavProps {
 }
 
 function ListNav({ userAuth, backendInterface }: ListNavProps) {
-    const { listName } = useParams<{ listName: string }>();
-    const navigate = useNavigate();
-    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-    const [open, setOpen] = useState(false); //first dialogue for all ingredients
-    const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
-    const [chosenIngredient, setChosenIngredient] = useState<Ingredient | null>(null);
-    const [amount, setAmount] = useState<number | ''>('');
-    const [units, setUnits] = useState<string[]>([]);
-    const [selectedUnit, setSelectedUnit] = useState<string>("g");
-    const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null); 
-    const [openUnitDialog, setOpenUnitDialog] = useState(false);
-    const [openConfirmDialog, setOpenConfirmDialog] = useState(false); 
-    const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
-    const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [editAmount, setEditAmount] = useState<number | ''>('');
-    const [editUnit, setEditUnit] = useState<string>("g");
-    const [amountError, setAmountError] = useState<string>('');
-    const [searchQuery, setSearchQuery] = useState<string>("");
-    const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
-    const [availableLists, setAvailableLists] = useState<string[]>([]);
-    const [openMoveDialog, setOpenMoveDialog] = useState(false);
-    const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
-    const [formError, setFormError] = useState('');
-
+	const { listName } = useParams<{ listName: string }>();
+	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+	const [open, setOpen] = useState(false); //first dialogue for all ingredients
+	const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
+	const [chosenIngredient, setChosenIngredient] = useState<Ingredient | null>(null);
+	const [amount, setAmount] = useState<number | "">("");
+	const [units, setUnits] = useState<string[]>([]);
+	const [selectedUnit, setSelectedUnit] = useState<string>("g");
+	const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null);
+	const [openUnitDialog, setOpenUnitDialog] = useState(false);
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+	const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
+	const [openEditDialog, setOpenEditDialog] = useState(false);
+	const [editAmount, setEditAmount] = useState<number | "">("");
+	const [editUnit, setEditUnit] = useState<string>("g");
+	const [amountError, setAmountError] = useState<string>("");
+	const [searchQuery, setSearchQuery] = useState<string>("");
+	const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
+	const [availableLists, setAvailableLists] = useState<string[]>([]);
+	const [openMoveDialog, setOpenMoveDialog] = useState(false);
+	const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
+	const [formError, setFormError] = useState("");
 
 	useEffect(() => {
 		const fetchIngredients = async () => {
@@ -89,21 +83,20 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 		fetchUnits();
 	}, [backendInterface]);
-    
-    useEffect(() => {
-        const fetchUserLists = async () => {
-            try {
-                const lists = await userAuth.getMyLists(); 
-                const filteredLists = lists.filter(list => list.name !== listName); 
-                setAvailableLists(filteredLists.map(list => list.name)); 
-            } catch (error) {
-                console.error("Error fetching user lists:", error);
-            }
-        };
-    
-        fetchUserLists();
-    }, [listName, userAuth]);
-    
+
+	useEffect(() => {
+		const fetchUserLists = async () => {
+			try {
+				const lists = await userAuth.getMyLists();
+				const filteredLists = lists.filter((list) => list.name !== listName);
+				setAvailableLists(filteredLists.map((list) => list.name));
+			} catch (error) {
+				console.error("Error fetching user lists:", error);
+			}
+		};
+
+		fetchUserLists();
+	}, [listName, userAuth]);
 
 	const handleAddIngredient = async () => {
 		const allIngreds = await backendInterface.getAllIngredients();
@@ -151,12 +144,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	};
 
 	const handleAdd = async () => {
-        setAmountError('');
-        setFormError('');
-        
+		setAmountError("");
+		setFormError("");
+
 		if (!chosenIngredient || !listName || amount === "" || !selectedUnit) {
 			console.error("Missing required fields: ingredient, list, amount, or unit");
-            setFormError("Please fill out all the fields.");
+			setFormError("Please fill out all the fields.");
 			return;
 		}
 
@@ -194,173 +187,166 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			setAmountError("");
 		}
 
-        try {
-            const updatedIngredient = new Ingredient(
-                ingredientToEdit.name,
-                ingredientToEdit.type,
-                editAmount,
-                editUnit
-            );
-    
-            await backendInterface.updateIngred(listName, ingredientToEdit, updatedIngredient);
-    
-            // Fetch updated ingredients for the list to refresh the UI
-            const updatedIngredients = await userAuth.getIngredientsFromList(listName);
-            setIngredients(updatedIngredients);
-    
-        } catch (error) {
-            console.error("Error updating ingredient:", error);
-        } finally {
-            handleCloseEditDialog(); // Close the edit dialog
-        }
-    };
-    
-    const handleMoveIngredients = async (toListName: string) => {
-        if (!ingredientToMove || !listName) return; // Ensure ingredient and current list are set
-    
-        try {
-            await backendInterface.moveIngredient(listName, toListName, ingredientToMove); // Move ingredient
-    
-            const updatedIngredients = await userAuth.getIngredientsFromList(listName);
-            setIngredients(updatedIngredients);
-    
-        } catch (error) {
-            console.error("Error moving ingredient:", error);
-        } finally {
-            handleCloseMoveDialog(); 
-        }
-    };
+		try {
+			const updatedIngredient = new Ingredient(ingredientToEdit.name, ingredientToEdit.type, editAmount, editUnit);
 
-    const handleOpenEditDialog = (ingredient: Ingredient) => {
-        setIngredientToEdit(ingredient);
-        setEditAmount(ingredient.amount ?? ''); 
-        setEditUnit(ingredient.unit ?? "g"); 
-        setOpenEditDialog(true);
-    };
-    
-    const handleCloseEditDialog = () => {
-        setOpenEditDialog(false);
-        setTimeout(() => {
-            setIngredientToEdit(null);
-        }, 100); // Small delay to avoid rendering issues
-    };
-    const handleOpenMoveDialog = (ingredient: Ingredient) => {
-        setIngredientToMove(ingredient);
-        setOpenMoveDialog(true);
-    };
+			await backendInterface.updateIngred(listName, ingredientToEdit, updatedIngredient);
 
-    const handleCloseMoveDialog = () =>{
-        setOpenMoveDialog(false);
-        setIngredientToMove(null);
-    } 
+			// Fetch updated ingredients for the list to refresh the UI
+			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
+			setIngredients(updatedIngredients);
+		} catch (error) {
+			console.error("Error updating ingredient:", error);
+		} finally {
+			handleCloseEditDialog(); // Close the edit dialog
+		}
+	};
 
-    const filteredIngredients = ingredients.filter(ingredient =>
-        ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    
-    const filteredAllIngredients = allIngredients.filter(ingredient =>
-        ingredient.name.toLowerCase().includes(dialogSearchQuery.toLowerCase())
-    );
+	const handleMoveIngredients = async (toListName: string) => {
+		if (!ingredientToMove || !listName) return; // Ensure ingredient and current list are set
 
-    
-    return (
-        <Container maxWidth={false} disableGutters className="sub-color" style={{ height: "100vh", position: "relative" }}>
-            {/* App Bar */}
-            <AppBar position="static" className="header-color">
-                <Toolbar>
-                    <AiOutlineArrowLeft
-                        style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
-                        onClick={() => navigate("/my-lists")}
-                    />
-                    <Typography variant="h6" style={{ flexGrow: 1, textAlign: "center", color: "white", fontWeight: "bold", fontSize: "1.5rem" }}>
-                        {listName}
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            
-            {/* Search Bar */}
-            <div style={{ paddingTop: '20px', display: 'flex', justifyContent: 'flex-start' }}>
-                <TextField
+		try {
+			await backendInterface.moveIngredient(listName, toListName, ingredientToMove); // Move ingredient
 
-                    variant="outlined"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    size="small" 
-                    style={{ width: '350px', backgroundColor: 'white' }}
-                    InputLabelProps={{
-                        shrink: true,
-                    }}
-                    placeholder="Search Ingredients"
-                />
-            </div>
+			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
+			setIngredients(updatedIngredients);
+		} catch (error) {
+			console.error("Error moving ingredient:", error);
+		} finally {
+			handleCloseMoveDialog();
+		}
+	};
 
-            {/* Ingredient Table */}
-            <TableContainer component={Paper} style={{ marginTop: "20px" }}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell style={{ fontWeight: "bold" }}>Ingredient Name</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }}>Type</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }}>Amount</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }}>Unit</TableCell>
-                            <TableCell style={{ fontWeight: "bold" }}>Actions</TableCell> 
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {ingredients.length > 0 ? (
-                            filteredIngredients.map((ingredient, index) => (
-                                <TableRow
-                                    key={index}
-                                    sx={{
-                                        cursor: "pointer",
-                                        backgroundColor: "white",
-                                        "&:hover": {
-                                            backgroundColor: "#f5f5f5",
-                                        },
-                                    }}
-                                    style={{
-                                        borderBottom: "1px solid #ddd",
-                                    }}
-                                >
-                                    <TableCell style={{ padding: "12px 16px" }}>{ingredient.name}</TableCell>
-                                    <TableCell>{ingredient.type}</TableCell>
-                                    <TableCell>{ingredient.amount ?? "N/A"}</TableCell>
-                                    <TableCell>{ingredient.unit ?? "N/A"}</TableCell>
-                                    <TableCell>
-                                    <div style={{ display: "flex", gap: "8px", transform: "translateX(-55px)" }}>
-                                        <Button
-                                            color="error"
-                                            onClick={() => handleOpenConfirmDialog(ingredient)} 
-                                        >
-                                            <Delete />
-                                        </Button>
-                                            <Button color="primary" 
-                                            onClick={() => handleOpenEditDialog(ingredient)}
-                                            style={{ transform: "translateX(-15px)" }}>
-                                            <Edit />
-                                        </Button>
+	const handleOpenEditDialog = (ingredient: Ingredient) => {
+		setIngredientToEdit(ingredient);
+		setEditAmount(ingredient.amount ?? "");
+		setEditUnit(ingredient.unit ?? "g");
+		setOpenEditDialog(true);
+	};
 
-                                        <Button
-                                            className="secondary-color"
-                                            onClick={() =>handleOpenMoveDialog(ingredient)} 
-                                            style={{ transform: "translateX(-15px)" }}
-                                            sx={{ color: "black" }}
-                                            size = "small"
-                                        >
-                                            Move
-                                        </Button>
-                                    </div>
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell style={{ fontSize: "1.1rem", color: "#555" }} colSpan={5}>No ingredients available</TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+	const handleCloseEditDialog = () => {
+		setOpenEditDialog(false);
+		setTimeout(() => {
+			setIngredientToEdit(null);
+		}, 100); // Small delay to avoid rendering issues
+	};
+	const handleOpenMoveDialog = (ingredient: Ingredient) => {
+		setIngredientToMove(ingredient);
+		setOpenMoveDialog(true);
+	};
+
+	const handleCloseMoveDialog = () => {
+		setOpenMoveDialog(false);
+		setIngredientToMove(null);
+	};
+
+	const filteredIngredients = ingredients.filter((ingredient) =>
+		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
+	const filteredAllIngredients = allIngredients.filter((ingredient) =>
+		ingredient.name.toLowerCase().includes(dialogSearchQuery.toLowerCase())
+	);
+
+	return (
+		<Container
+			maxWidth={false}
+			disableGutters
+			className="sub-color"
+			style={{ height: "100%", position: "relative" }}
+		>
+			{/* Search Bar */}
+			<div style={{ paddingTop: "20px", display: "flex", justifyContent: "flex-start" }}>
+				<TextField
+					variant="outlined"
+					value={searchQuery}
+					onChange={(e) => setSearchQuery(e.target.value)}
+					size="small"
+					style={{ width: "350px", backgroundColor: "white" }}
+					InputLabelProps={{
+						shrink: true,
+					}}
+					placeholder="Search Ingredients"
+				/>
+			</div>
+
+			{/* Ingredient Table */}
+			<TableContainer
+				component={Paper}
+				style={{ marginTop: "20px" }}
+			>
+				<Table>
+					<TableHead>
+						<TableRow>
+							<TableCell style={{ fontWeight: "bold" }}>Ingredient Name</TableCell>
+							<TableCell style={{ fontWeight: "bold" }}>Type</TableCell>
+							<TableCell style={{ fontWeight: "bold" }}>Amount</TableCell>
+							<TableCell style={{ fontWeight: "bold" }}>Unit</TableCell>
+							<TableCell style={{ fontWeight: "bold" }}>Actions</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{ingredients.length > 0 ? (
+							filteredIngredients.map((ingredient, index) => (
+								<TableRow
+									key={index}
+									sx={{
+										cursor: "pointer",
+										backgroundColor: "white",
+										"&:hover": {
+											backgroundColor: "#f5f5f5",
+										},
+									}}
+									style={{
+										borderBottom: "1px solid #ddd",
+									}}
+								>
+									<TableCell style={{ padding: "12px 16px" }}>{ingredient.name}</TableCell>
+									<TableCell>{ingredient.type}</TableCell>
+									<TableCell>{ingredient.amount ?? "N/A"}</TableCell>
+									<TableCell>{ingredient.unit ?? "N/A"}</TableCell>
+									<TableCell>
+										<div style={{ display: "flex", gap: "8px", transform: "translateX(-55px)" }}>
+											<Button
+												color="error"
+												onClick={() => handleOpenConfirmDialog(ingredient)}
+											>
+												<Delete />
+											</Button>
+											<Button
+												color="primary"
+												onClick={() => handleOpenEditDialog(ingredient)}
+												style={{ transform: "translateX(-15px)" }}
+											>
+												<Edit />
+											</Button>
+
+											<Button
+												className="secondary-color"
+												onClick={() => handleOpenMoveDialog(ingredient)}
+												style={{ transform: "translateX(-15px)" }}
+												sx={{ color: "black" }}
+												size="small"
+											>
+												Move
+											</Button>
+										</div>
+									</TableCell>
+								</TableRow>
+							))
+						) : (
+							<TableRow>
+								<TableCell
+									style={{ fontSize: "1.1rem", color: "#555" }}
+									colSpan={5}
+								>
+									No ingredients available
+								</TableCell>
+							</TableRow>
+						)}
+					</TableBody>
+				</Table>
+			</TableContainer>
 
 			{/* Confirm Delete Dialog */}
 			<Dialog
@@ -529,93 +515,113 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				</DialogActions>
 			</Dialog>
 
+			{/* Dialog for adding ingredient*/}
+			<Dialog
+				open={openUnitDialog}
+				onClose={handleUnitDialogClose}
+				PaperProps={{ className: "secondary-color" }}
+			>
+				<DialogTitle>{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}</DialogTitle>
+				<DialogContent>
+					<TextField
+						label="Amount"
+						type="number"
+						value={amount}
+						onChange={(e) => {
+							const value = e.target.value;
+							if (value === "") {
+								setAmount("");
+								setAmountError("");
+							} else if (isNumber(value)) {
+								setAmount(Number(value));
+								setAmountError("");
+							}
+						}}
+						fullWidth
+						margin="normal"
+						style={{ backgroundColor: "white" }}
+					/>
+					{amountError && <div style={{ color: "red" }}>{amountError}</div>}
+					<div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
+					<TextField
+						select
+						value={selectedUnit}
+						onChange={(e) => setSelectedUnit(e.target.value)}
+						fullWidth
+						margin="normal"
+						style={{ backgroundColor: "white" }}
+					>
+						{units.map((unitOption) => (
+							<MenuItem
+								key={unitOption}
+								value={unitOption}
+							>
+								{unitOption}
+							</MenuItem>
+						))}
+					</TextField>
+					{formError && <div style={{ color: "red" }}>{formError}</div>}
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleAdd}
+						className="primary-color"
+						style={{ color: "black" }}
+					>
+						Add
+					</Button>
+					<Button
+						onClick={handleUnitDialogClose}
+						className="primary-color"
+						style={{ color: "black" }}
+					>
+						Back
+					</Button>
+				</DialogActions>
+			</Dialog>
 
-        {/* Dialog for adding ingredient*/}
-        <Dialog open={openUnitDialog} onClose={handleUnitDialogClose} PaperProps={{ className: "secondary-color" }}>
-                <DialogTitle>{chosenIngredient ? `Add ${chosenIngredient.name}` : 'Add Ingredient'}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        label="Amount"
-                        type="number"
-                        value={amount}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            if (value === "") {
-                                setAmount(""); 
-                                setAmountError('');
-                            } else if (isNumber(value)) {
-                                setAmount(Number(value));
-                                setAmountError('');
-                            }
-                        }}                        
-                        fullWidth
-                        margin="normal"
-                        style={{ backgroundColor: 'white' }} 
-                    />
-                    {amountError && <div style={{ color: 'red' }}>{amountError}</div>}
-                    <div style={{ marginBottom: '0.5px', color: 'black' }}>
-                         Unit
-                    </div>
-                    <TextField
-                        select
-                        value={selectedUnit}
-                        onChange={(e) => setSelectedUnit(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        style={{ backgroundColor: 'white' }}
-                    >
-                        {units.map((unitOption) => ( 
-                            <MenuItem key={unitOption} value={unitOption}>
-                                {unitOption}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                    {formError && <div style={{ color: 'red' }}>{formError}</div>}
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleAdd} className="primary-color" style={{ color: 'black' }}>
-                        Add
-                    </Button>
-                    <Button onClick={handleUnitDialogClose} className="primary-color" style={{ color: 'black' }}>
-                        Back
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
-            {/*Dialogue that opens when you click Move */}
-            <Dialog open={openMoveDialog} onClose={handleCloseMoveDialog} PaperProps={{ className: "secondary-color" }}>
-                <DialogTitle>Select List to Move</DialogTitle>
-                <DialogContent>
-                    {/* List of available lists */}
-                    <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-                        {availableLists.map((listName, index) => (
-                            <div
-                                key={index}
-                                onClick={() => {
-                                    handleMoveIngredients(listName)
-                                }}
-                                style={{
-                                    padding: '10px',
-                                    cursor: 'pointer',
-                                    borderBottom: '1px solid #ddd',
-                                    transition: 'background-color 0.2s',
-                                }}
-                                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#e0e0e0'}
-                                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'inherit'}
-                            >
-                                {listName}
-                            </div>
-                        ))}
-                    </div>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleCloseMoveDialog} className="primary-color" style={{ color: 'black' }}>
-                        Close
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        </Container>
-    );
+			{/*Dialogue that opens when you click Move */}
+			<Dialog
+				open={openMoveDialog}
+				onClose={handleCloseMoveDialog}
+				PaperProps={{ className: "secondary-color" }}
+			>
+				<DialogTitle>Select List to Move</DialogTitle>
+				<DialogContent>
+					{/* List of available lists */}
+					<div style={{ maxHeight: "300px", overflowY: "auto" }}>
+						{availableLists.map((listName, index) => (
+							<div
+								key={index}
+								onClick={() => {
+									handleMoveIngredients(listName);
+								}}
+								style={{
+									padding: "10px",
+									cursor: "pointer",
+									borderBottom: "1px solid #ddd",
+									transition: "background-color 0.2s",
+								}}
+								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
+							>
+								{listName}
+							</div>
+						))}
+					</div>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleCloseMoveDialog}
+						className="primary-color"
+						style={{ color: "black" }}
+					>
+						Close
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</Container>
+	);
 }
 
 export default ListNav;
