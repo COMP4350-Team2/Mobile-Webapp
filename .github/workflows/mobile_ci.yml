@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Unit tests
+      - name: Run all tests
         run: CI=true npm test
 
       - name: Start application

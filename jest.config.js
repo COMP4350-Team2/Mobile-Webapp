@@ -7,8 +7,8 @@ module.exports = {
     moduleFileExtensions: ["js", "jsx", "ts", "tsx"],
     transformIgnorePatterns: ["<rootDir>/node_modules/"],
     testMatch: [
-        "<rootDir>/src/components/**/*.test.{js,jsx,ts,tsx}",
-        "<rootDir>/src/components/**/*.spec.{js,jsx,ts,tsx}"
+      "<rootDir>/src/components/**/*.test.{js,jsx,ts,tsx}",
+      "<rootDir>/src/components/**/*.spec.{js,jsx,ts,tsx}"
     ]
   };
   
