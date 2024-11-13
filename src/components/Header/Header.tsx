@@ -10,7 +10,7 @@ interface HeaderProp {
 }
 
 function Header({ searchQuery, searchQueryChange }: HeaderProp) {
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [anchorEl] = React.useState<null | HTMLElement>(null);
 	const [searchBarOpenned, toggleSearchBar] = React.useState(false);
 	const open = Boolean(anchorEl);
 	const location = useLocation();
@@ -25,7 +25,7 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 		[]
 	);
 
-	const searchInapplicableScreens = ["Logged In"];
+	const searchInapplicableScreens = useMemo(() => ["Logged In"], []);
 
 	// Determine the active screen name based on the current path
 	const activeScreenName = useMemo(() => {
