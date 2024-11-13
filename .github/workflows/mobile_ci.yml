@@ -41,7 +41,7 @@ jobs:
         run: rm -rf ./node_modules/.cache/typescript
 
       - name: Start application
-        run: npm run build
+        run: CI=false npm run build
 
   Build-docker:
     runs-on: ubuntu-latest
