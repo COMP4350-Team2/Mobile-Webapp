@@ -140,7 +140,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						variant="contained"
 						color="primary"
-						style={{ margin: "20px" }}
+						style={{ marginTop: "20px", marginLeft: "8px"}}
 						onClick={handleOpenNewListDialog}
 					>
 						Create List
