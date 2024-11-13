@@ -1,25 +1,26 @@
 import { Delete } from "@mui/icons-material";
 import {
-	Button,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/List";
+import { LayoutContext } from "../Layout/Layout";
 import Loading from "../Loading/Loading";
 
 interface MyListsProps {
@@ -29,6 +30,7 @@ interface MyListsProps {
 
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
+    const { searchQuery } = useOutletContext<LayoutContext>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [myLists, updateMyLists] = useState<List[]>([]);
 	const [openNewListDialog, setOpenNewListDialog] = useState(false);
@@ -103,6 +105,25 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		closeConfirmDeleteDialog();
 	};
 
+    const filteredLists = myLists.filter((list) =>
+        list.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const highlightText = (text: string, query: string) => {
+        if (!query) return text;
+    
+        const parts = text.split(new RegExp(`(${query})`, "gi"));
+        return parts.map((part, index) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <span key={index} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        );
+    };
+
 	return (
 		<Container
 			maxWidth={false}
@@ -137,8 +158,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{myLists.length > 0 ? (
-									myLists.map((list, index) => (
+								{filteredLists.length > 0 ? (
+									filteredLists.map((list, index) => (
 										<TableRow
 											key={index}
 											onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}
@@ -153,7 +174,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 												borderBottom: "1px solid #ddd",
 											}}
 										>
-											<TableCell style={{ padding: "12px 16px" }}>{list.name}</TableCell>
+											<TableCell style={{ padding: "12px 16px" }}>{highlightText(list.name, searchQuery)}
+                                            </TableCell>
 											<TableCell>
 												<Button
 													color="error"
