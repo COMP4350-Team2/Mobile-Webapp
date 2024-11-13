@@ -35,7 +35,7 @@ jobs:
         run: npm install
 
       - name: Clear ESLint cache
-        run: npx eslint --clear-cache
+        run: rm -f .eslintcache
 
       - name: Start application
         run: npm run build
