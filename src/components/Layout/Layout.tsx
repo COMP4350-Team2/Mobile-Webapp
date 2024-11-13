@@ -10,19 +10,6 @@ export interface LayoutContext {
 
 function Layout() {
 	const [searchQuery, searchQueryChange] = React.useState("");
-
-	// return (
-	// 	<div className="full-screen">
-	// 		<Header
-	// 			searchQuery={searchQuery}
-	// 			searchQueryChange={(val) => searchQueryChange(val)}
-	// 		></Header>
-	// 		<Outlet context={{ searchQuery }} />
-	// 		{/* Add toolbar here*/}
-    //         <ToolBar/>
-	// 	</div>
-	// );
-
     return (
         <div className="full-screen">
           <Header
