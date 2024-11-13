@@ -31,11 +31,11 @@ jobs:
       - name: Delete previous node modules
         run: rm -rf node_modules
 
-      - name: Clear ESLint cache
-        run: npx eslint --clear-cache
-
       - name: Install dependencies
         run: npm install
+
+      - name: Clear ESLint cache
+        run: npx eslint --clear-cache
 
       - name: Start application
         run: npm run build
