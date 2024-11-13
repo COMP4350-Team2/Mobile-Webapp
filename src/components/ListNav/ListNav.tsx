@@ -281,7 +281,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                       <Typography 
                             variant="h6" 
                             style = {{color: 'black'}}>
-                            {ingredient.name}
+                            {highlightText(ingredient.name, searchQuery)}
                         </Typography>
 
                       <Typography 
@@ -386,8 +386,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             className="primary-color"
             style={{
               position: "fixed",
-              bottom: "20px",
-              right: "20px",
+              bottom: "70px",
+              right: "25px",
             }}
             onClick={handleAddIngredient}
           >
