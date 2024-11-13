@@ -3,22 +3,22 @@
  */
 
 import {
-	Button,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	IconButton,
-	MenuItem,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    MenuItem,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
@@ -152,6 +152,21 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
+    const highlightText = (text: string, query: string) => {
+        if (!query) return text;
+    
+        const parts = text.split(new RegExp(`(${query})`, "gi"));
+        return parts.map((part, index) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <span key={index} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        );
+    };
+
 	return (
 		<Container
 			maxWidth={false}
@@ -175,7 +190,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 					<TableBody>
 						{filteredIngredients.map((ingredient) => (
 							<TableRow key={ingredient.name}>
-								<TableCell>{ingredient.name}</TableCell>
+								<TableCell>{highlightText(ingredient.name, searchQuery)}</TableCell>
 								<TableCell>{ingredient.type}</TableCell>
 								<TableCell style={{ textAlign: "center" }}>
 									<IconButton
