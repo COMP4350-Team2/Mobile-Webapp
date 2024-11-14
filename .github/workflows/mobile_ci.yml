@@ -25,20 +25,8 @@ jobs:
           ENV_FILE: ${{ secrets.ENV }}
         run: echo "$ENV_FILE" > ".env"
 
-      - name: Clean npm cache
-        run: npm cache clean --force
-
-      - name: Delete previous node modules
-        run: rm -rf node_modules
-
       - name: Install dependencies
         run: npm install
-
-      - name: Clear ESLint cache
-        run: rm -f .eslintcache
-
-      - name: Clean TypeScript cache
-        run: rm -rf ./node_modules/.cache/typescript
 
       - name: Start application
         run: CI=false npm run build
