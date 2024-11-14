@@ -2,10 +2,12 @@ import HomeIcon from "@mui/icons-material/Home";
 import ListIcon from "@mui/icons-material/List";
 import { useNavigate } from "react-router-dom";
 import "./Toolbar.css";
+import React from "react";
 
 function ToolBar() {
 
     const navigate = useNavigate();
+    const isDisabled = React.useState(true);
 
     return (
         <div className="toolbar">
@@ -33,7 +35,7 @@ function ToolBar() {
             <span className="toolbar-button-text">Ingredients</span>
           </div>
     
-          <div className="toolbar-button">
+          <div className={`toolbar-button ${isDisabled ? "disabled" : ""}`}>
             <ListIcon className="toolbar-button-icon" />
             <span className="toolbar-button-text">Recipes</span>
           </div>
