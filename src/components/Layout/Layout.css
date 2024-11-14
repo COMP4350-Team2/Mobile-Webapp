@@ -5,8 +5,7 @@
 }
 
 .content-container {
-    flex: 1; 
-    overflow-y: auto;
+    height: 100%;
     padding: 10px; 
     background-color: #bbe1fa;
 }
