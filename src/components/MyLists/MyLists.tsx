@@ -115,7 +115,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
         const parts = text.split(new RegExp(`(${query})`, "gi"));
         return parts.map((part, index) =>
           part.toLowerCase() === query.toLowerCase() ? (
-            <span key={index} style={{ backgroundColor: "yellow", fontWeight: "bold" }}>
+            <span key={index} style={{fontWeight: "bold" }}>
               {part}
             </span>
           ) : (
@@ -140,7 +140,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						variant="contained"
 						color="primary"
-						style={{ marginTop: "20px", marginLeft: "8px"}}
+						style={{ marginTop: "20px", marginLeft: "0.75px"}}
 						onClick={handleOpenNewListDialog}
 					>
 						Create List
@@ -148,7 +148,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 
 					<TableContainer
 						component={Paper}
-						style={{ marginTop: "20px" }}
+						style={{ marginTop: "10px" }}
 					>
 						<Table>
 							<TableHead>
