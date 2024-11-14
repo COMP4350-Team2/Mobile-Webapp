@@ -1,4 +1,4 @@
-import { Add, Delete, Edit } from "@mui/icons-material";
+import { Add, Delete, Edit, SwapHoriz } from "@mui/icons-material";
 import {
     Button,
     Card,
@@ -11,6 +11,7 @@ import {
     DialogTitle,
     Fab,
     Grid,
+    IconButton,
     MenuItem,
     TextField,
     Typography
@@ -305,28 +306,30 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
                     <CardActions sx={{ display: "flex", justifyContent: "flex-end", gap: "8px", padding: 1 }}>
                     <div
-                        style={{ display: "flex", gap: "8px" }}
+                        style={{ display: "flex", gap: "8px"}}
                     >
                     <Button
                     color="error"
                     onClick={() => handleOpenConfirmDialog(ingredient)}
+                    sx={{ transform: "translateX(8px)" }}
                     >
                     <Delete />
                     </Button>
                     <Button
                     color="primary"
                     onClick={() => handleOpenEditDialog(ingredient)}
+                    sx={{ transform: "translateX(-2px)" }}
                     >
                     <Edit />
                     </Button>
-                    <Button
+                    <IconButton
                     className="secondary-color"
                     onClick={() => handleOpenMoveDialog(ingredient)}
-                    sx={{ color: "black" }}
+                    sx={{ color: "black" , width: "35px" }}
                     size="small"
                     >
-                    Move
-                    </Button>
+                    <SwapHoriz /> 
+                    </IconButton>
                 </div>
                 </CardActions>
                   </Card>
@@ -340,6 +343,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               </Grid>
             )}
           </Grid>
+
+           {/* Spacer for FAB */}
+            <div style={{ height: "60px" }}></div> 
       
           {/* Confirm Delete Dialog */}
           <Dialog
@@ -386,7 +392,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             className="primary-color"
             style={{
               position: "fixed",
-              bottom: "70px",
+              bottom: "10%",
               right: "25px",
             }}
             onClick={handleAddIngredient}
