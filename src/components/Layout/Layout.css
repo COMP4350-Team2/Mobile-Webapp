@@ -3,3 +3,14 @@
 	display: flex;
 	flex-direction: column;
 }
+
+.content-container {
+    height: 100%;
+    padding: 10px; 
+    background-color: #bbe1fa;
+    margin-bottom: 65px;
+    overflow-y: auto;
+}
+  
+  
+  

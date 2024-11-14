@@ -1,5 +1,5 @@
 import { AppBar, IconButton, Input, InputAdornment, Toolbar, Typography } from "@mui/material";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
 import "./Header.css";
@@ -10,7 +10,7 @@ interface HeaderProp {
 }
 
 function Header({ searchQuery, searchQueryChange }: HeaderProp) {
-	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+	const [anchorEl] = React.useState<null | HTMLElement>(null);
 	const [searchBarOpenned, toggleSearchBar] = React.useState(false);
 	const open = Boolean(anchorEl);
 	const location = useLocation();
@@ -25,7 +25,7 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 		[]
 	);
 
-	const searchInapplicableScreens = ["Logged In", "My Lists"];
+	const searchInapplicableScreens = useMemo(() => ["Logged In"], []);
 
 	// Determine the active screen name based on the current path
 	const activeScreenName = useMemo(() => {
@@ -45,6 +45,12 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 		return "404 Page Not Found";
 	}, [location.pathname, routeNames]);
 
+    useEffect(() => {
+		if (searchInapplicableScreens.includes(activeScreenName)) {
+			toggleSearchBar(false);  // Close the search bar when the route is one where it's not allowed
+		}
+	}, [activeScreenName, searchInapplicableScreens])
+    
 	const toggleMenu = (event: React.MouseEvent<HTMLElement>) => {
 		// Add code to handle opening/closing menu here
 	};
