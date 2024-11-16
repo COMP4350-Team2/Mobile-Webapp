@@ -3,12 +3,12 @@ import MyLists from "components/MyLists/MyLists";
 import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import UserAuthFactory from "./auth/UserAuthFactory";
-import AllIngredients from "./components/AllIngredients/AllIngredients";
-import Home from "./components/Home/Home";
-import Layout from "./components/Layout/Layout";
-import LoggedIn from "./components/LoggedIn/LoggedIn";
-import BackendFactory from "./services/BackendFactory";
+import UserAuthFactory from "auth/UserAuthFactory";
+import AllIngredients from "components/AllIngredients/AllIngredients";
+import Home from "components/Home/Home";
+import Layout from "components/Layout/Layout";
+import LoggedIn from "components/LoggedIn/LoggedIn";
+import BackendFactory from "services/BackendFactory";
 
 function App() {
 	const [isFirstLoggin, setIsFirstLoggin] = useState(true);
@@ -22,7 +22,7 @@ function App() {
 			errorElement: <div>404 Page Not Found</div>,
 		},
 		{
-			element: <Layout />,
+			element: <Layout userAuth={userAuth} />,
 			children: [
 				{
 					path: "/logged-in",

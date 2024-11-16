@@ -8,6 +8,7 @@ export interface UserAuth {
 	isAuthenticated: () => boolean;
 	isProcessing: () => boolean;
 	getAccessToken: () => Promise<string>;
+	getEmail: () => string;
 	isAuth0User: () => boolean;
 
 	// Functional methods
