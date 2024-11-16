@@ -49,9 +49,9 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 
 	useEffect(() => {
 		if (searchInapplicableScreens.includes(activeScreenName)) {
-			toggleSearchBar(false);  // Close the search bar when the route is one where it's not allowed
+			toggleSearchBar(false); // Close the search bar when the route is one where it's not allowed
 		}
-	}, [activeScreenName, searchInapplicableScreens])
+	}, [activeScreenName, searchInapplicableScreens]);
 
 	return (
 		<>
@@ -113,7 +113,11 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 			)}
 
 			{menuOpenned && (
-				<SideMenu userAuth={userAuth} open={menuOpenned} onClose={() => toggleMenu(false)}></SideMenu>
+				<SideMenu
+					userAuth={userAuth}
+					open={menuOpenned}
+					onClose={() => toggleMenu(false)}
+				></SideMenu>
 			)}
 		</>
 	);
