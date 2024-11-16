@@ -1,0 +1,22 @@
+.side-menu .MuiDrawer-paper {
+    width: 250px;
+}
+
+.side-menu-header {
+    padding: 16px 0;
+    text-align: center;
+}
+
+.email {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.menu-list {
+    flex-grow: 1;
+}
+
+.MuiDivider-root.thick-divider {
+    border-bottom-width: 2px;
+    margin: 0 8px;
+}

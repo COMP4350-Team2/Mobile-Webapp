@@ -3,16 +3,18 @@ import React, { useEffect, useMemo } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
 import "./Header.css";
+import SideMenu from "components/SideMenu/SideMenu";
+import { UserAuth } from "auth/UserAuth";
 
 interface HeaderProp {
+	userAuth: UserAuth;
 	searchQuery: string;
 	searchQueryChange: (val: string) => void;
 }
 
-function Header({ searchQuery, searchQueryChange }: HeaderProp) {
-	const [anchorEl] = React.useState<null | HTMLElement>(null);
+function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
+	const [menuOpenned, toggleMenu] = React.useState(false);
 	const [searchBarOpenned, toggleSearchBar] = React.useState(false);
-	const open = Boolean(anchorEl);
 	const location = useLocation();
 
 	const routeNames = useMemo(
@@ -45,15 +47,11 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 		return "404 Page Not Found";
 	}, [location.pathname, routeNames]);
 
-    useEffect(() => {
+	useEffect(() => {
 		if (searchInapplicableScreens.includes(activeScreenName)) {
 			toggleSearchBar(false);  // Close the search bar when the route is one where it's not allowed
 		}
 	}, [activeScreenName, searchInapplicableScreens])
-    
-	const toggleMenu = (event: React.MouseEvent<HTMLElement>) => {
-		// Add code to handle opening/closing menu here
-	};
 
 	return (
 		<>
@@ -64,10 +62,10 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 				<Toolbar>
 					<IconButton
 						aria-label="menu"
-						aria-controls={open ? "menu" : undefined}
-						aria-expanded={open ? "true" : undefined}
+						aria-controls={menuOpenned ? "menu" : undefined}
+						aria-expanded={menuOpenned ? "true" : undefined}
 						aria-haspopup="true"
-						onClick={toggleMenu}
+						onClick={() => toggleMenu(true)}
 						sx={{ color: "white" }}
 					>
 						<AiOutlineMenu />
@@ -85,8 +83,8 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 					{!searchInapplicableScreens.includes(activeScreenName) ? (
 						<IconButton
 							aria-label="menu"
-							aria-controls={open ? "search-bar" : undefined}
-							aria-expanded={open ? "true" : "false"}
+							aria-controls={searchBarOpenned ? "search-bar" : undefined}
+							aria-expanded={searchBarOpenned ? "true" : "false"}
 							aria-haspopup="true"
 							onClick={() => toggleSearchBar(!searchBarOpenned)}
 							sx={{ color: "white" }}
@@ -100,7 +98,7 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 				</Toolbar>
 			</AppBar>
 
-			{searchBarOpenned ? (
+			{searchBarOpenned && (
 				<Input
 					value={searchQuery}
 					onChange={(e) => searchQueryChange(e.target.value)}
@@ -112,7 +110,11 @@ function Header({ searchQuery, searchQueryChange }: HeaderProp) {
 						</InputAdornment>
 					}
 				/>
-			) : null}
+			)}
+
+			{menuOpenned && (
+				<SideMenu userAuth={userAuth} open={menuOpenned} onClose={() => toggleMenu(false)}></SideMenu>
+			)}
 		</>
 	);
 }
