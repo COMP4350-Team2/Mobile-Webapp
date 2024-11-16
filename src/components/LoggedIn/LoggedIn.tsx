@@ -50,7 +50,7 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 	return (
 		<div
 			className="sub-color"
-			style={{ height: "100vh" }}
+			style={{ height: "100%" }}
 		>
 			{/* Background Logo */}
 			<div className="logo-background" />
@@ -125,9 +125,7 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 								</span>
 							</div>
 
-							<div style={{ color: "white", fontSize: "1.2rem", marginBottom: "20px" }}>
-								User Type: {userType}
-							</div>
+							<div style={{ color: "white", fontSize: "1.2rem", marginBottom: "20px" }}>User Type: {userType}</div>
 
 							<button
 								className="primary-color logout-button"
@@ -145,29 +143,6 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 							</button>
 						</div>
 					)}
-
-					{/* Cards Container */}
-					<div className="card-container">
-						{/* Card for "View My Lists" */}
-						<div
-							className="primary-color card"
-							onClick={() => navigate("/my-lists")}
-							onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-							onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-						>
-							My Lists
-						</div>
-
-						{/* Card for "View All Ingredients" */}
-						<div
-							className="primary-color card"
-							onClick={() => navigate("/all-ingredients")}
-							onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-							onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-						>
-							All Ingredients
-						</div>
-					</div>
 				</div>
 			)}
 		</div>

@@ -1,6 +1,5 @@
 import { Delete } from "@mui/icons-material";
 import {
-    AppBar,
     Button,
     Container,
     Dialog,
@@ -15,15 +14,13 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Toolbar,
-    Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AiOutlineArrowLeft } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/List";
+import { LayoutContext } from "../Layout/Layout";
 import Loading from "../Loading/Loading";
 
 interface MyListsProps {
@@ -33,6 +30,7 @@ interface MyListsProps {
 
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
+    const { searchQuery } = useOutletContext<LayoutContext>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [myLists, updateMyLists] = useState<List[]>([]);
 	const [openNewListDialog, setOpenNewListDialog] = useState(false);
@@ -107,38 +105,32 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		closeConfirmDeleteDialog();
 	};
 
+    const filteredLists = myLists.filter((list) =>
+        list.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const highlightText = (text: string, query: string) => {
+        if (!query) return text;
+    
+        const parts = text.split(new RegExp(`(${query})`, "gi"));
+        return parts.map((part, index) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <span key={index} style={{fontWeight: "bold" }}>
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        );
+    };
+
 	return (
 		<Container
 			maxWidth={false}
 			disableGutters
 			className="sub-color"
-			style={{ height: "100vh" }}
+			style={{ height: "100%" }}
 		>
-			{/* App Bar */}
-			<AppBar
-				position="static"
-				className="header-color"
-			>
-				<Toolbar>
-					<AiOutlineArrowLeft
-						style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
-						onClick={() => navigate("/logged-in")}
-					/>
-					<Typography
-						variant="h6"
-						style={{
-							flexGrow: 1,
-							textAlign: "center",
-							color: "white",
-							fontWeight: "bold",
-							fontSize: "1.5rem",
-						}}
-					>
-						My Lists
-					</Typography>
-				</Toolbar>
-			</AppBar>
-
 			{/* Main Content */}
 			{isLoading ? (
 				<Loading />
@@ -148,7 +140,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						variant="contained"
 						color="primary"
-						style={{ margin: "20px" }}
+						style={{ marginTop: "20px", marginLeft: "0.75px"}}
 						onClick={handleOpenNewListDialog}
 					>
 						Create List
@@ -156,7 +148,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 
 					<TableContainer
 						component={Paper}
-						style={{ marginTop: "20px" }}
+						style={{ marginTop: "10px" }}
 					>
 						<Table>
 							<TableHead>
@@ -166,8 +158,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 								</TableRow>
 							</TableHead>
 							<TableBody>
-								{myLists.length > 0 ? (
-									myLists.map((list, index) => (
+								{filteredLists.length > 0 ? (
+									filteredLists.map((list, index) => (
 										<TableRow
 											key={index}
 											onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}
@@ -182,7 +174,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 												borderBottom: "1px solid #ddd",
 											}}
 										>
-											<TableCell style={{ padding: "12px 16px" }}>{list.name}</TableCell>
+											<TableCell style={{ padding: "12px 16px" }}>{highlightText(list.name, searchQuery)}
+                                            </TableCell>
 											<TableCell>
 												<Button
 													color="error"
@@ -290,7 +283,6 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			</Dialog>
 		</Container>
 	);
-    
 }
 
 export default MyLists;

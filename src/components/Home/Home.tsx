@@ -23,12 +23,13 @@ function Home({ userAuth }: HomeProps) {
 	return (
 		<div className="container">
 			{/* Background Logo */}
-			<div className="sub-color logo-background" />
+			<div className="logo-background" />
 
 			{/* Banner */}
 			<span className="header-color header">Welcome to Cupboard!</span>
 
 			{/* Main Content */}
+			<div className="sub-color"></div>
 			<div
 				style={{
 					position: "absolute", // Change to absolute positioning
@@ -43,6 +44,10 @@ function Home({ userAuth }: HomeProps) {
 					onClick={handleLogin}
 					className="primary-color"
 					style={{
+						position:"absolute",
+						top: "-175px",
+						left: "50%",
+						transform: "translateX(-50%)",
 						padding: "15px 30px",
 						fontSize: "1.2rem", // Use rem for responsive font size
 						color: "white",
