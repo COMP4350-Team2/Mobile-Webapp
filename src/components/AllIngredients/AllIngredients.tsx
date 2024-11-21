@@ -228,8 +228,8 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                                         onClick={() => handleOpen(ingredient)}
                                         sx={{
                                             position: "absolute",
-                                            bottom: "22px",
-                                            right: "8px",
+                                            bottom: 0,
+                                            right: 0,
                                             color: "white", 
                                             backgroundColor: "white",
                                             borderRadius: "50%",
