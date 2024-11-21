@@ -54,20 +54,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
 	 * Once the result is validated, it calls setIngredients to display all available ingredients.
 	 */
-	// useEffect(() => {
-	// 	backend
-	// 		.getAllIngredients()
-	// 		.then((res) => {
-	// 			if (Array.isArray(res)) {
-	// 				setIngredients(res);
-	// 			} else {
-	// 				throw new Error("Unexpected response format");
-	// 			}
-	// 		})
-	// 		.catch((error) => {
-	// 			console.error("Error fetching ingredients:", error);
-	// 		});
-	// }, [backend]);
     useEffect(() => {
 		const fetchIngredients = async () => {
 			try {
