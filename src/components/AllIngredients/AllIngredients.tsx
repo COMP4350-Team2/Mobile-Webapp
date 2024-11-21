@@ -308,10 +308,10 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     </TextField>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} className="primary-color" style={{ color: "black" }}>
+                    <Button onClick={handleClose} className="secondary-color" style={{ color: "white" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleAdd} className="primary-color" style={{ color: "black" }}>
+                    <Button onClick={handleAdd} className="secondary-color" style={{ color: "white" }}>
                         Add
                     </Button>
                 </DialogActions>
