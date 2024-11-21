@@ -19,9 +19,9 @@
     transition: background-color 0.3s ease;
   }
   .toolbar-button-icon {
-    width: 30px; /* Adjust for your icon dimensions */
+    width: 30px; 
     height: 30px;
-    object-fit: contain; /* Ensures icons scale without distortion */
+    object-fit: contain; 
     margin-bottom: 4px;
   }
   .toolbar-button-text {
