@@ -238,7 +238,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                                 >
                                     <Tooltip title="Add to List" arrow>
                                     <IconButton
-                                        className="plus-button secondary-color"
+                                        className="primary-color"
                                         onClick={() => handleOpen(ingredient)}
                                         sx={{
                                             position: "absolute",
