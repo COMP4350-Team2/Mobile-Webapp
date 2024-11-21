@@ -46,6 +46,12 @@ export class Auth0User implements UserAuth {
 		return this._accessToken;
 	}
 
+	getEmail(): string {
+		// TODO this.auth0.user?.email doesn't have any data,
+		// would need to get this from BE ideally
+		return "auth0-user@cupboard.com";
+	}
+
 	/**
 	 * Purpose: This method makes a POST request to our API endpoint to create a user.
 	 * The backend checks the database for an existing user and adds the user to the database if it’s a new user.
@@ -135,7 +141,7 @@ export class Auth0User implements UserAuth {
 		return res;
 	}
 
-	getIngredientsFromList(listName: String): Promise<Ingredient[]>  {
+	getIngredientsFromList(listName: String): Promise<Ingredient[]> {
 		const foundList = this.mylists.find((list) => list.name === listName);
 		return Promise.resolve(foundList ? foundList.ingredients : []);
 	}

@@ -1,29 +1,31 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../Header/Header";
-import ToolBar from "../Toolbar/Toolbar";
+import Header from "components/Header/Header";
+import ToolBar from "components/Toolbar/Toolbar";
 import "./Layout.css";
+import { UserAuth } from "auth/UserAuth";
 
 export interface LayoutContext {
-	searchQuery: string;
+    searchQuery: string;
 }
 
-function Layout() {
-	const [searchQuery, searchQueryChange] = React.useState("");
+function Layout({ userAuth }: { userAuth: UserAuth }) {
+    const [searchQuery, searchQueryChange] = React.useState("");
     return (
         <div className="full-screen">
-          <Header
-            searchQuery={searchQuery}
-            searchQueryChange={(val) => searchQueryChange(val)}
-          />
-          
-          <div className="content-container">
-            <Outlet context={{ searchQuery }} />
-          </div>
-    
-          <ToolBar />
+            <Header
+                userAuth={userAuth}
+                searchQuery={searchQuery}
+                searchQueryChange={(val) => searchQueryChange(val)}
+            />
+
+            <div className="content-container">
+                <Outlet context={{ searchQuery }} />
+            </div>
+
+            <ToolBar />
         </div>
-      );
+    );
 }
 
 export default Layout;

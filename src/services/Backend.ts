@@ -98,7 +98,7 @@ export class Backend implements BackendInterface {
 		try {
 			const token = await this.userAuth.getAccessToken();
 			const response = await axios.delete<any[]>(
-				`${process.env.REACT_APP_BACKEND_HOST}user_list_ingredients/${listName}`,
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_LIST}${listName}`,
 				{
 					headers: { Authorization: "Bearer " + token },
 				}
@@ -141,7 +141,7 @@ export class Backend implements BackendInterface {
 	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.put(
+			const response = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
 				{
 					list_name: listName,
@@ -174,13 +174,8 @@ export class Backend implements BackendInterface {
 	async deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.put(
-				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
-				{
-					list_name: listName,
-					ingredient: ingredient.name,
-					unit: ingredient.unit,
-				},
+			const response = await axios.delete(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}${listName}/ingredients/${ingredient.name}/units/${ingredient.unit}`,
 				{
 					headers: { Authorization: "Bearer " + token },
 				}
@@ -264,12 +259,14 @@ export class Backend implements BackendInterface {
 		try {
 			const token = await this.userAuth.getAccessToken();
 
-			const response = await axios.put(
+			const response = await axios.patch(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
 				{
-					list_name: listName,
+					old_list_name: listName,
 					old_ingredient: oldIngredient.name,
+                    old_amount: oldIngredient.amount,
 					old_unit: oldIngredient.unit,
+                    new_list_name: listName,
 					new_ingredient: newIngredient.name,
 					new_amount: newIngredient.amount,
 					new_unit: newIngredient.unit,
@@ -289,58 +286,36 @@ export class Backend implements BackendInterface {
         }
     }
 
-    async moveIngredient(from: string, to: string, ingredient: Ingredient) {
-        try{
-            const token = await this.userAuth.getAccessToken();
-            //first, we try to add the ingredient to the new list
-            const addResponse = await axios.put(
-                `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
-                {
-                    list_name: to,
-                    ingredient: ingredient.name,
-                    amount: ingredient.amount,
-                    unit: ingredient.unit
-                },
-                {
-                    headers: { Authorization: "Bearer " + token }
-                }
-            );
-            if (addResponse.status === 200) { //only if the ingredient gets added to the new list, we will remove it from the old list
-                const removeResponse = await axios.put(
-                    `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
-                    {
-                        list_name: from,
-                        ingredient: ingredient.name,
-                        unit: ingredient.unit
-                    },
-                    {
-                        headers: { Authorization: "Bearer " + token }
-                    }
-                );
-                if(removeResponse.status === 200){
-                    this.userAuth.addToList(to, ingredient);
-                    this.userAuth.removeIngredient(from, ingredient); //updating the DSO for state management
-                }else { //if the ingredient wasnt removed successfully from the old list, we remove it from our new list
-                    await axios.put(
-                        `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}`,
-                        {
-                            list_name: to,
-                            ingredient: ingredient.name,
-                            unit: ingredient.unit
-                        },
-                        {
-                            headers: { Authorization: "Bearer " + token }
-                        }
-                    );
-                    console.error(`Error: Received status code ${removeResponse.status}`);
-                }
-            } 
-            else{
-                console.error(`Error: Received status code ${addResponse.status}`);
+    async moveIngredient(from: string, to: string, ingredient: Ingredient){
+        try {
+			const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.patch(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
+				{
+					old_list_name: from,
+					old_ingredient: ingredient.name,
+                    old_amount: ingredient.amount,
+					old_unit: ingredient.unit,
+                    new_list_name: to,
+					new_ingredient: ingredient.name,
+					new_amount: ingredient.amount,
+					new_unit: ingredient.unit,
+				},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+            if (response.status === 200) {
+                this.userAuth.addToList(to, ingredient);
+                this.userAuth.removeIngredient(from, ingredient);
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
             }
-        }catch(error){
+        } catch (error) {
             console.error("Failed to move ingredient:", error);
         }
     }
-
+    
 }

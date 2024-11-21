@@ -1,10 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Header from "./Header"; // adjust path if needed
+import { UserAuth } from "auth/UserAuth";
 
 describe("Header", () => {
 	// Mock props for Header
 	const mockProps = {
+		userAuth: {} as UserAuth,
 		searchQuery: "",
 		searchQueryChange: jest.fn(),
 	};

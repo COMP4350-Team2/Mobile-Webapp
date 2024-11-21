@@ -34,6 +34,8 @@ export class MockUser implements UserAuth {
 		return "";
 	}
 
+	getEmail = () => "mock-user@cupboard.com";
+
 	getMyLists(): List[] {
 		return this.mylists;
 	}
@@ -78,7 +80,7 @@ export class MockUser implements UserAuth {
 			console.error(`List with name ${listName} not found.`);
 			return;
 		}
-        list.removeIngredient(ingredient);
+		list.removeIngredient(ingredient);
 	}
 
 	updateIngredient(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): void {
