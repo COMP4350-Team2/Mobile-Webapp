@@ -308,16 +308,12 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     </TextField>
                 </DialogContent>
                 <DialogActions>
-                    <Tooltip title="Cancel" arrow>
                     <Button onClick={handleClose} className="primary-color" style={{ color: "black" }}>
                         Cancel
                     </Button>
-                    </Tooltip>
-                    <Tooltip title="Add to List" arrow>
                     <Button onClick={handleAdd} className="primary-color" style={{ color: "black" }}>
                         Add
                     </Button>
-                    </Tooltip>
                 </DialogActions>
             </Dialog>
         </Container>
