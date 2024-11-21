@@ -250,9 +250,9 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 
             {/* Popup Dialog for Adding Ingredients */}
             <Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
-                <DialogTitle>Add Ingredient</DialogTitle>
+                <DialogTitle sx={{ color: "white" }}>Add Ingredient</DialogTitle>
                 <DialogContent>
-                    <div style={{ marginBottom: "0.5px", color: "black" }}>Amount</div>
+                    <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
                     <TextField
                         autoFocus
                         margin="dense"
@@ -272,7 +272,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     {amountError && <div style={{ color: "red" }}>{amountError}</div>}
 
                     {/* Unit Dropdown */}
-                    <div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
+                    <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
                     <TextField
                         select
                         value={selectedUnit}
@@ -288,7 +288,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     </TextField>
 
                     {/* List Name Dropdown */}
-                    <div style={{ marginBottom: "0.5px", color: "black" }}>List Name</div>
+                    <div style={{ marginBottom: "0.5px", color: "white" }}>List Name</div>
                     <TextField
                         select
                         value={selectedList}
@@ -308,10 +308,10 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     </TextField>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} className="secondary-color" style={{ color: "white" }}>
+                    <Button onClick={handleClose} className="primary-color" style={{ color: "white" }}>
                         Cancel
                     </Button>
-                    <Button onClick={handleAdd} className="secondary-color" style={{ color: "white" }}>
+                    <Button onClick={handleAdd} className="primary-color" style={{ color: "white" }}>
                         Add
                     </Button>
                 </DialogActions>
