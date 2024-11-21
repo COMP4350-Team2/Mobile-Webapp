@@ -211,7 +211,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				onClose={handleCloseNewListDialog}
 				PaperProps={{ className: "secondary-color" }}
 			>
-				<DialogTitle>Create New List</DialogTitle>
+				<DialogTitle sx={{ color: "white" }}>Create New List</DialogTitle>
 				<DialogContent>
 					{/* Input field for the new list name */}
 					<TextField
@@ -233,12 +233,14 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				</DialogContent>
 				<DialogActions>
 					<Button
+                        style={{ color: "white" }}
 						onClick={handleCloseNewListDialog}
 						className="primary-color"
 					>
 						Cancel
 					</Button>
 					<Button
+                        style={{ color: "white" }}
 						onClick={handleCreateList}
 						color="primary"
 						disabled={!newListName.trim()}
