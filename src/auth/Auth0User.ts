@@ -3,10 +3,10 @@ import axios from "axios";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
+import Cookies from "js-cookie";
 
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
-	private _accessToken;
 	private backendHost = process.env.REACT_APP_BACKEND_HOST ?? "";
 	private audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? "";
 	private mylists: List[] = [];
@@ -25,25 +25,34 @@ export class Auth0User implements UserAuth {
 	isAuth0User = () => true;
 
 	/**
-	 * Purpose: Retrieves the user's JWT access token using `getAccessToken` and stores it in the user authentication object.
-	 * Then, it calls the `createUser` method, which sends a request to the `create_user` API endpoint.
-	 * This checks the database to see if the user associated with the access token already exists or needs to be added.
+	 * Purpose: Store access token to app's cookie and send a new user login update to backend
 	 */
-	storeAccessToken() {
-		this.getAccessToken().then((token) => {
-			this._accessToken = token;
-			this.createUser();
-		});
+	completeLogin() {
+		this.getAccessToken().finally(() => this.createUser().then());
 	}
 
 	/**
-	 * Purpose: This method retrieves the user's JWT access token and updates the instance variable.
+	 * Purpose: Retrieve access token, either from auth0 if retrieving for the first time, 
+	 * otherwise, from the app's cookie `access_token`
+	 *
+	 * @return {Promise<string>} The JWT access token.
 	 */
 	async getAccessToken(): Promise<string> {
-		if (!this._accessToken) {
-			this._accessToken = await this.getAccessTokenValue();
+		if (!Cookies.get('access_token')) {
+			const token = await this.auth0.getAccessTokenSilently({
+				authorizationParams: {
+					audience: this.audience,
+				},
+			});
+			// Store the access token in a cookie using js-cookie
+			Cookies.set('access_token', token, { 
+				path: '/', 
+				secure: true, 
+				sameSite: 'Strict' 
+			});
+			return token
 		}
-		return this._accessToken;
+		return Cookies.get('access_token')!;
 	}
 
 	getEmail(): string {
@@ -56,14 +65,14 @@ export class Auth0User implements UserAuth {
 	 * Purpose: This method makes a POST request to our API endpoint to create a user.
 	 * The backend checks the database for an existing user and adds the user to the database if it’s a new user.
 	 */
-	private createUser() {
+	private async createUser() {
 		try {
 			axios
 				.post<string>(
 					`${this.backendHost}${process.env.REACT_APP_API_CREATE_USER}`,
 					{},
 					{
-						headers: { authorization: "Bearer " + this._accessToken },
+						headers: { authorization: "Bearer " + await this.getAccessToken() },
 					}
 				)
 				.then((response) => {
@@ -125,20 +134,6 @@ export class Auth0User implements UserAuth {
 		if (list) {
 			list.addOrUpdateIngredient(ingredient);
 		}
-	}
-
-	/**
-	 * Purpose: This method retrieves the user's JWT access token and returns it.
-	 *
-	 * @return {string} The JWT access token.
-	 */
-	private async getAccessTokenValue(): Promise<string> {
-		const res = await this.auth0.getAccessTokenSilently({
-			authorizationParams: {
-				audience: this.audience,
-			},
-		});
-		return res;
 	}
 
 	getIngredientsFromList(listName: String): Promise<Ingredient[]> {

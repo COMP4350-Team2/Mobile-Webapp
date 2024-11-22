@@ -26,7 +26,7 @@ export class MockUser implements UserAuth {
 	isAuthenticated = () => this.isLoggedIn;
 	isAuth0User = () => false;
 
-	storeAccessToken() {
+	completeLogin() {
 		// Does not apply
 	}
 

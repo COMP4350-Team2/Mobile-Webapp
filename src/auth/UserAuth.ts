@@ -7,6 +7,7 @@ export interface UserAuth {
 	logout: () => void;
 	isAuthenticated: () => boolean;
 	isProcessing: () => boolean;
+	completeLogin: () => void;
 	getAccessToken: () => Promise<string>;
 	getEmail: () => string;
 	isAuth0User: () => boolean;
@@ -16,7 +17,6 @@ export interface UserAuth {
 	deleteList: (name: string) => void;
 	getAllIngredients: () => Ingredient[];
 	addToList: (listName: string, ingredient: Ingredient) => void;
-	storeAccessToken?: () => void;
 	setAllIngredients?: (list: Ingredient[]) => void;
 	setMyLists?: (lists: List[]) => void;
 	getIngredientsFromList: (listName: String) => Promise<Ingredient[]>;
