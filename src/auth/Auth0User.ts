@@ -32,27 +32,27 @@ export class Auth0User implements UserAuth {
 	}
 
 	/**
-	 * Purpose: Retrieve access token, either from auth0 if retrieving for the first time, 
+	 * Purpose: Retrieve access token, either from auth0 if retrieving for the first time,
 	 * otherwise, from the app's cookie `access_token`
 	 *
 	 * @return {Promise<string>} The JWT access token.
 	 */
 	async getAccessToken(): Promise<string> {
-		if (!Cookies.get('access_token')) {
+		if (!Cookies.get("access_token")) {
 			const token = await this.auth0.getAccessTokenSilently({
 				authorizationParams: {
 					audience: this.audience,
 				},
 			});
 			// Store the access token in a cookie using js-cookie
-			Cookies.set('access_token', token, { 
-				path: '/', 
-				secure: true, 
-				sameSite: 'Strict' 
+			Cookies.set("access_token", token, {
+				path: "/",
+				secure: true,
+				sameSite: "Strict",
 			});
-			return token
+			return token;
 		}
-		return Cookies.get('access_token')!;
+		return Cookies.get("access_token")!;
 	}
 
 	getEmail(): string {
@@ -72,7 +72,7 @@ export class Auth0User implements UserAuth {
 					`${this.backendHost}${process.env.REACT_APP_API_CREATE_USER}`,
 					{},
 					{
-						headers: { authorization: "Bearer " + await this.getAccessToken() },
+						headers: { authorization: "Bearer " + (await this.getAccessToken()) },
 					}
 				)
 				.then((response) => {
