@@ -211,7 +211,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				onClose={handleCloseNewListDialog}
 				PaperProps={{ className: "secondary-color" }}
 			>
-				<DialogTitle>Create New List</DialogTitle>
+				<DialogTitle sx={{ color: "white" }}>Create New List</DialogTitle>
 				<DialogContent>
 					{/* Input field for the new list name */}
 					<TextField
@@ -233,12 +233,14 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				</DialogContent>
 				<DialogActions>
 					<Button
+                        style={{ color: "white" }}
 						onClick={handleCloseNewListDialog}
 						className="primary-color"
 					>
 						Cancel
 					</Button>
 					<Button
+                        style={{ color: "white" }}
 						onClick={handleCreateList}
 						color="primary"
 						disabled={!newListName.trim()}
@@ -255,19 +257,34 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				onClose={closeConfirmDeleteDialog}
 				PaperProps={{ className: "secondary-color" }}
 			>
-				<DialogTitle style={{ color: "white" }}>Confirm Deletion</DialogTitle>
-				<DialogContent style={{ color: "white" }}>
-					{activeList ? <span>Are you sure you want to delete list {activeList.name}?</span> : null}
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={closeConfirmDeleteDialog}
-						className="primary-color"
-						style={{ color: "white" }}
-					>
-						No
-					</Button>
-					<Button
+			<DialogTitle sx={{ 
+                    color: "white", 
+                    textAlign: "center", 
+                    marginBottom: "4px",
+                    paddingBottom: "4px", 
+                }}
+            > 
+            <strong>Confirm Deletion</strong>
+            </DialogTitle>
+			<DialogContent 
+                sx={{ 
+                    color: "white", 
+                    textAlign: "center", 
+                    marginBottom: "4px",
+                    paddingBottom: "4px", 
+                }}
+            >
+			{activeList ? <span>Are you sure you want to delete list <strong>{activeList.name}</strong>?</span> : null}
+			</DialogContent>
+			<DialogActions
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "flex-start",
+                        gap: "20px",
+                    }}
+                >
+                <Button
 						onClick={deleteList}
 						sx={{
 							backgroundColor: "error.main",
@@ -277,7 +294,14 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 							},
 						}}
 					>
-						Yes
+						Delete
+					</Button>
+					<Button
+						onClick={closeConfirmDeleteDialog}
+						className="primary-color"
+						style={{ color: "white" }}
+					>
+						Cancel
 					</Button>
 				</DialogActions>
 			</Dialog>

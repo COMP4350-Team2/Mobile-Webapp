@@ -354,24 +354,36 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             PaperProps={{ className: "secondary-color" }}
           >
             <DialogTitle 
-                style={{ color: "white" }}>
-                Confirm Deletion
+                sx={{ 
+                    color: "white", 
+                    textAlign: "center", 
+                    marginBottom: "4px",
+                    paddingBottom: "4px", 
+                 }}
+            >
+                <strong>Confirm Deletion</strong>
             </DialogTitle>
             <DialogContent 
-                style={{ color: "white" }}>
+                sx={{
+                    color: "white", 
+                    textAlign: "center", 
+                    marginBottom: "4px", 
+                    paddingBottom: "4px",
+                }}
+            >
                 {ingredientToDelete ? (
-                <span>Are you sure you want to delete {ingredientToDelete.name} from your list?</span>
+                <span>Are you sure you want to delete <strong>{ingredientToDelete.name}</strong> from your list?</span>
               ) : null}
             </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleCloseConfirmDialog}
-                className="primary-color"
-                style={{ color: "white" }}
-              >
-                No
-              </Button>
-              <Button
+            <DialogActions
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "20px",
+                }}
+            >
+            <Button
                 onClick={handleDeleteIngredient}
                 sx={{
                   backgroundColor: "error.main",
@@ -381,7 +393,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                   },
                 }}
               >
-                Yes
+                Delete
+              </Button>
+              <Button
+                onClick={handleCloseConfirmDialog}
+                className="primary-color"
+                style={{ color: "white" }}
+              >
+                Cancel
               </Button>
             </DialogActions>
           </Dialog>
@@ -406,7 +425,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             onClose={handleClose}
             PaperProps={{ className: "secondary-color" }}
           >
-            <DialogTitle>Select Ingredients</DialogTitle>
+            <DialogTitle style={{ color: "white" }}>Select Ingredients</DialogTitle>
             <DialogContent>
               {/* Search Bar for Dialog */}
               <TextField
@@ -414,7 +433,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                 value={dialogSearchQuery}
                 onChange={(e) => setDialogSearchQuery(e.target.value)}
                 size="small"
-                style={{ width: "100%", backgroundColor: "white", marginBottom: "10px" }}
+                style={{ width: "100%", backgroundColor: "white"}}
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -428,11 +447,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     style={{
                       padding: "10px",
                       cursor: "pointer",
-                      borderBottom: "1px solid #ddd",
+                      borderBottom: "1px solid white",
+                      color: "white",
                       backgroundColor: "inherit",
-                      transition: "background-color 0.2s",
+                      transition: "background-color 0.2s"
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#29668f")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
                   >
                     {highlightText(ingredient.name, dialogSearchQuery)}
@@ -444,9 +464,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               <Button
                 onClick={handleClose}
                 className="primary-color"
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
-                Close
+                Cancel
               </Button>
             </DialogActions>
           </Dialog>
@@ -457,10 +477,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             onClose={handleCloseEditDialog}
             PaperProps={{ className: "secondary-color" }}
           >
-            <DialogTitle>{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : "Edit Ingredient"}</DialogTitle>
+            <DialogTitle style={{ color: "white" }}>{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : "Edit Ingredient"}</DialogTitle>
             <DialogContent>
+            <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
               <TextField
-                label="Amount"
                 type="number"
                 value={editAmount}
                 onChange={(e) => {
@@ -481,7 +501,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               />
               {amountError && <div style={{ color: "red" }}>{amountError}</div>}
       
-              <div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
+              <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
               <TextField
                 select
                 value={editUnit}
@@ -498,19 +518,20 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               </TextField>
             </DialogContent>
             <DialogActions>
+            <Button
+                onClick={handleUpdateIngredient}
+                className="primary-color"
+                style={{ color: "white" }}
+              >
+                Update
+              </Button>
+              
               <Button
                 onClick={handleCloseEditDialog}
                 className="primary-color"
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
-                Close
-              </Button>
-              <Button
-                onClick={handleUpdateIngredient}
-                className="primary-color"
-                style={{ color: "black" }}
-              >
-                Update
+                Cancel
               </Button>
             </DialogActions>
           </Dialog>
@@ -521,10 +542,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             onClose={handleUnitDialogClose}
             PaperProps={{ className: "secondary-color" }}
           >
-            <DialogTitle>{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}</DialogTitle>
+            <DialogTitle style={{ color: "white" }}>{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}</DialogTitle>
             <DialogContent>
+            <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
               <TextField
-                label="Amount"
                 type="number"
                 value={amount}
                 onChange={(e) => {
@@ -542,7 +563,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                 style={{ backgroundColor: "white" }}
               />
               {amountError && <div style={{ color: "red" }}>{amountError}</div>}
-              <div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
+              <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
               <TextField
                 select
                 value={selectedUnit}
@@ -563,14 +584,14 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               <Button
                 onClick={handleAdd}
                 className="primary-color"
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
                 Add
               </Button>
               <Button
                 onClick={handleUnitDialogClose}
                 className="primary-color"
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
                 Back
               </Button>
@@ -583,7 +604,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             onClose={handleCloseMoveDialog}
             PaperProps={{ className: "secondary-color" }}
           >
-            <DialogTitle>Select List to Move</DialogTitle>
+            <DialogTitle style={{ color: "white" }}>Select List to Move</DialogTitle>
             <DialogContent>
               {/* List of available lists */}
               <div style={{ maxHeight: "300px", overflowY: "auto" }}>
@@ -594,11 +615,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     style={{
                       padding: "10px",
                       cursor: "pointer",
-                      borderBottom: "1px solid #ddd",
+                      borderBottom: "1px solid white",
+                      color: "white",
                       backgroundColor: "inherit",
                       transition: "background-color 0.2s",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#e0e0e0")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#29668f")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
                   >
                     {listName}
@@ -610,9 +632,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               <Button
                 onClick={handleCloseMoveDialog}
                 className="primary-color"
-                style={{ color: "black" }}
+                style={{ color: "white" }}
               >
-                Close
+                Cancel
               </Button>
             </DialogActions>
           </Dialog>
