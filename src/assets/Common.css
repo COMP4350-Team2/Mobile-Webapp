@@ -1,3 +1,7 @@
+:root {
+	--sub-color: #bbe1fa; /* Sub color */
+}
+
 .header-color {
 	background-color: #1b262c !important;
 	color: white;
@@ -30,5 +34,5 @@
 }
 
 .sub-color {
-	background-color: #bbe1fa !important;
+	background-color: var(--sub-color) !important;
 }

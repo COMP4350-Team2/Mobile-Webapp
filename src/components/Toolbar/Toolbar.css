@@ -1,43 +1,61 @@
 .toolbar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #1b262c; /*Using the header color*/
-    display: flex;
-    justify-content: space-around;
-    padding: 6.3px 0;
-    border-top: 1px solid #ccc;
-    z-index: 10;
-  }
-  
-  .toolbar-button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: #bbe1fa; /* sub color */
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .toolbar-button-icon {
-    width: 30px; 
-    height: 30px;
-    object-fit: contain; 
-    margin-bottom: 4px;
-  }
-  .toolbar-button-text {
-    font-size: 12px;
-    font-weight: bold; 
-    margin-top: 1px; 
-    color: white;
-  }
-  
-  .toolbar-button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-  }
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	background-color: #1b262c; /*Using the header color*/
+	display: flex;
+	justify-content: space-around;
+	padding: 6.3px 0;
+	border-top: 1px solid #ccc;
+	z-index: 10;
+}
 
-  .toolbar-button.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    pointer-events: none;
-  }
-  
+.toolbar-button {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 65px;
+	color: #bbe1fa; /* sub color */
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.toolbar-button.selected .toolbar-button-icon {
+	transform: scale(1.4);
+	transition: transform 0.3s ease;
+}
+
+.toolbar-button.selected::before {
+	content: "";
+	position: absolute;
+	height: 40px;
+	width: 65px;
+	background-color: rgba(187, 225, 250, 0.3); /* Highlight color with transparency */
+	border-radius: 50%;
+	z-index: -1;
+	transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
+}
+
+.toolbar-button:not(.selected)::before {
+	display: none; /* No circle when not selected */
+}
+
+.toolbar-button-icon {
+	width: 30px;
+	height: 30px;
+	object-fit: contain;
+	margin-bottom: 4px;
+}
+
+.toolbar-button-text {
+	font-size: 12px;
+	font-weight: bold;
+	margin-top: 1px;
+	color: white;
+}
+
+.toolbar-button.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+	pointer-events: none;
+}
