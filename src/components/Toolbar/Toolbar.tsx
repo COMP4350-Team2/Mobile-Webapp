@@ -23,8 +23,8 @@ function ToolBar() {
 	return (
 		<div className="toolbar">
 			<div
-				className={`toolbar-button ${isActive("/logged-in") ? "selected" : ""}`}
-				onClick={() => goToPage("/logged-in")}
+				className={`toolbar-button ${isActive("/home") ? "selected" : ""}`}
+				onClick={() => goToPage("/home")}
 			>
 				<img
 					src={homeIcon}

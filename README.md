@@ -75,7 +75,7 @@ The instructions for running these tests in **Production** and **Mock** are stat
 - On the main page, click on log in button. Mock users log in immediately. Bypasses login, single user.
 - Production environment users are taken to an `Auth0` log in and registration page.
 - Register a new account with an email. It will sign you in.
-- Log out. User taken to home page.
+- Log out. User taken to Welcome page.
 - Log in with the registered credientials.
 - User taken to logged in page.
 
@@ -97,47 +97,53 @@ The instructions for running these tests in **Production** and **Mock** are stat
 - Click the `+` button to add ingredient. This gives the user the option to add a certain amount of an Ingredient to one of their specified lists. <br>
 
 ### User Story: Ingredient lists board
+
 **Description:** As a user, I want to have a place to view all my lists.
 
-**Acceptance Criteria:** 
+**Acceptance Criteria:**
+
 - Given that I’m a logged in user
 - When I click on my profile and click My Lists
 - Then I should be able to see, add or remove all my lists with all the ingredients in them
 
 #### Test Steps
+
 - After logging in, click on `My Lists` button.
 - It shows a list of all the user's lists.
-- Each List is clickable and shows all the ingredients within the list. 
+- Each List is clickable and shows all the ingredients within the list.
 - Next to each List is a delete button that can be used to delete the List with all the ingredients within it.
 - On the top of the `My Lists` page is a `Create List` button that creates a new (uniquely named) empty List that can be populated
 
-
-
 ### User Story: Remove Ingredients from List
+
 **Description:** As a user, i should be able to remove an ingredient from my lists.
 
-**Acceptance Criteria:** 
+**Acceptance Criteria:**
+
 - Given that I am logged in and on My Lists page
 - And I navigate to an ingredient on a list
 - And I click on delete ingredient
 - Then the ingredient should be removed from that list
 
 #### Test Steps
+
 - On the `My Lists` page, click on a list to open it. It shows ingredients in that list.
 - Click on the delete button next on the ingredient.
 - That should remove that ingredient from that list.
 
-
 ### User Story: Add Ingredient To List
+
 **Description:** As a user, I want to search ingredients and add them to one of my lists.
 
-**Acceptance Criteria:** 
+**Acceptance Criteria:**
+
 - Given that I’m a logged in user and on my profile
 - I should be able to see a list of my own ingredients that I can open
 - When I click the “add ingredients” button upon opening my list
 - Then I should be presented with a list of commonly available ingredients that I can search through using a search bar.
 
 #### Test Steps
+
 - After logging in, click the `My Lists` button.
 - Then, click on a specific List to open it.
 - Once opened, lick the `+` button to add ingredient. This will show us a searchable List of all available ingredients. I should then be able to specify an amount and the unit.
@@ -146,45 +152,54 @@ The instructions for running these tests in **Production** and **Mock** are stat
 - If the ingredient with the same name but different unit existed in the list already, a new ingredient should be added.
 
 ### User Story: Set Amount/Unit For Ingredients
+
 **Description:** As a user, I want to be able to set the amounts/units of ingredients in a list
 
-**Acceptance Criteria:** 
+**Acceptance Criteria:**
+
 - Given that I’m in a list on My Lists page
 - When I click on the edit button next to an ingredient.
 - Then, I should be able to edit the amount/unit of ingredient in that list.
 
 #### Test Steps
+
 - When on a list in `My Lists` page, click on the edit button next to an ingredient.
 - Enter the amount and/or unit in the popup and click OK.
 - If an ingredient with the same name and unit as the new ingredient exists, the amount entered should be added to that ingredient.
 - If an ingredient with the same name and unit as the new ingredient does not exist, the ingredient should just be edited with the new values.
 
 ### User Story: Persistence User
+
 **Description:** As a user, I want to see the ingredients I previously had in my list when I log in.
 
-**Acceptance Criteria:** 
+**Acceptance Criteria:**
+
 - Given that I’m a logged-out user
 - When I enter my details correctly and get logged in
 - Then, the app should keep my previous ingredients list.
 
 #### Test Steps
+
 - Log into the application
 - Click on `My Lists`
 - All the lists should have the same ingredients as before the log-in.
 
 ### User Story: Move Ingredients
+
 **Description:** As a user, when I'm on a list, I should be able to move any given ingredient to another list of mine.
 
-**Acceptance Criteria:** 
+**Acceptance Criteria:**
+
 - Given that I am a logged in user on My Lists page on a list
 - Then I should be able to move an ingredient to another list.
 
 #### Test Steps
+
 - From the Home Page, click on `My Lists` and navigate to a certain List.
 - Click on the `Move` button next to an ingredient.
 - Select the list to move to from the pop-up and click Move.
 - The ingredient should disappear from the current list.
-- If the list to move to already has an ingredient with the same name and unit, the amount of that ingredient should increase. 
+- If the list to move to already has an ingredient with the same name and unit, the amount of that ingredient should increase.
 - If the list to move to does not have an ingredient with the same name and unit, a new ingredient should be added.
 
 ## Docker Commands

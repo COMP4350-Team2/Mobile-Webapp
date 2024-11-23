@@ -20,7 +20,7 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 
 	const routeNames = useMemo(
 		() => ({
-			"/logged-in": "Home",
+			"/home": "Home",
 			"/all-ingredients": "Ingredient Selections",
 			"/my-lists": "My Lists",
 			"/view-list/:listName": ":listName",
