@@ -24,7 +24,7 @@ function LoggedIn({ userAuth, isFirstLoggin, setIsFirstLoggin }: LoggedInProps) 
 			}
 
 			if (userAuth.isAuthenticated() && isFirstLoggin) {
-				userAuth.storeAccessToken!();
+				userAuth.completeLogin();
 				setIsFirstLoggin(false);
 			} else if (!userAuth.isAuthenticated()) {
 				navigate("/");

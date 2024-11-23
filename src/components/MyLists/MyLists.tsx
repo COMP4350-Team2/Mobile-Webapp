@@ -1,19 +1,19 @@
 import { Delete } from "@mui/icons-material";
 import {
-    Button,
-    Container,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
+	Button,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -30,7 +30,7 @@ interface MyListsProps {
 
 function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const navigate = useNavigate();
-    const { searchQuery } = useOutletContext<LayoutContext>();
+	const { searchQuery } = useOutletContext<LayoutContext>();
 	const [isLoading, setIsLoading] = useState(true);
 	const [myLists, updateMyLists] = useState<List[]>([]);
 	const [openNewListDialog, setOpenNewListDialog] = useState(false);
@@ -105,24 +105,24 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		closeConfirmDeleteDialog();
 	};
 
-    const filteredLists = myLists.filter((list) =>
-        list.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+	const filteredLists = myLists.filter((list) =>
+		list.name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 
-    const highlightText = (text: string, query: string) => {
-        if (!query) return text;
-    
-        const parts = text.split(new RegExp(`(${query})`, "gi"));
-        return parts.map((part, index) =>
-          part.toLowerCase() === query.toLowerCase() ? (
-            <span key={index} style={{fontWeight: "bold" }}>
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        );
-    };
+	const highlightText = (text: string, query: string) => {
+		if (!query) return text;
+
+		const parts = text.split(new RegExp(`(${query})`, "gi"));
+		return parts.map((part, index) =>
+			part.toLowerCase() === query.toLowerCase() ? (
+				<span key={index} style={{ fontWeight: "bold" }}>
+					{part}
+				</span>
+			) : (
+				part
+			)
+		);
+	};
 
 	return (
 		<Container
@@ -140,7 +140,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						variant="contained"
 						color="primary"
-						style={{ marginTop: "20px", marginLeft: "0.75px"}}
+						style={{ marginTop: "20px", marginLeft: "0.75px" }}
 						onClick={handleOpenNewListDialog}
 					>
 						Create List
@@ -154,7 +154,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 							<TableHead>
 								<TableRow>
 									<TableCell style={{ fontWeight: "bold" }}>List Name</TableCell>
-									<TableCell></TableCell> {/* column for action */}
+									<TableCell> </TableCell> {/* column for action */}
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -175,7 +175,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 											}}
 										>
 											<TableCell style={{ padding: "12px 16px" }}>{highlightText(list.name, searchQuery)}
-                                            </TableCell>
+											</TableCell>
 											<TableCell>
 												<Button
 													color="error"
