@@ -1,5 +1,6 @@
 import { Add, Delete, Edit, SwapHoriz } from "@mui/icons-material";
 import {
+    Box,
     Button,
     Card,
     CardActions,
@@ -351,11 +352,11 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
           <Dialog
             open={openConfirmDialog}
             onClose={handleCloseConfirmDialog}
-            PaperProps={{ className: "secondary-color" }}
+            PaperProps={{ className: "white" }}
           >
             <DialogTitle 
                 sx={{ 
-                    color: "white", 
+                    color: "black", 
                     textAlign: "center", 
                     marginBottom: "4px",
                     paddingBottom: "4px", 
@@ -365,7 +366,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             </DialogTitle>
             <DialogContent 
                 sx={{
-                    color: "white", 
+                    color: "black", 
                     textAlign: "center", 
                     marginBottom: "4px", 
                     paddingBottom: "4px",
@@ -397,8 +398,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               </Button>
               <Button
                 onClick={handleCloseConfirmDialog}
-                className="primary-color"
-                style={{ color: "white" }}
+                className="white"
+                style={{ color: "black", border: "1px solid #ccc" }}
               >
                 Cancel
               </Button>
@@ -408,7 +409,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
           {/* Floating Action Button */}
           <Fab
             color="primary"
-            className="primary-color"
+            className="secondary-color"
             style={{
               position: "fixed",
               bottom: "10%",
@@ -423,9 +424,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
           <Dialog
             open={open}
             onClose={handleClose}
-            PaperProps={{ className: "secondary-color" }}
+            PaperProps={{ className: "white" }}
           >
-            <DialogTitle style={{ color: "white" }}>Select Ingredients</DialogTitle>
+            <DialogTitle style={{ color: "black" }}>Select Ingredients</DialogTitle>
             <DialogContent>
               {/* Search Bar for Dialog */}
               <TextField
@@ -447,12 +448,12 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     style={{
                       padding: "10px",
                       cursor: "pointer",
-                      borderBottom: "1px solid white",
-                      color: "white",
+                      borderBottom: "1px solid #808080",
+                      color: "black",
                       backgroundColor: "inherit",
                       transition: "background-color 0.2s"
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#29668f")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
                   >
                     {highlightText(ingredient.name, dialogSearchQuery)}
@@ -463,8 +464,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             <DialogActions>
               <Button
                 onClick={handleClose}
-                className="primary-color"
-                style={{ color: "white" }}
+                className="white"
+                style={{ color: "black", border: "1px solid #ccc" }}
               >
                 Cancel
               </Button>
@@ -475,33 +476,42 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
           <Dialog
             open={openEditDialog}
             onClose={handleCloseEditDialog}
-            PaperProps={{ className: "secondary-color" }}
+            PaperProps={{ className: "white" }}
           >
-            <DialogTitle style={{ color: "white" }}>{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : "Edit Ingredient"}</DialogTitle>
-            <DialogContent>
-            <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
-              <TextField
-                type="number"
-                value={editAmount}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "") {
-                    setEditAmount("");
-                    setAmountError("");
-                  } else if (isNumber(value)) {
-                    setEditAmount(Number(value));
-                    setAmountError("");
-                  } else {
-                    setAmountError("Please enter a valid amount.");
-                  }
+            <DialogTitle style={{ color: "black" }}>{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : "Edit Ingredient"}</DialogTitle>
+            <DialogContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px", 
                 }}
-                fullWidth
-                margin="normal"
-                style={{ backgroundColor: "white" }}
-              />
-              {amountError && <div style={{ color: "red" }}>{amountError}</div>}
-      
-              <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
+            >
+            <Box>
+                <div style={{color: "black", marginBottom: "2px" }}> <strong>Amount</strong></div>
+                <TextField
+                    type="number"
+                    value={editAmount}
+                    onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "") {
+                        setEditAmount("");
+                        setAmountError("");
+                    } else if (isNumber(value)) {
+                        setEditAmount(Number(value));
+                        setAmountError("");
+                    } else {
+                        setAmountError("Please enter a valid amount.");
+                    }
+                    }}
+                    fullWidth
+                    margin="normal"
+                    style={{ backgroundColor: "white" }}
+                />
+                {amountError && <div style={{ color: "red" }}>{amountError}</div>}
+            </Box>
+            
+            <Box>
+            <div style={{color: "black", marginBottom : "2px" }}><strong>Unit</strong></div>
               <TextField
                 select
                 value={editUnit}
@@ -516,11 +526,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                   </MenuItem>
                 ))}
               </TextField>
+            </Box>
+              
             </DialogContent>
             <DialogActions>
             <Button
                 onClick={handleUpdateIngredient}
-                className="primary-color"
+                className="secondary-color"
                 style={{ color: "white" }}
               >
                 Update
@@ -528,8 +540,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
               
               <Button
                 onClick={handleCloseEditDialog}
-                className="primary-color"
-                style={{ color: "white" }}
+                className="white"
+                style={{ color: "black",  border: "1px solid #ccc" }}
               >
                 Cancel
               </Button>
@@ -540,58 +552,69 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
           <Dialog
             open={openUnitDialog}
             onClose={handleUnitDialogClose}
-            PaperProps={{ className: "secondary-color" }}
+            PaperProps={{ className: "white" }}
           >
-            <DialogTitle style={{ color: "white" }}>{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}</DialogTitle>
-            <DialogContent>
-            <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
-              <TextField
-                type="number"
-                value={amount}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === "") {
-                    setAmount("");
-                    setAmountError("");
-                  } else if (isNumber(value)) {
-                    setAmount(Number(value));
-                    setAmountError("");
-                  }
+            <DialogTitle style={{ color: "black" }}>{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}</DialogTitle>
+            <DialogContent
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px", 
                 }}
-                fullWidth
-                margin="normal"
-                style={{ backgroundColor: "white" }}
-              />
-              {amountError && <div style={{ color: "red" }}>{amountError}</div>}
-              <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
-              <TextField
-                select
-                value={selectedUnit}
-                onChange={(e) => setSelectedUnit(e.target.value)}
-                fullWidth
-                margin="normal"
-                style={{ backgroundColor: "white" }}
-              >
-                {units.map((unitOption) => (
-                  <MenuItem key={unitOption} value={unitOption}>
-                    {unitOption}
-                  </MenuItem>
-                ))}
-              </TextField>
-              {formError && <div style={{ color: "red" }}>{formError}</div>}
+            >
+            <Box>
+                <div style={{ marginBottom: "2px", color: "black" }}> <strong>Amount</strong></div>
+                <TextField
+                    type="number"
+                    value={amount}
+                    onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "") {
+                        setAmount("");
+                        setAmountError("");
+                    } else if (isNumber(value)) {
+                        setAmount(Number(value));
+                        setAmountError("");
+                    }
+                    }}
+                    fullWidth
+                    margin="normal"
+                    style={{ backgroundColor: "white" }}
+                />
+                {amountError && <div style={{ color: "red" }}>{amountError}</div>}
+            </Box>
+            <Box>
+                <div style={{ marginBottom: "2px", color: "black" }}> <strong>Unit</strong></div>
+                <TextField
+                    select
+                    value={selectedUnit}
+                    onChange={(e) => setSelectedUnit(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    style={{ backgroundColor: "white" }}
+                >
+                    {units.map((unitOption) => (
+                    <MenuItem key={unitOption} value={unitOption}>
+                        {unitOption}
+                    </MenuItem>
+                    ))}
+                </TextField>
+                {formError && <div style={{ color: "red" }}>{formError}</div>}
+            </Box>
+              
             </DialogContent>
             <DialogActions>
               <Button
                 onClick={handleAdd}
-                className="primary-color"
+                className="secondary-color"
                 style={{ color: "white" }}
               >
                 Add
               </Button>
               <Button
                 onClick={handleUnitDialogClose}
-                className="primary-color"
-                style={{ color: "white" }}
+                className="white"
+                style={{ color: "black",  border: "1px solid #ccc" }}
               >
                 Back
               </Button>
@@ -602,9 +625,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
           <Dialog
             open={openMoveDialog}
             onClose={handleCloseMoveDialog}
-            PaperProps={{ className: "secondary-color" }}
+            PaperProps={{ className: "white" }}
           >
-            <DialogTitle style={{ color: "white" }}>Select List to Move</DialogTitle>
+            <DialogTitle style={{ color: "black" }}>Move <strong>{ingredientToMove?.name}</strong> to another list</DialogTitle>
             <DialogContent>
               {/* List of available lists */}
               <div style={{ maxHeight: "300px", overflowY: "auto" }}>
@@ -615,12 +638,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                     style={{
                       padding: "10px",
                       cursor: "pointer",
-                      borderBottom: "1px solid white",
-                      color: "white",
+                      borderBottom: "1px solid #808080",
+                      color: "black",
                       backgroundColor: "inherit",
                       transition: "background-color 0.2s",
+                      fontWeight: "bold"
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#29668f")}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
                     onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
                   >
                     {listName}
@@ -631,8 +655,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
             <DialogActions>
               <Button
                 onClick={handleCloseMoveDialog}
-                className="primary-color"
-                style={{ color: "white" }}
+                className="white"
+                style={{ color: "black", border: "1px solid #ccc" }}
               >
                 Cancel
               </Button>
