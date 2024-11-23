@@ -4,21 +4,20 @@
 
 import {
     Button,
+    Card,
+    CardActions,
+    CardContent,
     Container,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    Grid,
     IconButton,
     MenuItem,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     TextField,
+    Tooltip,
+    Typography
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
@@ -28,6 +27,7 @@ import { useOutletContext } from "react-router-dom";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
 import { LayoutContext } from "../Layout/Layout";
+import Loading from "../Loading/Loading";
 import "./AllIngredients.css";
 
 interface AllIngredientsProps {
@@ -47,24 +47,33 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const [units, setUnits] = useState<string[]>([]);
 	const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
 	const [amountError, setAmountError] = useState<string>("");
+    const [isLoading, setIsLoading] = useState(true);
+
 
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
 	 * Once the result is validated, it calls setIngredients to display all available ingredients.
 	 */
-	useEffect(() => {
-		backend
-			.getAllIngredients()
-			.then((res) => {
+    useEffect(() => {
+		const fetchIngredients = async () => {
+			try {
+				// Fetch the ingredients from the backend
+				const res = await backend.getAllIngredients();
+				// Check if response is an array
 				if (Array.isArray(res)) {
 					setIngredients(res);
 				} else {
 					throw new Error("Unexpected response format");
 				}
-			})
-			.catch((error) => {
+			} catch (error) {
 				console.error("Error fetching ingredients:", error);
-			});
+			} finally {
+				setIsLoading(false);  // Set loading to false once the fetch is done
+			}
+		};
+
+		setIsLoading(true);  // Start loading
+		fetchIngredients();  // Fetch ingredients from backend
 	}, [backend]);
 
 	//the hook for rendering all the user's lists
@@ -166,132 +175,149 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
           )
         );
     };
+    return (
+        <Container
+            maxWidth={false}
+            disableGutters
+            className="sub-color"
+            style={{ height: "100%" }}
+        >
+            
+            {/* Ingredient Cards */}
+            {isLoading ? (
+				<Loading />
+			) : (
+			<>
+            <Grid container spacing={2} style={{ marginTop: "20px" }}>
+                
+                {filteredIngredients.map((ingredient, index) => (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                        <Card>
+                            <CardContent>
+                                <Typography variant="h6" style={{ color: 'black', fontWeight: 'bold'}}>
+                                    {highlightText(ingredient.name, searchQuery)}
+                                </Typography>
 
-	return (
-		<Container
-			maxWidth={false}
-			disableGutters
-			className="sub-color"
-			style={{ height: "100%" }}
-		>
-			{/* Main Content */}
-			<TableContainer
-				component={Paper}
-				style={{ marginTop: "20px" }}
-			>
-				<Table>
-					<TableHead>
-						<TableRow>
-							<TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
-							<TableCell style={{ fontWeight: "bold" }}>Type</TableCell>
-							<TableCell style={{ fontWeight: "bold", textAlign: "center" }}>Action</TableCell>
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{filteredIngredients.map((ingredient) => (
-							<TableRow key={ingredient.name}>
-								<TableCell>{highlightText(ingredient.name, searchQuery)}</TableCell>
-								<TableCell>{ingredient.type}</TableCell>
-								<TableCell style={{ textAlign: "center" }}>
-									<IconButton
-										className="plus-button secondary-color"
-										onClick={() => handleOpen(ingredient)}
-									>
-										<AiOutlinePlus />
-									</IconButton>
-								</TableCell>
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
-			</TableContainer>
+                                <Typography 
+                                    variant="body2" 
+                                    style={{ 
+                                        color: 'black', 
+                                        fontSize: '0.98rem', 
+                                        position: 'relative',
+                                        top: '8px'
+                                    }}
+                                >
+                                <span style={{ fontWeight: 'bold' }}>Type:</span> {ingredient.type}
+                                </Typography>
+                            </CardContent>
 
-			{/* Popup Dialog for Adding Ingredients */}
-			<Dialog
-				open={open}
-				onClose={handleClose}
-				PaperProps={{ className: "secondary-color" }}
-			>
-				<DialogTitle>Add Ingredient</DialogTitle>
-				<DialogContent>
-					<TextField
-						autoFocus
-						margin="dense"
-						label="Amount"
-						type="number"
-						value={amount}
-						onChange={(e) => {
-							const value = e.target.value;
-							setAmount(value);
-							if (parseFloat(value) > 0 && isNumber(value)) {
-								setAmountError("");
-							}
-						}}
-						fullWidth
-						inputProps={{ step: "0.1", min: "0" }}
-						style={{ backgroundColor: "white" }}
-					/>
-					{amountError && <div style={{ color: "red" }}>{amountError}</div>}
-					<div style={{ marginBottom: "0.5px", color: "black" }}>Unit</div>
-					<TextField
-						select
-						value={selectedUnit}
-						onChange={(e) => setSelectedUnit(e.target.value)}
-						fullWidth
-						style={{ marginTop: "10px", backgroundColor: "white" }}
-					>
-						{units.map((option) => (
-							<MenuItem
-								key={option}
-								value={option}
-							>
-								{option}
-							</MenuItem>
-						))}
-					</TextField>
+                            <CardActions
+                                sx={{ display: "flex", justifyContent: "flex-end", gap: "8px", padding: 1 }}
+                            >
+                                <div
+                                    style={{
+                                        position: "relative",
+                                        display: "flex",
+                                        gap: "8px",
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Tooltip title="Add to List" arrow>
+                                    <IconButton
+                                        className="primary-color"
+                                        onClick={() => handleOpen(ingredient)}
+                                        sx={{
+                                            position: "absolute",
+                                            bottom: 0,
+                                            right: 0,
+                                            color: "white", 
+                                            backgroundColor: "white",
+                                            borderRadius: "50%",
+                                        }}
+                                    >
+                                        <AiOutlinePlus />
+                                    </IconButton>
+                                    </Tooltip>     
+                                </div>
+                            </CardActions>
+                        </Card>
+                    </Grid>
+                ))}
+                
+            </Grid>
+            </>
+            )}
 
-					{/* New dropdown for selecting a list */}
-					<div style={{ marginBottom: "0.5px", color: "black" }}>List Name</div>
-					<TextField
-						select
-						value={selectedList}
-						onChange={(e) => setSelectedList(e.target.value)}
-						fullWidth
-						style={{ marginTop: "10px", backgroundColor: "white" }}
-					>
-						{allLists.length === 0 ? (
-							<MenuItem value="">No lists available</MenuItem>
-						) : (
-							allLists.map((listItem) => (
-								<MenuItem
-									key={listItem}
-									value={listItem}
-								>
-									{listItem}
-								</MenuItem>
-							))
-						)}
-					</TextField>
-				</DialogContent>
-				<DialogActions>
-					<Button
-						onClick={handleClose}
-						className="primary-color"
-						style={{ color: "black" }}
-					>
-						Cancel
-					</Button>
-					<Button
-						onClick={handleAdd}
-						className="primary-color"
-						style={{ color: "black" }}
-					>
-						Add
-					</Button>
-				</DialogActions>
-			</Dialog>
-		</Container>
-	);
+            {/* Popup Dialog for Adding Ingredients */}
+            <Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
+                <DialogTitle sx={{ color: "white" }}>Add Ingredient</DialogTitle>
+                <DialogContent>
+                    <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        type="number"
+                        value={amount}
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            setAmount(value);
+                            if (parseFloat(value) > 0 && isNumber(value)) {
+                                setAmountError("");
+                            }
+                        }}
+                        fullWidth
+                        inputProps={{ step: "0.1", min: "0" }}
+                        style={{ backgroundColor: "white" }}
+                    />
+                    {amountError && <div style={{ color: "red" }}>{amountError}</div>}
+
+                    {/* Unit Dropdown */}
+                    <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
+                    <TextField
+                        select
+                        value={selectedUnit}
+                        onChange={(e) => setSelectedUnit(e.target.value)}
+                        fullWidth
+                        style={{ marginTop: "10px", backgroundColor: "white" }}
+                    >
+                        {units.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+
+                    {/* List Name Dropdown */}
+                    <div style={{ marginBottom: "0.5px", color: "white" }}>List Name</div>
+                    <TextField
+                        select
+                        value={selectedList}
+                        onChange={(e) => setSelectedList(e.target.value)}
+                        fullWidth
+                        style={{ marginTop: "10px", backgroundColor: "white" }}
+                    >
+                        {allLists.length === 0 ? (
+                            <MenuItem value="">No lists available</MenuItem>
+                        ) : (
+                            allLists.map((listItem) => (
+                                <MenuItem key={listItem} value={listItem}>
+                                    {listItem}
+                                </MenuItem>
+                            ))
+                        )}
+                    </TextField>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleAdd} className="primary-color" style={{ color: "white" }}>
+                        Add
+                    </Button>
+                    <Button onClick={handleClose} className="primary-color" style={{ color: "white" }}>
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Container>
+    );
 }
 
 export default AllIngredients;

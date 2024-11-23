@@ -1,8 +1,10 @@
-import HomeIcon from "@mui/icons-material/Home";
-import ListIcon from "@mui/icons-material/List";
-import { useNavigate } from "react-router-dom";
-import "./Toolbar.css";
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import homeIcon from "../../assets/icons/ToolBar/Home/home_col.png";
+import ingredientIcon from "../../assets/icons/ToolBar/Ingredients/ingredients_col.png";
+import listIcon from "../../assets/icons/ToolBar/My Lists/myLists_col.png";
+import recipeIcon from "../../assets/icons/ToolBar/Recipes/recipe_col.png";
+import "./Toolbar.css";
 
 function ToolBar() {
 
@@ -15,7 +17,7 @@ function ToolBar() {
             className="toolbar-button"
             onClick={() => navigate("/logged-in")}
           >
-            <HomeIcon className="toolbar-button-icon" />
+            <img src={homeIcon} alt="Home" className="toolbar-button-icon" />
             <span className="toolbar-button-text">Home</span>
           </div>
     
@@ -23,7 +25,7 @@ function ToolBar() {
             className="toolbar-button"
             onClick={() => navigate("/my-lists")}
           >
-            <ListIcon className="toolbar-button-icon" />
+            <img src={listIcon} alt="MyLists" className="toolbar-button-icon" />
             <span className="toolbar-button-text">My Lists</span>
           </div>
     
@@ -31,12 +33,12 @@ function ToolBar() {
             className="toolbar-button"
             onClick={() => navigate("/all-ingredients")}
           >
-            <ListIcon className="toolbar-button-icon" />
+            <img src={ingredientIcon} alt="AllIngredients" className="toolbar-button-icon" />
             <span className="toolbar-button-text">Ingredients</span>
           </div>
     
           <div className={`toolbar-button ${isDisabled ? "disabled" : ""}`}>
-            <ListIcon className="toolbar-button-icon" />
+            <img src={recipeIcon} alt="Recipes" className="toolbar-button-icon" />
             <span className="toolbar-button-text">Recipes</span>
           </div>
         </div>

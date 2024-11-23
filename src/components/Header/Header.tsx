@@ -1,10 +1,10 @@
 import { AppBar, IconButton, Input, InputAdornment, Toolbar, Typography } from "@mui/material";
+import { UserAuth } from "auth/UserAuth";
+import SideMenu from "components/SideMenu/SideMenu";
 import React, { useEffect, useMemo } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
 import "./Header.css";
-import SideMenu from "components/SideMenu/SideMenu";
-import { UserAuth } from "auth/UserAuth";
 
 interface HeaderProp {
 	userAuth: UserAuth;
@@ -19,7 +19,7 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 
 	const routeNames = useMemo(
 		() => ({
-			"/logged-in": "Logged In",
+			"/logged-in": "Home",
 			"/all-ingredients": "Ingredient Selections",
 			"/my-lists": "My Lists",
 			"/view-list/:listName": ":listName",
@@ -27,7 +27,7 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 		[]
 	);
 
-	const searchInapplicableScreens = useMemo(() => ["Logged In"], []);
+	const searchInapplicableScreens = useMemo(() => ["Home"], []);
 
 	// Determine the active screen name based on the current path
 	const activeScreenName = useMemo(() => {
