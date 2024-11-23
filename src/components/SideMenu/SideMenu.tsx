@@ -8,6 +8,7 @@ import { IoInformationCircleOutline, IoLogOutOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import "./SideMenu.css";
 
+
 interface SideMenuProps {
 	userAuth: UserAuth;
 	open: boolean;
@@ -29,23 +30,22 @@ function SideMenu({ userAuth, open, onClose }: SideMenuProps) {
 			open={open}
 			onClose={onClose}
 		>
-			<div className="side-menu-header sub-color">
+			<div className="side-menu-header" style={{ color: "white" }}>
 				<button
 					onClick={onClose}
 					className="close-btn"
 					aria-label="Close"
+                    style={{ color: "white" }}
 				>
 					{uniIcons.cross}
 				</button>
 				<h2>Cupboard</h2>
 				<p className="email">{userAuth.getEmail()}</p>
 			</div>
-			<div className="sub-color">
-				<Divider className="thick-divider" />
-			</div>
-			<List className="menu-list sub-color">
+            <Divider className="header-divider" sx={{ borderColor: 'white', borderBottomWidth: 1 }} />
+			<List className="menu-list" style={{ color: "white" }} >
 				<ListItemButton disabled={true}>
-					<ListItemIcon sx={{ fontSize: "1.7rem" }}>
+					<ListItemIcon sx={{ fontSize: "1.7rem", color: "white" }}>
 						<FaUserCircle />
 					</ListItemIcon>
 					<ListItemText primary="My Account" />
@@ -55,14 +55,26 @@ function SideMenu({ userAuth, open, onClose }: SideMenuProps) {
 					href={links.aboutPage}
 					target="_blank" // Open in a new tab
 					rel="noopener noreferrer" // Security measure
+                    sx={{
+                        "&:hover": {
+                          backgroundColor: "#0f4c75", 
+                        },
+                      }}
 				>
-					<ListItemIcon sx={{ fontSize: "1.7rem" }}>
+					<ListItemIcon sx={{ fontSize: "1.7rem", color: "white" }}>
 						<IoInformationCircleOutline />
 					</ListItemIcon>
 					<ListItemText primary="About" />
 				</ListItemButton>
-				<ListItemButton onClick={handleLogout}>
-					<ListItemIcon sx={{ fontSize: "1.7rem" }}>
+				<ListItemButton
+                 onClick={handleLogout}
+                 sx={{
+                    "&:hover": {
+                      backgroundColor: "#0f4c75", 
+                    },
+                  }}
+                 >
+					<ListItemIcon sx={{fontSize: "1.7rem", color: "red" }}>
 						<IoLogOutOutline />
 					</ListItemIcon>
 					<ListItemText primary="Log out" />
@@ -71,7 +83,7 @@ function SideMenu({ userAuth, open, onClose }: SideMenuProps) {
 			<img
 				src={logo}
 				alt="Cupboard Logo"
-				className="logo sub-color"
+				className="logo"
 			/>
 		</Drawer>
 	);
