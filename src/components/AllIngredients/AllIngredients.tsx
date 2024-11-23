@@ -3,6 +3,7 @@
  */
 
 import {
+    Box,
     Button,
     Card,
     CardActions,
@@ -249,10 +250,22 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             )}
 
             {/* Popup Dialog for Adding Ingredients */}
-            <Dialog open={open} onClose={handleClose} PaperProps={{ className: "secondary-color" }}>
-                <DialogTitle sx={{ color: "white" }}>Add Ingredient</DialogTitle>
-                <DialogContent>
-                    <div style={{ marginBottom: "0.5px", color: "white" }}>Amount</div>
+            <Dialog 
+                open={open} 
+                onClose={handleClose} 
+                PaperProps={{ color: "white" }}
+            >
+                <DialogTitle sx={{ color: "black" }}>Add Ingredient</DialogTitle>
+                <DialogContent
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "16px", 
+                    }}
+                >
+                    {/* Amount section */}
+                    <Box>
+                    <div style={{ marginBottom: "3px", color: "black" }}><strong>Amount</strong></div>
                     <TextField
                         autoFocus
                         margin="dense"
@@ -270,15 +283,17 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                         style={{ backgroundColor: "white" }}
                     />
                     {amountError && <div style={{ color: "red" }}>{amountError}</div>}
-
+                    </Box>
+                    
                     {/* Unit Dropdown */}
-                    <div style={{ marginBottom: "0.5px", color: "white" }}>Unit</div>
+                    <Box>
+                    <div style={{ marginBottom: "2px", color: "black" }}><strong>Unit</strong></div>
                     <TextField
                         select
                         value={selectedUnit}
                         onChange={(e) => setSelectedUnit(e.target.value)}
                         fullWidth
-                        style={{ marginTop: "10px", backgroundColor: "white" }}
+                        style={{ backgroundColor: "white" }}
                     >
                         {units.map((option) => (
                             <MenuItem key={option} value={option}>
@@ -286,15 +301,17 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                             </MenuItem>
                         ))}
                     </TextField>
-
+                    </Box>
+                    
                     {/* List Name Dropdown */}
-                    <div style={{ marginBottom: "0.5px", color: "white" }}>List Name</div>
+                    <Box>
+                    <div style={{ marginBottom: "2px", color: "black" }}><strong>List Name</strong></div>
                     <TextField
                         select
                         value={selectedList}
                         onChange={(e) => setSelectedList(e.target.value)}
                         fullWidth
-                        style={{ marginTop: "10px", backgroundColor: "white" }}
+                        style={{ backgroundColor: "white" }}
                     >
                         {allLists.length === 0 ? (
                             <MenuItem value="">No lists available</MenuItem>
@@ -306,12 +323,13 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                             ))
                         )}
                     </TextField>
+                    </Box> 
                 </DialogContent>
                 <DialogActions>
-                <Button onClick={handleAdd} className="primary-color" style={{ color: "white" }}>
+                <Button onClick={handleAdd} className="secondary-color" style={{ color: "white" }}>
                         Add
                     </Button>
-                    <Button onClick={handleClose} className="primary-color" style={{ color: "white" }}>
+                    <Button onClick={handleClose} className="#808080" style={{ color: "black", border: "1px solid #ccc" }}>
                         Cancel
                     </Button>
                 </DialogActions>
