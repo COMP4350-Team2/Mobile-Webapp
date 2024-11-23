@@ -1,4 +1,4 @@
-import { Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Button, Divider, Drawer, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import logo from "assets/Cupboard_Logo_lightmode.png";
 import links from "assets/Links.json";
 import uniIcons from "assets/UniIcon.json";
@@ -66,25 +66,39 @@ function SideMenu({ userAuth, open, onClose }: SideMenuProps) {
 					</ListItemIcon>
 					<ListItemText primary="About" />
 				</ListItemButton>
-				<ListItemButton
-                 onClick={handleLogout}
-                 sx={{
-                    "&:hover": {
-                      backgroundColor: "#0f4c75", 
-                    },
-                  }}
-                 >
-					<ListItemIcon sx={{fontSize: "1.7rem", color: "red" }}>
-						<IoLogOutOutline />
-					</ListItemIcon>
-					<ListItemText primary="Log out" />
-				</ListItemButton>
 			</List>
 			<img
 				src={logo}
 				alt="Cupboard Logo"
 				className="logo"
 			/>
+        <div className="logout-menu" style={{ display: "flex", justifyContent: "center" }}>
+        <Button
+        onClick={handleLogout}
+        fullWidth
+        sx={{
+            backgroundColor: "#b71c1c",
+            color: "white",
+            padding: "12px",
+            borderRadius: "20px", 
+            fontSize: "1rem",
+            fontWeight: "bold",
+            textTransform: "none", 
+            width: "190px",
+            height: "45px",
+            marginBottom: "5px",
+            "&:hover": {
+                backgroundColor: "#841b1b", 
+            },
+            "& .MuiButton-startIcon": {
+                color: "white", 
+            },
+        }}
+        startIcon={<IoLogOutOutline />}
+    >
+        Log Out
+    </Button>
+            </div> 
 		</Drawer>
 	);
 }
