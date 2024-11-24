@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../../auth/UserAuth";
 import Loading from "../Loading/Loading";
-import "./Home.css";
 
 interface HomeProps {
 	userAuth: UserAuth;
