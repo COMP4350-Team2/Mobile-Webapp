@@ -25,6 +25,7 @@ import isNumber from "is-number";
 import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useOutletContext } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
 import { LayoutContext } from "../Layout/Layout";
@@ -152,7 +153,18 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 			);
 			// Call the addIngredient method on the backend
 			await backend.addIngredient(selectedList, ingredientToAdd);
+            toast.success(
+                `${amount} ${selectedUnit} of ${selectedIngredient.name} added to ${selectedList}`,
+                {
+                    style: {
+                        backgroundColor: "white",
+                        color:"#0f4c75",
+                        fontWeight: "bold"
+                    }
+                }
+            );
 			handleClose();
+            
 		} catch (error) {
 			console.error("Error adding ingredient:", error);
 		}
