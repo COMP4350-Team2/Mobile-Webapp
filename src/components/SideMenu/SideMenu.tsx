@@ -86,7 +86,7 @@ function SideMenu({ userAuth, open, onClose }: SideMenuProps) {
             textTransform: "none", 
             width: "190px",
             height: "45px",
-            marginBottom: "5px",
+            marginBottom: "16px",
             "&:hover": {
                 backgroundColor: "#841b1b", 
             },

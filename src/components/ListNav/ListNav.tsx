@@ -21,6 +21,7 @@ import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
 import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { BackendInterface } from "services/BackendInterface";
 import { Ingredient } from "../../models/Ingredient";
 import { LayoutContext } from "../Layout/Layout";
@@ -169,6 +170,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			await backendInterface.addIngredient(listName, ingredientToAdd);
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
+            toast.success(
+                `${amount} ${selectedUnit} of ${chosenIngredient.name} added to ${listName}`,
+                {
+                    style: {
+                        backgroundColor: "white",
+                        color:"#0f4c75",
+                        fontWeight: "bold"
+                    }
+                }
+            );
 		} catch (error) {
 			console.error("Error adding ingredient:", error);
 		} finally {
