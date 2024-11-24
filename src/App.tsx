@@ -7,6 +7,8 @@ import MyLists from "components/MyLists/MyLists";
 import Welcome from "components/Welcome/Welcome";
 import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BackendFactory from "services/BackendFactory";
 import "./App.css";
 
@@ -69,7 +71,15 @@ function App() {
 		},
 	]);
 
-	return <RouterProvider router={router} />;
+	return (
+		<>
+			<RouterProvider router={router} />
+			<ToastContainer
+				position="top-center"
+				autoClose={2000}
+			/>
+		</>
+	);
 }
 
 export default App;
