@@ -208,6 +208,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			// Fetch updated ingredients for the list to refresh the UI
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
+            toast.success(
+                `Success!`,
+                {
+                    style: {
+                        backgroundColor: "white",
+                        color:"#0f4c75",
+                        fontWeight: "bold"
+                    }
+                }
+            );
 		} catch (error) {
 			console.error("Error updating ingredient:", error);
 		} finally {
@@ -223,6 +233,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
+            toast.success(
+                `${ingredientToMove.name} moved to ${listName}`,
+                {
+                    style: {
+                        backgroundColor: "white",
+                        color:"#0f4c75",
+                        fontWeight: "bold"
+                    }
+                }
+            );
 		} catch (error) {
 			console.error("Error moving ingredient:", error);
 		} finally {
