@@ -3,11 +3,10 @@ import AllIngredients from "components/AllIngredients/AllIngredients";
 import Home from "components/Home/Home";
 import Layout from "components/Layout/Layout";
 import ListNav from "components/ListNav/ListNav";
-import LoggedIn from "components/LoggedIn/LoggedIn";
 import MyLists from "components/MyLists/MyLists";
+import Welcome from "components/Welcome/Welcome";
 import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BackendFactory from "services/BackendFactory";
 import "./App.css";
@@ -20,16 +19,16 @@ function App() {
 	const router = createBrowserRouter([
 		{
 			path: "/",
-			element: <Home userAuth={userAuth} />,
+			element: <Welcome userAuth={userAuth} />,
 			errorElement: <div>404 Page Not Found</div>,
 		},
 		{
 			element: <Layout userAuth={userAuth} />,
 			children: [
 				{
-					path: "/logged-in",
+					path: "/home",
 					element: (
-						<LoggedIn
+						<Home
 							userAuth={userAuth}
 							isFirstLoggin={isFirstLoggin}
 							setIsFirstLoggin={(val) => setIsFirstLoggin(val)}
@@ -71,15 +70,11 @@ function App() {
 		},
 	]);
 
-	return(
-        <>
-        <RouterProvider router={router} />
-        <ToastContainer
-            position="top-center"
-            autoClose={2000}
-      />
-    </>
-    );
+	return (
+		<>
+			<RouterProvider router={router} />
+		</>
+	);
 }
 
 export default App;

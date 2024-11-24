@@ -1,7 +1,7 @@
 import { AppBar, IconButton, Input, InputAdornment, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import SideMenu from "components/SideMenu/SideMenu";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
 import "./Header.css";
@@ -16,10 +16,11 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 	const [menuOpenned, toggleMenu] = React.useState(false);
 	const [searchBarOpenned, toggleSearchBar] = React.useState(false);
 	const location = useLocation();
+	const prevScreenName = useRef<string | null>(null);
 
 	const routeNames = useMemo(
 		() => ({
-			"/logged-in": "Home",
+			"/home": "Home",
 			"/all-ingredients": "Ingredient Selections",
 			"/my-lists": "My Lists",
 			"/view-list/:listName": ":listName",
@@ -48,10 +49,14 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 	}, [location.pathname, routeNames]);
 
 	useEffect(() => {
-		if (searchInapplicableScreens.includes(activeScreenName)) {
-			toggleSearchBar(false); // Close the search bar when the route is one where it's not allowed
+		if (prevScreenName.current !== activeScreenName) {
+			if (searchInapplicableScreens.includes(activeScreenName)) {
+				toggleSearchBar(false); // Close the search bar when the route is one where it's not allowed
+			}
+			searchQueryChange("");
 		}
-	}, [activeScreenName, searchInapplicableScreens]);
+		prevScreenName.current = activeScreenName;
+	}, [activeScreenName, searchInapplicableScreens, prevScreenName, searchQueryChange]);
 
 	return (
 		<>
