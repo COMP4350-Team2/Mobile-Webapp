@@ -1,19 +1,20 @@
 import { Delete } from "@mui/icons-material";
 import {
-    Button,
-    Container,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    TextField,
+	Button,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	TextField,
+	Tooltip,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -82,16 +83,13 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					const updatedLists = await backendInterface.getMyLists();
 					userAuth.setMyLists?.(updatedLists);
 					updateMyLists(updatedLists);
-                    toast.success(
-                        `${newList.name} created successfully!`,
-                        {
-                            style: {
-                                backgroundColor: "white",
-                                color:"#0f4c75",
-                                fontWeight: "bold"
-                            }
-                        }
-                    );
+					toast.success(`${newList.name} created successfully!`, {
+						style: {
+							backgroundColor: "white",
+							color: "#0f4c75",
+							fontWeight: "bold",
+						},
+					});
 				} catch (error) {
 					console.error("Error creating new list:", error);
 				}
@@ -116,9 +114,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		closeConfirmDeleteDialog();
 	};
 
-	const filteredLists = myLists.filter((list) =>
-		list.name.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const filteredLists = myLists.filter((list) => list.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
 	const highlightText = (text: string, query: string) => {
 		if (!query) return text;
@@ -126,7 +122,10 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		const parts = text.split(new RegExp(`(${query})`, "gi"));
 		return parts.map((part, index) =>
 			part.toLowerCase() === query.toLowerCase() ? (
-				<span key={index} style={{ fontWeight: "bold" }}>
+				<span
+					key={index}
+					style={{ fontWeight: "bold" }}
+				>
 					{part}
 				</span>
 			) : (
@@ -151,8 +150,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						variant="contained"
 						color="primary"
-                        className= "primary-color"
-						style={{ marginTop: "20px", marginLeft: "0.75px" }}
+						className="primary-color"
+						style={{ marginTop: "20px", marginLeft: "0.75px", fontSize: "0.95rem" }}
 						onClick={handleOpenNewListDialog}
 					>
 						Create List
@@ -165,8 +164,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 						<Table>
 							<TableHead>
 								<TableRow>
-									<TableCell style={{ fontWeight: "bold" }}>List Name</TableCell>
-									<TableCell> </TableCell> {/* column for action */}
+									<TableCell style={{ fontWeight: "bold", fontSize: "1.1rem" }}>List Name</TableCell>
+									<TableCell align="right" /> {/* column for action */}
 								</TableRow>
 							</TableHead>
 							<TableBody>
@@ -186,18 +185,24 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 												borderBottom: "1px solid #ddd",
 											}}
 										>
-											<TableCell style={{ padding: "12px 16px" }}>{highlightText(list.name, searchQuery)}
+											<TableCell style={{ padding: "12px 16px", fontSize: "1.1rem" }}>
+												{highlightText(list.name, searchQuery)}
 											</TableCell>
-											<TableCell>
-												<Button
-													color="error"
-													onClick={(event) => {
-														event.stopPropagation(); // Prevents the row's onClick from triggering
-														handleConfirmDelete(list);
-													}}
+											<TableCell align="right">
+												<Tooltip
+													title="Delete list"
+													arrow
 												>
-													<Delete />
-												</Button>
+													<Button
+														color="error"
+														onClick={(event) => {
+															event.stopPropagation(); // Prevents the row's onClick from triggering
+															handleConfirmDelete(list);
+														}}
+													>
+														<Delete />
+													</Button>
+												</Tooltip>
 											</TableCell>
 										</TableRow>
 									))
@@ -244,8 +249,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					{nameError && <div style={{ color: "red" }}>{nameError}</div>}
 				</DialogContent>
 				<DialogActions>
-                <Button
-                        style={{ color: "white" }}
+					<Button
+						style={{ color: "white" }}
 						onClick={handleCreateList}
 						disabled={!newListName.trim()}
 						className="secondary-color"
@@ -253,7 +258,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 						Create
 					</Button>
 					<Button
-                        style={{ color: "black", border: "1px solid #ccc"  }}
+						style={{ color: "black", border: "1px solid #ccc" }}
 						onClick={handleCloseNewListDialog}
 						className="white"
 					>
@@ -268,34 +273,39 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 				onClose={closeConfirmDeleteDialog}
 				PaperProps={{ className: "white" }}
 			>
-			<DialogTitle sx={{ 
-                    color: "black", 
-                    textAlign: "center", 
-                    marginBottom: "4px",
-                    paddingBottom: "4px", 
-                }}
-            > 
-            <strong>Confirm Deletion</strong>
-            </DialogTitle>
-			<DialogContent 
-                sx={{ 
-                    color: "black", 
-                    textAlign: "center", 
-                    marginBottom: "4px",
-                    paddingBottom: "4px", 
-                }}
-            >
-			{activeList ? <span>Are you sure you want to delete list <strong>{activeList.name}</strong>?</span> : null}
-			</DialogContent>
-			<DialogActions
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "flex-start",
-                        gap: "20px",
-                    }}
-                >
-                <Button
+				<DialogTitle
+					sx={{
+						color: "black",
+						textAlign: "center",
+						marginBottom: "4px",
+						paddingBottom: "4px",
+					}}
+				>
+					<strong>Confirm Deletion</strong>
+				</DialogTitle>
+				<DialogContent
+					sx={{
+						color: "black",
+						textAlign: "center",
+						marginBottom: "4px",
+						paddingBottom: "4px",
+					}}
+				>
+					{activeList ? (
+						<span>
+							Are you sure you want to delete list <strong>{activeList.name}</strong>?
+						</span>
+					) : null}
+				</DialogContent>
+				<DialogActions
+					sx={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "flex-start",
+						gap: "20px",
+					}}
+				>
+					<Button
 						onClick={deleteList}
 						sx={{
 							backgroundColor: "error.main",
