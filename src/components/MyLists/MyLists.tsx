@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { toast } from "react-toastify";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/List";
@@ -81,6 +82,16 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					const updatedLists = await backendInterface.getMyLists();
 					userAuth.setMyLists?.(updatedLists);
 					updateMyLists(updatedLists);
+                    toast.success(
+                        `${newList.name} created successfully!`,
+                        {
+                            style: {
+                                backgroundColor: "white",
+                                color:"#0f4c75",
+                                fontWeight: "bold"
+                            }
+                        }
+                    );
 				} catch (error) {
 					console.error("Error creating new list:", error);
 				}
