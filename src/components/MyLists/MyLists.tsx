@@ -1,22 +1,23 @@
 import { Delete } from "@mui/icons-material";
 import {
-	Button,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import { toast } from "react-toastify";
 import { BackendInterface } from "services/BackendInterface";
 import { UserAuth } from "../../auth/UserAuth";
 import { List } from "../../models/List";
@@ -81,6 +82,16 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					const updatedLists = await backendInterface.getMyLists();
 					userAuth.setMyLists?.(updatedLists);
 					updateMyLists(updatedLists);
+                    toast.success(
+                        `${newList.name} created successfully!`,
+                        {
+                            style: {
+                                backgroundColor: "white",
+                                color:"#0f4c75",
+                                fontWeight: "bold"
+                            }
+                        }
+                    );
 				} catch (error) {
 					console.error("Error creating new list:", error);
 				}
@@ -140,6 +151,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					<Button
 						variant="contained"
 						color="primary"
+                        className= "primary-color"
 						style={{ marginTop: "20px", marginLeft: "0.75px" }}
 						onClick={handleOpenNewListDialog}
 					>
@@ -209,9 +221,9 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			<Dialog
 				open={openNewListDialog}
 				onClose={handleCloseNewListDialog}
-				PaperProps={{ className: "secondary-color" }}
+				PaperProps={{ color: "white" }}
 			>
-				<DialogTitle sx={{ color: "white" }}>Create New List</DialogTitle>
+				<DialogTitle sx={{ color: "black" }}>Create New List</DialogTitle>
 				<DialogContent>
 					{/* Input field for the new list name */}
 					<TextField
@@ -232,21 +244,20 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					{nameError && <div style={{ color: "red" }}>{nameError}</div>}
 				</DialogContent>
 				<DialogActions>
-					<Button
-                        style={{ color: "white" }}
-						onClick={handleCloseNewListDialog}
-						className="primary-color"
-					>
-						Cancel
-					</Button>
-					<Button
+                <Button
                         style={{ color: "white" }}
 						onClick={handleCreateList}
-						color="primary"
 						disabled={!newListName.trim()}
-						className="primary-color"
+						className="secondary-color"
 					>
 						Create
+					</Button>
+					<Button
+                        style={{ color: "black", border: "1px solid #ccc"  }}
+						onClick={handleCloseNewListDialog}
+						className="white"
+					>
+						Cancel
 					</Button>
 				</DialogActions>
 			</Dialog>
@@ -255,10 +266,10 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			<Dialog
 				open={openConfirmDeleteDialog}
 				onClose={closeConfirmDeleteDialog}
-				PaperProps={{ className: "secondary-color" }}
+				PaperProps={{ className: "white" }}
 			>
 			<DialogTitle sx={{ 
-                    color: "white", 
+                    color: "black", 
                     textAlign: "center", 
                     marginBottom: "4px",
                     paddingBottom: "4px", 
@@ -268,7 +279,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
             </DialogTitle>
 			<DialogContent 
                 sx={{ 
-                    color: "white", 
+                    color: "black", 
                     textAlign: "center", 
                     marginBottom: "4px",
                     paddingBottom: "4px", 
@@ -298,8 +309,8 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					</Button>
 					<Button
 						onClick={closeConfirmDeleteDialog}
-						className="primary-color"
-						style={{ color: "white" }}
+						className="white"
+						style={{ color: "black", border: "1px solid #ccc" }}
 					>
 						Cancel
 					</Button>

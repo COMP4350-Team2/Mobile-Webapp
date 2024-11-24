@@ -1,14 +1,16 @@
-import ListNav from "components/ListNav/ListNav";
-import MyLists from "components/MyLists/MyLists";
-import { useState } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import "./App.css";
 import UserAuthFactory from "auth/UserAuthFactory";
 import AllIngredients from "components/AllIngredients/AllIngredients";
 import Home from "components/Home/Home";
 import Layout from "components/Layout/Layout";
+import ListNav from "components/ListNav/ListNav";
 import LoggedIn from "components/LoggedIn/LoggedIn";
+import MyLists from "components/MyLists/MyLists";
+import { useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import BackendFactory from "services/BackendFactory";
+import "./App.css";
 
 function App() {
 	const [isFirstLoggin, setIsFirstLoggin] = useState(true);
@@ -69,7 +71,15 @@ function App() {
 		},
 	]);
 
-	return <RouterProvider router={router} />;
+	return(
+        <>
+        <RouterProvider router={router} />
+        <ToastContainer
+            position="top-center"
+            autoClose={2000}
+      />
+    </>
+    );
 }
 
 export default App;
