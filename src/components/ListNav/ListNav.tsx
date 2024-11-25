@@ -478,7 +478,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				<Add />
 			</Fab>
 
-			{/* Dialog for Adding Ingredients */}
+			{/* Dialog for Select Ingredients for adding */}
 			<Dialog
 				open={open}
 				onClose={handleClose}
@@ -504,17 +504,18 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 								key={index}
 								onClick={() => handleIngredientClick(ingredient)}
 								style={{
-									padding: "10px",
 									cursor: "pointer",
 									borderBottom: "1px solid #808080",
 									color: "black",
 									backgroundColor: "inherit",
 									transition: "background-color 0.2s",
+									padding: "10px",
 								}}
-								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
+								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--secondary-color)")}
 								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
 							>
-								{`${highlightText(ingredient.name, dialogSearchQuery)} | ${ingredient.type}`}
+								<div> {highlightText(ingredient.name, dialogSearchQuery)}</div>
+								<div style={{ fontSize: "0.9rem", color: "#606060" }}>{ingredient.type}</div>
 							</div>
 						))}
 					</div>
