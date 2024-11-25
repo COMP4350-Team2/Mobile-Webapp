@@ -122,6 +122,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
 			handleCloseConfirmDialog();
+			toast.success(`${ingredientToDelete.name} successfully deleted.`, {
+				style: {
+					backgroundColor: "white",
+					color: "#0f4c75",
+					fontWeight: "bold",
+				},
+			});
 		}
 	};
 
@@ -485,7 +492,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				PaperProps={{ className: "white" }}
 			>
 				<DialogTitle style={{ color: "black" }}>Select Ingredients</DialogTitle>
-				<DialogContent>
+				<DialogContent sx={{ overflowY: "hidden" }}>
 					{/* Search Bar for Dialog */}
 					<TextField
 						variant="outlined"
