@@ -112,6 +112,15 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		const newList = await backendInterface.deleteList(activeList?.name ?? "");
 		updateMyLists(newList);
 		closeConfirmDeleteDialog();
+		if (activeList) {
+			toast.success(`List ${activeList.name} successfully deleted.`, {
+				style: {
+					backgroundColor: "white",
+					color: "#0f4c75",
+					fontWeight: "bold",
+				},
+			});
+		}
 	};
 
 	const filteredLists = myLists.filter((list) => list.name.toLowerCase().includes(searchQuery.toLowerCase()));

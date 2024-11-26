@@ -1,21 +1,22 @@
 import { Add, Delete, Edit, SwapHoriz } from "@mui/icons-material";
 import {
-    Box,
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    Container,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Fab,
-    Grid,
-    IconButton,
-    MenuItem,
-    TextField,
-    Typography
+	Box,
+	Button,
+	Card,
+	CardActions,
+	CardContent,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Fab,
+	Grid,
+	IconButton,
+	MenuItem,
+	TextField,
+	Tooltip,
+	Typography,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
@@ -121,6 +122,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
 			handleCloseConfirmDialog();
+			toast.success(`${ingredientToDelete.name} successfully deleted.`, {
+				style: {
+					backgroundColor: "white",
+					color: "#0f4c75",
+					fontWeight: "bold",
+				},
+			});
 		}
 	};
 
@@ -170,16 +178,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			await backendInterface.addIngredient(listName, ingredientToAdd);
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
-            toast.success(
-                `${amount} ${selectedUnit} of ${chosenIngredient.name} added to ${listName}`,
-                {
-                    style: {
-                        backgroundColor: "white",
-                        color:"#0f4c75",
-                        fontWeight: "bold"
-                    }
-                }
-            );
+			toast.success(`${amount} ${selectedUnit} of ${chosenIngredient.name} added to ${listName}`, {
+				style: {
+					backgroundColor: "white",
+					color: "#0f4c75",
+					fontWeight: "bold",
+				},
+			});
 		} catch (error) {
 			console.error("Error adding ingredient:", error);
 		} finally {
@@ -208,16 +213,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			// Fetch updated ingredients for the list to refresh the UI
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
-            toast.success(
-                `Success!`,
-                {
-                    style: {
-                        backgroundColor: "white",
-                        color:"#0f4c75",
-                        fontWeight: "bold"
-                    }
-                }
-            );
+			toast.success(`Success!`, {
+				style: {
+					backgroundColor: "white",
+					color: "#0f4c75",
+					fontWeight: "bold",
+				},
+			});
 		} catch (error) {
 			console.error("Error updating ingredient:", error);
 		} finally {
@@ -233,16 +235,13 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
-            toast.success(
-                `${ingredientToMove.name} moved to ${listName}`,
-                {
-                    style: {
-                        backgroundColor: "white",
-                        color:"#0f4c75",
-                        fontWeight: "bold"
-                    }
-                }
-            );
+			toast.success(`${ingredientToMove.name} moved to ${listName}`, {
+				style: {
+					backgroundColor: "white",
+					color: "#0f4c75",
+					fontWeight: "bold",
+				},
+			});
 		} catch (error) {
 			console.error("Error moving ingredient:", error);
 		} finally {
@@ -281,422 +280,477 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		ingredient.name.toLowerCase().includes(dialogSearchQuery.toLowerCase())
 	);
 
-    const highlightText = (text: string, query: string) => {
-        if (!query) return text;
-    
-        const parts = text.split(new RegExp(`(${query})`, "gi"));
-        return parts.map((part, index) =>
-          part.toLowerCase() === query.toLowerCase() ? (
-            <span key={index} style={{fontWeight: "bold" }}>
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        );
-    };
+	const highlightText = (text: string, query: string) => {
+		if (!query) return text;
 
-    return (
-        <Container
-          maxWidth={false}
-          disableGutters
-          className="sub-color"
-          style={{ height: "100%", position: "relative" }}
-        >
-          {/* Ingredient Cards */}
-          <Grid container spacing={2} style={{ marginTop: "20px" }}>
-            {ingredients.length > 0 ? (
-              filteredIngredients.map((ingredient, index) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <Card>
-                    <CardContent>
+		const parts = text.split(new RegExp(`(${query})`, "gi"));
+		return parts.map((part, index) =>
+			part.toLowerCase() === query.toLowerCase() ? (
+				<span
+					key={index}
+					style={{ fontWeight: "bold" }}
+				>
+					{part}
+				</span>
+			) : (
+				part
+			)
+		);
+	};
 
-                      <Typography 
-                            variant="h6" 
-                            style = {{color: 'black'}}>
-                            {highlightText(ingredient.name, searchQuery)}
-                        </Typography>
+	return (
+		<Container
+			maxWidth={false}
+			disableGutters
+			className="sub-color"
+			style={{ height: "100%", position: "relative" }}
+		>
+			{/* Ingredient Cards */}
+			<Grid
+				container
+				spacing={2}
+				style={{ marginTop: "4px" }}
+			>
+				{ingredients.length > 0 ? (
+					filteredIngredients.map((ingredient, index) => (
+						<Grid
+							item
+							xs={12}
+							sm={6}
+							md={4}
+							lg={3}
+							key={index}
+						>
+							<Card>
+								<CardContent>
+									<Typography
+										variant="h6"
+										style={{ color: "black", fontWeight: "bold" }}
+									>
+										{highlightText(ingredient.name, searchQuery)}
+									</Typography>
 
-                      <Typography 
-                            variant="body2" 
-                            style = {{color: 'black'}} >
-                            Type: {ingredient.type}
-                        </Typography>
+									<Typography
+										variant="body2"
+										style={{
+											color: "black",
+											fontSize: "0.98rem",
+											position: "relative",
+											top: "8px",
+										}}
+									>
+										{`${ingredient.type} | ${ingredient.amount} ${ingredient.unit}`}
+									</Typography>
+								</CardContent>
 
-                      <Typography 
-                            variant="body2" 
-                            style = {{color: 'black'}}>
-                            Amount: {ingredient.amount ?? "N/A"}
-                      </Typography>
+								<CardActions sx={{ display: "flex", justifyContent: "space-between", padding: "8px 35px" }}>
+									<Tooltip
+										title="Move to other list"
+										arrow
+									>
+										<div
+											style={{
+												display: "flex",
+												justifyContent: "center",
+												width: "65px",
+											}}
+										>
+											<IconButton
+												className="secondary-color"
+												onClick={() => handleOpenMoveDialog(ingredient)}
+												sx={{ color: "black", width: "40px", height: "40px" }}
+												size="medium"
+											>
+												<SwapHoriz />
+											</IconButton>
+										</div>
+									</Tooltip>
+									<Tooltip
+										title="Edit"
+										arrow
+									>
+										<Button
+											color="primary"
+											onClick={() => handleOpenEditDialog(ingredient)}
+											sx={{ width: "65px" }}
+										>
+											<Edit />
+										</Button>
+									</Tooltip>
+									<Tooltip
+										title="Delete"
+										arrow
+									>
+										<Button
+											color="error"
+											onClick={() => handleOpenConfirmDialog(ingredient)}
+											sx={{ width: "65px" }}
+										>
+											<Delete />
+										</Button>
+									</Tooltip>
+								</CardActions>
+							</Card>
+						</Grid>
+					))
+				) : (
+					<Grid
+						item
+						xs={12}
+					>
+						<Typography
+							variant="h6"
+							style={{ textAlign: "center", color: "#555" }}
+						>
+							No ingredients available
+						</Typography>
+					</Grid>
+				)}
+			</Grid>
 
-                      <Typography 
-                            variant="body2" 
-                            style = {{color: 'black'}}>
-                            Unit: {ingredient.unit ?? "N/A"}
-                        </Typography>
-                    </CardContent>
+			{/* Spacer for FAB */}
+			<div style={{ height: "60px" }}></div>
 
-                    <CardActions sx={{ display: "flex", justifyContent: "flex-end", gap: "8px", padding: 1 }}>
-                    <div
-                        style={{ display: "flex", gap: "8px"}}
-                    >
-                    <Button
-                    color="error"
-                    onClick={() => handleOpenConfirmDialog(ingredient)}
-                    sx={{ transform: "translateX(8px)" }}
-                    >
-                    <Delete />
-                    </Button>
-                    <Button
-                    color="primary"
-                    onClick={() => handleOpenEditDialog(ingredient)}
-                    sx={{ transform: "translateX(-2px)" }}
-                    >
-                    <Edit />
-                    </Button>
-                    <IconButton
-                    className="secondary-color"
-                    onClick={() => handleOpenMoveDialog(ingredient)}
-                    sx={{ color: "black" , width: "35px" }}
-                    size="small"
-                    >
-                    <SwapHoriz /> 
-                    </IconButton>
-                </div>
-                </CardActions>
-                  </Card>
-                </Grid>
-              ))
-            ) : (
-              <Grid item xs={12}>
-                <Typography variant="h6" style={{ textAlign: "center", color: "#555" }}>
-                  No ingredients available
-                </Typography>
-              </Grid>
-            )}
-          </Grid>
+			{/* Confirm Delete Dialog */}
+			<Dialog
+				open={openConfirmDialog}
+				onClose={handleCloseConfirmDialog}
+				PaperProps={{ className: "white" }}
+			>
+				<DialogTitle
+					sx={{
+						color: "black",
+						textAlign: "center",
+						marginBottom: "4px",
+						paddingBottom: "4px",
+					}}
+				>
+					<strong>Confirm Deletion</strong>
+				</DialogTitle>
+				<DialogContent
+					sx={{
+						color: "black",
+						textAlign: "center",
+						marginBottom: "4px",
+						paddingBottom: "4px",
+					}}
+				>
+					{ingredientToDelete ? (
+						<span>
+							Are you sure you want to delete <strong>{ingredientToDelete.name}</strong> from your list?
+						</span>
+					) : null}
+				</DialogContent>
+				<DialogActions
+					sx={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						gap: "20px",
+					}}
+				>
+					<Button
+						onClick={handleDeleteIngredient}
+						sx={{
+							backgroundColor: "error.main",
+							color: "white",
+							"&:hover": {
+								backgroundColor: "error.dark",
+							},
+						}}
+					>
+						Delete
+					</Button>
+					<Button
+						onClick={handleCloseConfirmDialog}
+						className="white"
+						style={{ color: "black", border: "1px solid #ccc" }}
+					>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
 
-           {/* Spacer for FAB */}
-            <div style={{ height: "60px" }}></div> 
-      
-          {/* Confirm Delete Dialog */}
-          <Dialog
-            open={openConfirmDialog}
-            onClose={handleCloseConfirmDialog}
-            PaperProps={{ className: "white" }}
-          >
-            <DialogTitle 
-                sx={{ 
-                    color: "black", 
-                    textAlign: "center", 
-                    marginBottom: "4px",
-                    paddingBottom: "4px", 
-                 }}
-            >
-                <strong>Confirm Deletion</strong>
-            </DialogTitle>
-            <DialogContent 
-                sx={{
-                    color: "black", 
-                    textAlign: "center", 
-                    marginBottom: "4px", 
-                    paddingBottom: "4px",
-                }}
-            >
-                {ingredientToDelete ? (
-                <span>Are you sure you want to delete <strong>{ingredientToDelete.name}</strong> from your list?</span>
-              ) : null}
-            </DialogContent>
-            <DialogActions
-                sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "20px",
-                }}
-            >
-            <Button
-                onClick={handleDeleteIngredient}
-                sx={{
-                  backgroundColor: "error.main",
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "error.dark",
-                  },
-                }}
-              >
-                Delete
-              </Button>
-              <Button
-                onClick={handleCloseConfirmDialog}
-                className="white"
-                style={{ color: "black", border: "1px solid #ccc" }}
-              >
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-      
-          {/* Floating Action Button */}
-          <Fab
-            color="primary"
-            className="secondary-color"
-            style={{
-              position: "fixed",
-              bottom: "10%",
-              right: "25px",
-            }}
-            onClick={handleAddIngredient}
-          >
-            <Add />
-          </Fab>
-      
-          {/* Dialog for Adding Ingredients */}
-          <Dialog
-            open={open}
-            onClose={handleClose}
-            PaperProps={{ className: "white" }}
-          >
-            <DialogTitle style={{ color: "black" }}>Select Ingredients</DialogTitle>
-            <DialogContent>
-              {/* Search Bar for Dialog */}
-              <TextField
-                variant="outlined"
-                value={dialogSearchQuery}
-                onChange={(e) => setDialogSearchQuery(e.target.value)}
-                size="small"
-                style={{ width: "100%", backgroundColor: "white"}}
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                placeholder="Search Ingredients"
-              />
-              <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-                {filteredAllIngredients.map((ingredient, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleIngredientClick(ingredient)}
-                    style={{
-                      padding: "10px",
-                      cursor: "pointer",
-                      borderBottom: "1px solid #808080",
-                      color: "black",
-                      backgroundColor: "inherit",
-                      transition: "background-color 0.2s"
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
-                  >
-                    {highlightText(ingredient.name, dialogSearchQuery)}
-                  </div>
-                ))}
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleClose}
-                className="white"
-                style={{ color: "black", border: "1px solid #ccc" }}
-              >
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-      
-          {/*Dialogue for editing amounts*/}
-          <Dialog
-            open={openEditDialog}
-            onClose={handleCloseEditDialog}
-            PaperProps={{ className: "white" }}
-          >
-            <DialogTitle style={{ color: "black" }}>{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : "Edit Ingredient"}</DialogTitle>
-            <DialogContent
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px", 
-                }}
-            >
-            <Box>
-                <div style={{color: "black", marginBottom: "2px" }}> <strong>Amount</strong></div>
-                <TextField
-                    type="number"
-                    value={editAmount}
-                    onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "") {
-                        setEditAmount("");
-                        setAmountError("");
-                    } else if (isNumber(value)) {
-                        setEditAmount(Number(value));
-                        setAmountError("");
-                    } else {
-                        setAmountError("Please enter a valid amount.");
-                    }
-                    }}
-                    fullWidth
-                    margin="normal"
-                    style={{ backgroundColor: "white" }}
-                />
-                {amountError && <div style={{ color: "red" }}>{amountError}</div>}
-            </Box>
-            
-            <Box>
-            <div style={{color: "black", marginBottom : "2px" }}><strong>Unit</strong></div>
-              <TextField
-                select
-                value={editUnit}
-                onChange={(e) => setEditUnit(e.target.value)}
-                fullWidth
-                margin="normal"
-                style={{ backgroundColor: "white" }}
-              >
-                {units.map((unitOption) => (
-                  <MenuItem key={unitOption} value={unitOption}>
-                    {unitOption}
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Box>
-              
-            </DialogContent>
-            <DialogActions>
-            <Button
-                onClick={handleUpdateIngredient}
-                className="secondary-color"
-                style={{ color: "white" }}
-              >
-                Update
-              </Button>
-              
-              <Button
-                onClick={handleCloseEditDialog}
-                className="white"
-                style={{ color: "black",  border: "1px solid #ccc" }}
-              >
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-      
-          {/* Dialog for adding ingredient */}
-          <Dialog
-            open={openUnitDialog}
-            onClose={handleUnitDialogClose}
-            PaperProps={{ className: "white" }}
-          >
-            <DialogTitle style={{ color: "black" }}>{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}</DialogTitle>
-            <DialogContent
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "16px", 
-                }}
-            >
-            <Box>
-                <div style={{ marginBottom: "2px", color: "black" }}> <strong>Amount</strong></div>
-                <TextField
-                    type="number"
-                    value={amount}
-                    onChange={(e) => {
-                    const value = e.target.value;
-                    if (value === "") {
-                        setAmount("");
-                        setAmountError("");
-                    } else if (isNumber(value)) {
-                        setAmount(Number(value));
-                        setAmountError("");
-                    }
-                    }}
-                    fullWidth
-                    margin="normal"
-                    style={{ backgroundColor: "white" }}
-                />
-                {amountError && <div style={{ color: "red" }}>{amountError}</div>}
-            </Box>
-            <Box>
-                <div style={{ marginBottom: "2px", color: "black" }}> <strong>Unit</strong></div>
-                <TextField
-                    select
-                    value={selectedUnit}
-                    onChange={(e) => setSelectedUnit(e.target.value)}
-                    fullWidth
-                    margin="normal"
-                    style={{ backgroundColor: "white" }}
-                >
-                    {units.map((unitOption) => (
-                    <MenuItem key={unitOption} value={unitOption}>
-                        {unitOption}
-                    </MenuItem>
-                    ))}
-                </TextField>
-                {formError && <div style={{ color: "red" }}>{formError}</div>}
-            </Box>
-              
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleAdd}
-                className="secondary-color"
-                style={{ color: "white" }}
-              >
-                Add
-              </Button>
-              <Button
-                onClick={handleUnitDialogClose}
-                className="white"
-                style={{ color: "black",  border: "1px solid #ccc" }}
-              >
-                Back
-              </Button>
-            </DialogActions>
-          </Dialog>
-      
-          {/* Dialogue that opens when you click Move */}
-          <Dialog
-            open={openMoveDialog}
-            onClose={handleCloseMoveDialog}
-            PaperProps={{ className: "white" }}
-          >
-            <DialogTitle style={{ color: "black" }}>Move <strong>{ingredientToMove?.name}</strong> to another list</DialogTitle>
-            <DialogContent>
-              {/* List of available lists */}
-              <div style={{ maxHeight: "300px", overflowY: "auto" }}>
-                {availableLists.map((listName, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleMoveIngredients(listName)}
-                    style={{
-                      padding: "10px",
-                      cursor: "pointer",
-                      borderBottom: "1px solid #808080",
-                      color: "black",
-                      backgroundColor: "inherit",
-                      transition: "background-color 0.2s",
-                      fontWeight: "bold"
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
-                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
-                  >
-                    {listName}
-                  </div>
-                ))}
-              </div>
-            </DialogContent>
-            <DialogActions>
-              <Button
-                onClick={handleCloseMoveDialog}
-                className="white"
-                style={{ color: "black", border: "1px solid #ccc" }}
-              >
-                Cancel
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </Container>
-      );
-      
+			{/* Floating Action Button */}
+			<Fab
+				color="primary"
+				className="secondary-color"
+				style={{
+					position: "fixed",
+					bottom: "10%",
+					right: "25px",
+				}}
+				onClick={handleAddIngredient}
+			>
+				<Add />
+			</Fab>
+
+			{/* Dialog for Select Ingredients for adding */}
+			<Dialog
+				open={open}
+				onClose={handleClose}
+				PaperProps={{ className: "white" }}
+			>
+				<DialogTitle style={{ color: "black" }}>Select Ingredients</DialogTitle>
+				<DialogContent sx={{ overflowY: "hidden" }}>
+					{/* Search Bar for Dialog */}
+					<TextField
+						variant="outlined"
+						value={dialogSearchQuery}
+						onChange={(e) => setDialogSearchQuery(e.target.value)}
+						size="small"
+						style={{ width: "100%", backgroundColor: "white" }}
+						InputLabelProps={{
+							shrink: true,
+						}}
+						placeholder="Search Ingredients"
+					/>
+					<div style={{ maxHeight: "400px", overflowY: "auto" }}>
+						{filteredAllIngredients.map((ingredient, index) => (
+							<div
+								key={index}
+								onClick={() => handleIngredientClick(ingredient)}
+								style={{
+									cursor: "pointer",
+									borderBottom: "1px solid #808080",
+									color: "black",
+									backgroundColor: "inherit",
+									transition: "background-color 0.2s",
+									padding: "10px",
+								}}
+								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--secondary-color)")}
+								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
+							>
+								<div> {highlightText(ingredient.name, dialogSearchQuery)}</div>
+								<div style={{ fontSize: "0.9rem", color: "#606060" }}>{ingredient.type}</div>
+							</div>
+						))}
+					</div>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleClose}
+						className="white"
+						style={{ color: "black", border: "1px solid #ccc" }}
+					>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/*Dialogue for editing amounts*/}
+			<Dialog
+				open={openEditDialog}
+				onClose={handleCloseEditDialog}
+				PaperProps={{ className: "white" }}
+			>
+				<DialogTitle style={{ color: "black" }}>
+					{ingredientToEdit ? `Edit ${ingredientToEdit.name}` : "Edit Ingredient"}
+				</DialogTitle>
+				<DialogContent
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						gap: "16px",
+					}}
+				>
+					<Box>
+						<div style={{ color: "black", marginBottom: "2px" }}>
+							{" "}
+							<strong>Amount</strong>
+						</div>
+						<TextField
+							type="number"
+							value={editAmount}
+							onChange={(e) => {
+								const value = e.target.value;
+								if (value === "") {
+									setEditAmount("");
+									setAmountError("");
+								} else if (isNumber(value)) {
+									setEditAmount(Number(value));
+									setAmountError("");
+								} else {
+									setAmountError("Please enter a valid amount.");
+								}
+							}}
+							fullWidth
+							margin="normal"
+							style={{ backgroundColor: "white" }}
+						/>
+						{amountError && <div style={{ color: "red" }}>{amountError}</div>}
+					</Box>
+
+					<Box>
+						<div style={{ color: "black", marginBottom: "2px" }}>
+							<strong>Unit</strong>
+						</div>
+						<TextField
+							select
+							value={editUnit}
+							onChange={(e) => setEditUnit(e.target.value)}
+							fullWidth
+							margin="normal"
+							style={{ backgroundColor: "white" }}
+						>
+							{units.map((unitOption) => (
+								<MenuItem
+									key={unitOption}
+									value={unitOption}
+								>
+									{unitOption}
+								</MenuItem>
+							))}
+						</TextField>
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleUpdateIngredient}
+						className="secondary-color"
+						style={{ color: "white" }}
+					>
+						Update
+					</Button>
+
+					<Button
+						onClick={handleCloseEditDialog}
+						className="white"
+						style={{ color: "black", border: "1px solid #ccc" }}
+					>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Dialog for adding ingredient */}
+			<Dialog
+				open={openUnitDialog}
+				onClose={handleUnitDialogClose}
+				PaperProps={{ className: "white" }}
+			>
+				<DialogTitle style={{ color: "black" }}>
+					{chosenIngredient ? `Add ${chosenIngredient.name}` : "Add Ingredient"}
+				</DialogTitle>
+				<DialogContent
+					sx={{
+						display: "flex",
+						flexDirection: "column",
+						gap: "16px",
+					}}
+				>
+					<Box>
+						<div style={{ marginBottom: "2px", color: "black" }}>
+							{" "}
+							<strong>Amount</strong>
+						</div>
+						<TextField
+							type="number"
+							value={amount}
+							onChange={(e) => {
+								const value = e.target.value;
+								if (value === "") {
+									setAmount("");
+									setAmountError("");
+								} else if (isNumber(value)) {
+									setAmount(Number(value));
+									setAmountError("");
+								}
+							}}
+							fullWidth
+							margin="normal"
+							style={{ backgroundColor: "white" }}
+						/>
+						{amountError && <div style={{ color: "red" }}>{amountError}</div>}
+					</Box>
+					<Box>
+						<div style={{ marginBottom: "2px", color: "black" }}>
+							{" "}
+							<strong>Unit</strong>
+						</div>
+						<TextField
+							select
+							value={selectedUnit}
+							onChange={(e) => setSelectedUnit(e.target.value)}
+							fullWidth
+							margin="normal"
+							style={{ backgroundColor: "white" }}
+						>
+							{units.map((unitOption) => (
+								<MenuItem
+									key={unitOption}
+									value={unitOption}
+								>
+									{unitOption}
+								</MenuItem>
+							))}
+						</TextField>
+						{formError && <div style={{ color: "red" }}>{formError}</div>}
+					</Box>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleAdd}
+						className="secondary-color"
+						style={{ color: "white" }}
+					>
+						Add
+					</Button>
+					<Button
+						onClick={handleUnitDialogClose}
+						className="white"
+						style={{ color: "black", border: "1px solid #ccc" }}
+					>
+						Back
+					</Button>
+				</DialogActions>
+			</Dialog>
+
+			{/* Dialogue that opens when you click Move */}
+			<Dialog
+				open={openMoveDialog}
+				onClose={handleCloseMoveDialog}
+				PaperProps={{ className: "white" }}
+			>
+				<DialogTitle style={{ color: "black" }}>
+					Move <strong>{ingredientToMove?.name}</strong> to another list
+				</DialogTitle>
+				<DialogContent>
+					{/* List of available lists */}
+					<div style={{ maxHeight: "300px", overflowY: "auto" }}>
+						{availableLists.map((listName, index) => (
+							<div
+								key={index}
+								onClick={() => handleMoveIngredients(listName)}
+								style={{
+									padding: "10px",
+									cursor: "pointer",
+									borderBottom: "1px solid #808080",
+									color: "black",
+									backgroundColor: "inherit",
+									transition: "background-color 0.2s",
+									fontWeight: "bold",
+								}}
+								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
+								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
+							>
+								{listName}
+							</div>
+						))}
+					</div>
+				</DialogContent>
+				<DialogActions>
+					<Button
+						onClick={handleCloseMoveDialog}
+						className="white"
+						style={{ color: "black", border: "1px solid #ccc" }}
+					>
+						Cancel
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</Container>
+	);
 }
 
 export default ListNav;
-

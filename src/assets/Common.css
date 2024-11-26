@@ -1,5 +1,7 @@
 :root {
 	--sub-color: #bbe1fa; /* Sub color */
+	--sub-color-rgb: 187, 225, 250;
+	--secondary-color: #3282b8;
 }
 
 .header-color {
@@ -30,7 +32,7 @@
 }
 
 .secondary-color {
-	background-color: #3282b8 !important;
+	background-color: var(--secondary-color) !important;
 }
 
 .sub-color {
