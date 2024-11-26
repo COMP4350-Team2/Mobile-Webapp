@@ -1,22 +1,22 @@
 import { Add, Delete, Edit, SwapHoriz } from "@mui/icons-material";
 import {
-	Box,
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Fab,
-	Grid,
-	IconButton,
-	MenuItem,
-	TextField,
-	Tooltip,
-	Typography,
+    Box,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Fab,
+    Grid,
+    IconButton,
+    MenuItem,
+    TextField,
+    Tooltip,
+    Typography,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
@@ -641,7 +641,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				>
 					<Box>
 						<div style={{ marginBottom: "2px", color: "black" }}>
-							{" "}
 							<strong>Amount</strong>
 						</div>
 						<TextField
@@ -659,7 +658,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							}}
 							fullWidth
 							margin="normal"
-							style={{ backgroundColor: "white" }}
+							style={{ backgroundColor: "white", marginTop: "0px" }}
 						/>
 						{amountError && <div style={{ color: "red" }}>{amountError}</div>}
 					</Box>
@@ -674,7 +673,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							onChange={(e) => setSelectedUnit(e.target.value)}
 							fullWidth
 							margin="normal"
-							style={{ backgroundColor: "white" }}
+							style={{ backgroundColor: "white", marginTop: "0px" }}
 						>
 							{units.map((unitOption) => (
 								<MenuItem
