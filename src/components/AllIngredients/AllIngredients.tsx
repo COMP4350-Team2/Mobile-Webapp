@@ -277,10 +277,9 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                 >
                     {/* Amount section */}
                     <Box>
-                    <div style={{ marginBottom: "3px", color: "black" }}><strong>Amount</strong></div>
+                    <div style={{ marginBottom: "2px", color: "black" }}><strong>Amount</strong></div>
                     <TextField
                         autoFocus
-                        margin="dense"
                         type="number"
                         value={amount}
                         onChange={(e) => {
@@ -292,7 +291,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                         }}
                         fullWidth
                         inputProps={{ step: "0.1", min: "0" }}
-                        style={{ backgroundColor: "white" }}
+                        style={{ backgroundColor: "white", marginTop: "0px" }}
                     />
                     {amountError && <div style={{ color: "red" }}>{amountError}</div>}
                     </Box>
