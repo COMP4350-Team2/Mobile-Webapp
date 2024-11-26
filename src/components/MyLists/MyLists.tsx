@@ -1,20 +1,20 @@
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import {
-	Button,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	TextField,
-	Tooltip,
+    Button,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    TextField,
+    Tooltip,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -40,6 +40,9 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 	const [nameError, setNameError] = useState<string | null>(null);
 	const [openConfirmDeleteDialog, setOpenConfirmDeleteDialog] = useState(false);
 	const [activeList, setActiveList] = useState<List | null>(null);
+    const [oldName, setOldName] = useState("");
+    const [newName, setNewName] = useState("");
+    const [openRenameDialog, setOpenRenameDialog] = useState(false);
 
 	useEffect(() => {
 		const fetchLists = async () => {
@@ -108,6 +111,19 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		setActiveList(null);
 	};
 
+    const handleOpenRenameDialog = (list: List) => {
+        setOldName(list.name);
+        setNewName("");
+        setNameError(null);
+        setOpenRenameDialog(true);
+    };
+    
+    const handleCloseRenameDialog = () => {
+        setOpenRenameDialog(false);
+        setOldName("");
+        setNewName("");
+        setNameError(null);
+    };
 	const deleteList = async () => {
 		const newList = await backendInterface.deleteList(activeList?.name ?? "");
 		updateMyLists(newList);
@@ -122,6 +138,47 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 			});
 		}
 	};
+
+    const handleRenameList = async (oldName: string, newName: string) => {
+        const trimmedOldName = oldName.trim();
+        const trimmedNewName = newName.trim();
+    
+        if (!trimmedNewName) {
+            setNameError("Please enter a valid new list name.");
+            return;
+        }
+    
+        const listExists = myLists.some(
+            (list) => list.name.trim().toLowerCase() === trimmedNewName.toLowerCase()
+        );
+    
+        if (listExists) {
+            setNameError("A list with this name already exists. Please choose a unique name.");
+            return;
+        }
+    
+        try {
+            setNameError(null);
+            await backendInterface.renameList(trimmedOldName, trimmedNewName);
+    
+            const updatedLists = await backendInterface.getMyLists();
+            userAuth.setMyLists?.(updatedLists);
+            updateMyLists(updatedLists);
+    
+            toast.success(`${trimmedOldName} has been renamed to ${trimmedNewName}`, {
+                style: {
+                    backgroundColor: "white",
+                    color: "#0f4c75",
+                    fontWeight: "bold",
+                },
+            });
+    
+            handleCloseRenameDialog();
+        } catch (error) {
+            console.error("Error renaming list:", error);
+        }
+    };
+    
 
 	const filteredLists = myLists.filter((list) => list.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -198,6 +255,22 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 												{highlightText(list.name, searchQuery)}
 											</TableCell>
 											<TableCell align="right">
+                                            <Tooltip
+                                             title="Rename list" 
+                                             arrow
+                                            >
+                                                <Button
+                                                    color="primary"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        handleOpenRenameDialog(list);
+                                                    }}
+                                                    sx={{ width: "65px" }}
+                                                >
+                                                    <Edit />
+                                                </Button>
+
+                                                </Tooltip>
 												<Tooltip
 													title="Delete list"
 													arrow
@@ -335,6 +408,49 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					</Button>
 				</DialogActions>
 			</Dialog>
+            <Dialog
+                open={openRenameDialog}
+                onClose={handleCloseRenameDialog}
+                PaperProps={{ color: "white" }}
+            >
+            <DialogTitle sx={{ color: "black" }}>Rename List</DialogTitle>
+            <DialogContent>
+                <TextField
+                    label="Current Name"
+                    value={oldName}
+                    disabled
+                    fullWidth
+                    margin="dense"
+                    InputProps={{ style: { backgroundColor: "white" } }}
+                />
+                <TextField
+                    label="New Name"
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    fullWidth
+                    margin="dense"
+                    InputProps={{ style: { backgroundColor: "white" } }}
+                    error={!!nameError}
+                    helperText={nameError}
+                />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => handleRenameList(oldName, newName)}
+                        disabled={!newName.trim()}
+                        className="secondary-color"
+                        style={{color: "white"}}
+                    >
+                        Rename
+                    </Button>
+                    <Button
+                        onClick={handleCloseRenameDialog}
+                        style={{ color: "black", border: "1px solid #ccc" }}
+                    >
+                        Cancel
+                    </Button>
+                </DialogActions>
+                </Dialog>
 		</Container>
 	);
 }
