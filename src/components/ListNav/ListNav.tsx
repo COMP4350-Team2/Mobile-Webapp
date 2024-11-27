@@ -235,7 +235,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
-			toast.success(`${ingredientToMove.name} moved to ${listName}`, {
+			toast.success(`${ingredientToMove.name} moved to ${toListName}`, {
 				style: {
 					backgroundColor: "white",
 					color: "#0f4c75",
