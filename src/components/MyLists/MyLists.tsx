@@ -411,12 +411,14 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 					</Button>
 				</DialogActions>
 			</Dialog>
+
+            {/*Dialog for renaming ingredients */}
             <Dialog
                 open={openRenameDialog}
                 onClose={handleCloseRenameDialog}
-                PaperProps={{ color: "white" }}
+                PaperProps={{ color: "white", sx: { width: 400, height: 310 } }}
             >
-            <DialogTitle sx={{ color: "black" }}>Rename List</DialogTitle>
+            <DialogTitle sx={{ color: "black", marginBottom: "4px" }}>Rename List</DialogTitle>
             <DialogContent>
                 <TextField
                     label="Current Name"
