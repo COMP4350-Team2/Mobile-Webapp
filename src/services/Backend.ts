@@ -338,7 +338,7 @@ export class Backend implements BackendInterface {
             } else {
                 console.error(`Error: Received status code ${response.status}`);
             }
-        }catch (error) {
+        } catch (error) {
             console.error("Failed to rename list:", error);
         }
     }

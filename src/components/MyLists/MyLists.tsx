@@ -444,7 +444,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
                         onClick={() => handleRenameList(oldName, newName)}
                         disabled={!newName.trim()}
                         className="secondary-color"
-                        style={{color: "white"}}
+                        style={{ color: "white" }}
                     >
                         Rename
                     </Button>
