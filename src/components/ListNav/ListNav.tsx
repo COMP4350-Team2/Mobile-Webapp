@@ -312,7 +312,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				style={{ marginTop: "4px" }}
 			>
 				{ingredients.length > 0 ? (
-					filteredIngredients.map((ingredient, index) => (
+					filteredIngredients
+                    .slice()
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((ingredient, index) => (
 						<Grid
 							item
 							xs={12}
@@ -506,7 +509,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 						placeholder="Search Ingredients"
 					/>
 					<div style={{ maxHeight: "400px", overflowY: "auto" }}>
-						{filteredAllIngredients.map((ingredient, index) => (
+						{filteredAllIngredients
+                        .slice()
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((ingredient, index) => (
 							<div
 								key={index}
 								onClick={() => handleIngredientClick(ingredient)}
@@ -717,7 +723,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				<DialogContent>
 					{/* List of available lists */}
 					<div style={{ maxHeight: "300px", overflowY: "auto" }}>
-						{availableLists.map((listName, index) => (
+						{availableLists
+                        .slice()
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((listName, index) => (
 							<div
 								key={index}
 								onClick={() => handleMoveIngredients(listName)}

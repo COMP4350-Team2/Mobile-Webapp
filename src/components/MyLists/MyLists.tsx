@@ -236,7 +236,10 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 							</TableHead>
 							<TableBody>
 								{filteredLists.length > 0 ? (
-									filteredLists.map((list, index) => (
+									filteredLists
+                                    .slice()
+                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                    .map((list, index) => (
 										<TableRow
 											key={index}
 											onClick={() => navigate(`/view-list/${encodeURIComponent(list.name)}`)}

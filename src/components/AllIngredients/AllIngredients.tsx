@@ -203,7 +203,10 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 			<>
             <Grid container spacing={2} style={{ marginTop: "20px" }}>
                 
-                {filteredIngredients.map((ingredient, index) => (
+                {filteredIngredients
+                .slice()
+                .sort((a, b) => a.name.localeCompare(b.name))
+                .map((ingredient, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                         <Card>
                             <CardContent>
