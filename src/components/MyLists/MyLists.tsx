@@ -73,7 +73,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
 		const trimmedName = newListName.trim();
 
 		if (trimmedName) {
-			const listExists = myLists.some((list) => list.name.trim().toLowerCase() === trimmedName.toLowerCase());
+			const listExists = myLists.some((list) => list.name.trim() === trimmedName);
 
 			if (listExists) {
 				setNameError("Please enter a unique list name");
@@ -149,7 +149,7 @@ function MyLists({ userAuth, backendInterface }: MyListsProps) {
         }
     
         const listExists = myLists.some(
-            (list) => list.name.trim().toLowerCase() === trimmedNewName.toLowerCase()
+            (list) => list.name.trim() === trimmedNewName
         );
     
         if (listExists) {
