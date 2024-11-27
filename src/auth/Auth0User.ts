@@ -1,9 +1,9 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
-import Cookies from "js-cookie";
 
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
@@ -168,4 +168,13 @@ export class Auth0User implements UserAuth {
 	createList(toAdd: List): void {
 		this.mylists.push(toAdd);
 	}
+    
+    setListName(oldName: string, newName: string): void {
+        const list = this.mylists.find((list) => list.name === oldName);
+        if (list) {
+            list.setListName(newName);
+        } else {
+            console.error(`List with name "${oldName}" not found.`);
+        }
+    }
 }

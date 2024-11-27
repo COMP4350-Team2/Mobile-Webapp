@@ -65,4 +65,8 @@ export class MockBackend implements BackendInterface {
         toList.addOrUpdateIngredient(ingredient);
         fromList.removeIngredient(ingredient);  
     }
+
+    async renameList(oldName: string, newName: string) {
+        this.userAuth.setListName(oldName, newName);
+    }
 }

@@ -1,22 +1,22 @@
 import { Add, Delete, Edit, SwapHoriz } from "@mui/icons-material";
 import {
-	Box,
-	Button,
-	Card,
-	CardActions,
-	CardContent,
-	Container,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Fab,
-	Grid,
-	IconButton,
-	MenuItem,
-	TextField,
-	Tooltip,
-	Typography,
+    Box,
+    Button,
+    Card,
+    CardActions,
+    CardContent,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Fab,
+    Grid,
+    IconButton,
+    MenuItem,
+    TextField,
+    Tooltip,
+    Typography,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
@@ -235,7 +235,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
-			toast.success(`${ingredientToMove.name} moved to ${listName}`, {
+			toast.success(`${ingredientToMove.name} moved to ${toListName}`, {
 				style: {
 					backgroundColor: "white",
 					color: "#0f4c75",
@@ -312,7 +312,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				style={{ marginTop: "4px" }}
 			>
 				{ingredients.length > 0 ? (
-					filteredIngredients.map((ingredient, index) => (
+					filteredIngredients
+                    .slice()
+                    .sort((a, b) => a.name.localeCompare(b.name))
+                    .map((ingredient, index) => (
 						<Grid
 							item
 							xs={12}
@@ -506,7 +509,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 						placeholder="Search Ingredients"
 					/>
 					<div style={{ maxHeight: "400px", overflowY: "auto" }}>
-						{filteredAllIngredients.map((ingredient, index) => (
+						{filteredAllIngredients
+                        .slice()
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map((ingredient, index) => (
 							<div
 								key={index}
 								onClick={() => handleIngredientClick(ingredient)}
@@ -641,7 +647,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				>
 					<Box>
 						<div style={{ marginBottom: "2px", color: "black" }}>
-							{" "}
 							<strong>Amount</strong>
 						</div>
 						<TextField
@@ -659,7 +664,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							}}
 							fullWidth
 							margin="normal"
-							style={{ backgroundColor: "white" }}
+							style={{ backgroundColor: "white", marginTop: "0px" }}
 						/>
 						{amountError && <div style={{ color: "red" }}>{amountError}</div>}
 					</Box>
@@ -674,7 +679,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							onChange={(e) => setSelectedUnit(e.target.value)}
 							fullWidth
 							margin="normal"
-							style={{ backgroundColor: "white" }}
+							style={{ backgroundColor: "white", marginTop: "0px" }}
 						>
 							{units.map((unitOption) => (
 								<MenuItem
@@ -718,7 +723,10 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				<DialogContent>
 					{/* List of available lists */}
 					<div style={{ maxHeight: "300px", overflowY: "auto" }}>
-						{availableLists.map((listName, index) => (
+						{availableLists
+                        .slice()
+                        .sort((a, b) => a.localeCompare(b))
+                        .map((listName, index) => (
 							<div
 								key={index}
 								onClick={() => handleMoveIngredients(listName)}

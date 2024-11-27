@@ -101,4 +101,13 @@ export class MockUser implements UserAuth {
 	createList(toAdd: List): void {
 		this.mylists.push(toAdd);
 	}
+
+    setListName(oldName: string, newName: string): void {
+        const list = this.mylists.find((list) => list.name === oldName);
+        if (list) {
+            list.setListName(newName);
+        } else {
+            console.error(`List with name "${oldName}" not found.`);
+        }
+    }
 }

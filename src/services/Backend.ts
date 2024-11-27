@@ -318,4 +318,28 @@ export class Backend implements BackendInterface {
         }
     }
     
+    async renameList(oldName: string, newName: string) {
+        try{
+            const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.put(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_RENAME_LIST}`,
+				{
+					old_list_name: oldName,
+                    new_list_name: newName,
+				},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+            if (response.status === 200) {
+                this.userAuth.setListName(oldName, newName);
+            } else {
+                console.error(`Error: Received status code ${response.status}`);
+            }
+        } catch (error) {
+            console.error("Failed to rename list:", error);
+        }
+    }
 }

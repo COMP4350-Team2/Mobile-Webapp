@@ -32,4 +32,7 @@ export class List {
         this.ingredients.splice(ingredientIndex, 1);
     }
 
+    setListName(newName:string): void {
+        this.name = newName;
+    }
 }
