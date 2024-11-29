@@ -177,4 +177,21 @@ export class Auth0User implements UserAuth {
             console.error(`List with name "${oldName}" not found.`);
         }
     }
+
+    addCustomIngredient(customIngredient: Ingredient){
+        this.allIngredients.push(customIngredient);
+    }
+
+    removeCustomIngredient(name: string){
+        const ingredientIndex = this.allIngredients.findIndex(
+            (ingredient) => 
+                ingredient.name === name && 
+                ingredient.isCustom //must be a custom ingredient
+        );
+        if (ingredientIndex !== -1) {
+            this.allIngredients.splice(ingredientIndex, 1);
+        } else {
+            console.error(`Custom ingredient '${name}' not found.`);
+        }
+    }
 }

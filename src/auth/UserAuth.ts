@@ -24,4 +24,6 @@ export interface UserAuth {
 	updateIngredient: (listName: string, oldIngredient: Ingredient, newIngredient: Ingredient) => void;
 	createList: (toAdd: List) => void;
     setListName: (oldName: string, newName: string) => void;
+    addCustomIngredient: (customIngredient: Ingredient) => void;
+    removeCustomIngredient: (name: string) => void;
 }
