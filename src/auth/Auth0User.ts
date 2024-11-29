@@ -12,12 +12,48 @@ export class Auth0User implements UserAuth {
 	private mylists: List[] = [];
 	private allIngredients: Ingredient[] = [];
 
-	login() {
-		this.auth0.loginWithRedirect().then(); // Logs the user in using Auth0 redirect
+	async login() {
+		const response = await axios.get<{
+			access_token: string;
+			refresh_token: string;
+			issued_time: Date;
+			expire_time: Date;
+			user_info: {
+				nickname: string;
+				name: string;
+				picture: URL;
+				updated_at: Date;
+				email: string;
+				email_verified: boolean;
+				sid: string;
+			};
+		}>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`);
+
+		let data;
+		if (response.status === 200) {
+			data = response.data;
+			if (!Cookies.get("access_token")) {
+				Cookies.set("access_token", data.access_token, {
+					path: "/",
+					secure: true,
+					sameSite: "Strict",
+				});
+			}
+		} else {
+			throw new Error("Loggin unsuccessful.");
+		}
 	}
 
-	logout() {
-		this.auth0.logout();
+	async logout(): Promise<string> {
+		const response = await axios.get<{ message: string }>(
+			`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`
+		);
+
+		if (response.status === 200) {
+			return response.data.message;
+		} else {
+			throw new Error(response.data.message);
+		}
 	}
 
 	isAuthenticated = () => this.auth0.isAuthenticated; // auth0.isAuthenticated is false initially until Auth0 completes login
@@ -168,30 +204,28 @@ export class Auth0User implements UserAuth {
 	createList(toAdd: List): void {
 		this.mylists.push(toAdd);
 	}
-    
-    setListName(oldName: string, newName: string): void {
-        const list = this.mylists.find((list) => list.name === oldName);
-        if (list) {
-            list.setListName(newName);
-        } else {
-            console.error(`List with name "${oldName}" not found.`);
-        }
-    }
 
-    addCustomIngredient(customIngredient: Ingredient){
-        this.allIngredients.push(customIngredient);
-    }
+	setListName(oldName: string, newName: string): void {
+		const list = this.mylists.find((list) => list.name === oldName);
+		if (list) {
+			list.setListName(newName);
+		} else {
+			console.error(`List with name "${oldName}" not found.`);
+		}
+	}
 
-    removeCustomIngredient(name: string){
-        const ingredientIndex = this.allIngredients.findIndex(
-            (ingredient) => 
-                ingredient.name === name && 
-                ingredient.isCustom //must be a custom ingredient
-        );
-        if (ingredientIndex !== -1) {
-            this.allIngredients.splice(ingredientIndex, 1);
-        } else {
-            console.error(`Custom ingredient '${name}' not found.`);
-        }
-    }
+	addCustomIngredient(customIngredient: Ingredient) {
+		this.allIngredients.push(customIngredient);
+	}
+
+	removeCustomIngredient(name: string) {
+		const ingredientIndex = this.allIngredients.findIndex(
+			(ingredient) => ingredient.name === name && ingredient.isCustom //must be a custom ingredient
+		);
+		if (ingredientIndex !== -1) {
+			this.allIngredients.splice(ingredientIndex, 1);
+		} else {
+			console.error(`Custom ingredient '${name}' not found.`);
+		}
+	}
 }
