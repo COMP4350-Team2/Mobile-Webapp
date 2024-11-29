@@ -1,6 +1,7 @@
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { AppBar, Box, Checkbox, FormControlLabel, IconButton, Input, InputAdornment, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
+import SideMenu from 'components/SideMenu/SideMenu';
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
@@ -239,7 +240,13 @@ function Header({ userAuth, searchQuery, searchQueryChange, setFilter, filter }:
 					}
 				/>
 			)}
-
+            {menuOpenned && (
+				<SideMenu
+					userAuth={userAuth}
+					open={menuOpenned}
+					onClose={() => toggleMenu(false)}
+				></SideMenu>
+			)}
 
 		</>
 	);
