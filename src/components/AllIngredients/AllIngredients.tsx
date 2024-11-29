@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useOutletContext } from "react-router-dom";
 import { toast } from "react-toastify";
+import customIngIcon from "../../assets/icons/custom_ingred.png";
 import { Ingredient } from "../../models/Ingredient";
 import { BackendInterface } from "../../services/BackendInterface";
 import { LayoutContext } from "../Layout/Layout";
@@ -50,8 +51,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
 	const [amountError, setAmountError] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
-
-
+    const { filter } = useOutletContext<{ filter: "All" | "Common" | "Custom" }>();
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
 	 * Once the result is validated, it calls setIngredients to display all available ingredients.
@@ -169,8 +169,18 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 			console.error("Error adding ingredient:", error);
 		}
 	};
+    const getFilteredIngredients = () => {
+        switch (filter) {
+            case "Common":
+                return ingredients.filter((ingredient) => !ingredient.isCustom);
+            case "Custom":
+                return ingredients.filter((ingredient) => ingredient.isCustom);
+            default:
+                return ingredients;
+        }
+    };
 
-	const filteredIngredients = ingredients.filter((ingredient) =>
+	const filteredIngredients = getFilteredIngredients().filter((ingredient) =>
 		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
@@ -193,7 +203,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             maxWidth={false}
             disableGutters
             className="sub-color"
-            style={{ height: "100%" }}
+            style={{ height: "100%", marginTop: 6}}
         >
             
             {/* Ingredient Cards */}
@@ -201,14 +211,14 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 				<Loading />
 			) : (
 			<>
-            <Grid container spacing={2} style={{ marginTop: "20px" }}>
+            <Grid container spacing={2} style={{ marginTop: "0px" }}>
                 
                 {filteredIngredients
                 .slice()
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((ingredient, index) => (
                     <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                        <Card>
+                        <Card style={{ position: "relative" }}>
                             <CardContent>
                                 <Typography variant="h6" style={{ color: 'black', fontWeight: 'bold'}}>
                                     {highlightText(ingredient.name, searchQuery)}
@@ -226,7 +236,20 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                                 <span style={{ fontWeight: 'bold' }}>Type:</span> {ingredient.type}
                                 </Typography>
                             </CardContent>
-
+                            {/* Custom Ingredient Icon */}
+                                {ingredient.isCustom && (
+                                    <img 
+                                        src={customIngIcon} 
+                                        alt="Custom Ingredient" 
+                                        style={{
+                                            position: 'absolute',
+                                            top: '8px',  
+                                            right: '8px',  
+                                            width: '24px', 
+                                            height: '24px', 
+                                        }} 
+                                    />
+                                )}
                             <CardActions
                                 sx={{ display: "flex", justifyContent: "flex-end", gap: "8px", padding: 1 }}
                             >
