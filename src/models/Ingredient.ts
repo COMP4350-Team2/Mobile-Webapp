@@ -5,14 +5,15 @@ export class Ingredient {
     name: string;
     type: string;
     amount?: number;
-    //unit?: "mg" | "kg" | "g" | "count" | "mL";
     unit?: string;
+    isCustom: boolean;
 
     constructor(name: string, type: string, amount?: number, unit?: string) {
         this.name = name;
         this.type = type;
         this.amount = amount;
         this.setUnit(unit || "g"); //default to g
+        this.isCustom =false;
     }
 
     /**
@@ -41,6 +42,10 @@ export class Ingredient {
         } else {
             throw new Error("Invalid unit. Ingredient not created.");
         }   
+    }
+
+    setCustomFlag(isCustom : boolean) : void{
+        this.isCustom = isCustom;
     }
 
 }
