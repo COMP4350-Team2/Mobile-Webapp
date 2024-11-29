@@ -5,12 +5,14 @@ import {
     Card,
     CardActions,
     CardContent,
+    Checkbox,
     Container,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     Fab,
+    FormControlLabel,
     Grid,
     IconButton,
     MenuItem,
@@ -24,9 +26,9 @@ import { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { BackendInterface } from "services/BackendInterface";
+import customIngredIcon from "../../assets/icons/custom_ingred.png";
 import { Ingredient } from "../../models/Ingredient";
 import { LayoutContext } from "../Layout/Layout";
-
 interface ListNavProps {
 	backendInterface: BackendInterface;
 	userAuth: UserAuth;
@@ -56,6 +58,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const [openMoveDialog, setOpenMoveDialog] = useState(false);
 	const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
 	const [formError, setFormError] = useState("");
+    const [dialogFilter, setDialogFilter] = useState<'All' | 'Common' | 'Custom'>('All');
 
 	useEffect(() => {
 		const fetchIngredients = async () => {
@@ -152,6 +155,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const handleClose = () => {
 		setOpen(false);
 		setDialogSearchQuery("");
+        setDialogFilter("All");
 	};
 
 	const handleAdd = async () => {
@@ -172,7 +176,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		}
 
 		try {
-			const ingredientToAdd = new Ingredient(chosenIngredient.name, chosenIngredient.type, amount, selectedUnit);
+			const ingredientToAdd = new Ingredient(chosenIngredient.name, chosenIngredient.type ,amount, selectedUnit);
 
 			// Call the addIngredient method on the backend
 			await backendInterface.addIngredient(listName, ingredientToAdd);
@@ -272,11 +276,21 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		setIngredientToMove(null);
 	};
 
+    const getFilteredIngredients = () => {
+        switch (dialogFilter) {
+            case "Common":
+                return allIngredients.filter((ingredient) => !ingredient.isCustom);
+            case "Custom":
+                return allIngredients.filter((ingredient) => ingredient.isCustom);
+            default:
+                return allIngredients;
+        }
+    };
 	const filteredIngredients = ingredients.filter((ingredient) =>
 		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
-	const filteredAllIngredients = allIngredients.filter((ingredient) =>
+	const filteredAllIngredients = getFilteredIngredients().filter((ingredient) =>
 		ingredient.name.toLowerCase().includes(dialogSearchQuery.toLowerCase())
 	);
 
@@ -297,6 +311,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			)
 		);
 	};
+
 
 	return (
 		<Container
@@ -325,7 +340,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							key={index}
 						>
 							<Card>
-								<CardContent>
+								<CardContent style={{ display: "flex", flexDirection: "column" }}>
 									<Typography
 										variant="h6"
 										style={{ color: "black", fontWeight: "bold" }}
@@ -345,7 +360,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 										{`${ingredient.type} | ${ingredient.amount} ${ingredient.unit}`}
 									</Typography>
 								</CardContent>
-
 								<CardActions sx={{ display: "flex", justifyContent: "space-between", padding: "8px 35px" }}>
 									<Tooltip
 										title="Move to other list"
@@ -494,7 +508,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				onClose={handleClose}
 				PaperProps={{ className: "white" }}
 			>
-				<DialogTitle style={{ color: "black" }}>Select Ingredients</DialogTitle>
+				<DialogTitle style={{ color: "black" }}><strong>Select Ingredients</strong></DialogTitle>
 				<DialogContent sx={{ overflowY: "hidden" }}>
 					{/* Search Bar for Dialog */}
 					<TextField
@@ -508,7 +522,42 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 						}}
 						placeholder="Search Ingredients"
 					/>
-					<div style={{ maxHeight: "400px", overflowY: "auto" }}>
+                     {/* Filter Checkboxes */}
+                    <div style={{ marginTop: '10px', marginBottom: '10px', marginLeft: "5px" }}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={dialogFilter === 'All'}
+                                        onChange={() => setDialogFilter('All')}
+                                        color="primary"
+                                    />
+                                }
+                                label="All"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={dialogFilter === 'Common'}
+                                        onChange={() => setDialogFilter('Common')}
+                                        color="primary"
+                                    />
+                                }
+                                label="Common"
+                            />
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={dialogFilter === 'Custom'}
+                                        onChange={() => setDialogFilter('Custom')}
+                                        color="primary"
+                                    />
+                                }
+                                label="Custom"
+                            />
+                        </Box>
+                    </div>
+					<div style={{ maxHeight: "300px", overflowY: "auto"}}>
 						{filteredAllIngredients
                         .slice()
                         .sort((a, b) => a.name.localeCompare(b.name))
@@ -523,12 +572,27 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 									backgroundColor: "inherit",
 									transition: "background-color 0.2s",
 									padding: "10px",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "space-between"
 								}}
 								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--secondary-color)")}
 								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
-							>
+							>   <div>
 								<div> {highlightText(ingredient.name, dialogSearchQuery)}</div>
 								<div style={{ fontSize: "0.9rem", color: "#606060" }}>{ingredient.type}</div>
+                                </div>
+                                {ingredient.isCustom && (
+                                <img
+                                    src={customIngredIcon}
+                                    alt="Custom Ingredient"
+                                    style={{
+                                        width: "20px", 
+                                        height: "20px",
+                                        marginLeft: "10px"
+                                    }}
+                                />
+                                )}
 							</div>
 						))}
 					</div>
