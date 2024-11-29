@@ -12,6 +12,7 @@ export interface LayoutContext {
 
 function Layout({ userAuth }: { userAuth: UserAuth }) {
 	const [searchQuery, searchQueryChange] = React.useState("");
+    const [filter, setFilter] = React.useState<'All' | 'Common' | 'Custom'>('All');
 	return (
 		<div className="full-screen">
 			<ToastContainer
@@ -22,12 +23,14 @@ function Layout({ userAuth }: { userAuth: UserAuth }) {
 				userAuth={userAuth}
 				searchQuery={searchQuery}
 				searchQueryChange={(val) => searchQueryChange(val)}
-			/>
+                setFilter={setFilter}
+                filter={filter}
 
+			/>          
 			<div className="content-container">
-				<Outlet context={{ searchQuery }} />
+				<Outlet context={{ searchQuery, filter }} />
 			</div>
-
+            
 			<ToolBar />
 		</div>
 	);
