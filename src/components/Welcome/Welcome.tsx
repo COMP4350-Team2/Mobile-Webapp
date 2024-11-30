@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
 import { UserAuth } from "../../auth/UserAuth";
 import "./Welcome.css";
 
@@ -11,11 +12,13 @@ function Welcome({ userAuth }: WelcomeProps) {
 
 	const handleLogin = () => {
 		if (!userAuth.isAuthenticated()) {
-			userAuth.login(); // Log in the user using Auth0 or Mock User
+			userAuth.login().catch(async (e: Error) => {
+				navigate("/");
+				await new Promise((resolve) => setTimeout(resolve, 100));
+				toast.error(e.message || "An error occurred while logging in.");
+			});
 		}
-		if (userAuth.isAuthenticated()) {
-			navigate("/home");
-		}
+		navigate("/home");
 	};
 
 	return (
@@ -61,6 +64,11 @@ function Welcome({ userAuth }: WelcomeProps) {
 					Log In
 				</button>
 			</div>
+
+			<ToastContainer
+				position="top-center"
+				autoClose={2000}
+			/>
 		</div>
 	);
 }

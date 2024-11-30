@@ -3,11 +3,10 @@ import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 export interface UserAuth {
 	// Authenticating methods
-	login: () => void;
+	login: () => Promise<void>;
 	logout: () => void;
 	isAuthenticated: () => boolean;
 	isProcessing: () => boolean;
-	completeLogin: () => void;
 	getAccessToken: () => Promise<string>;
 	getEmail: () => string;
 	isAuth0User: () => boolean;
@@ -23,7 +22,7 @@ export interface UserAuth {
 	removeIngredient: (listName: string, ingredient: Ingredient) => void;
 	updateIngredient: (listName: string, oldIngredient: Ingredient, newIngredient: Ingredient) => void;
 	createList: (toAdd: List) => void;
-    setListName: (oldName: string, newName: string) => void;
-    addCustomIngredient: (customIngredient: Ingredient) => void;
-    removeCustomIngredient: (name: string) => void;
+	setListName: (oldName: string, newName: string) => void;
+	addCustomIngredient: (customIngredient: Ingredient) => void;
+	removeCustomIngredient: (name: string) => void;
 }

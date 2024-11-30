@@ -5,7 +5,7 @@
       "dom",
       "dom.iterable",
       "esnext",
-      "ES2015.Promise"
+      "ES2018.Promise"
     ],
     "allowJs": true,
     "skipLibCheck": true,

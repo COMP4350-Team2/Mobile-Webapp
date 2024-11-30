@@ -8,11 +8,9 @@ import Loading from "../Loading/Loading";
 
 interface HomeProps {
 	userAuth: UserAuth;
-	isFirstLoggin: boolean;
-	setIsFirstLoggin: (val: boolean) => void;
 }
 
-function Home({ userAuth, isFirstLoggin, setIsFirstLoggin }: HomeProps) {
+function Home({ userAuth }: HomeProps) {
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -22,10 +20,7 @@ function Home({ userAuth, isFirstLoggin, setIsFirstLoggin }: HomeProps) {
 				await new Promise((resolve) => setTimeout(resolve, 100)); // Wait 100ms before rechecking
 			}
 
-			if (userAuth.isAuthenticated() && isFirstLoggin) {
-				userAuth.completeLogin();
-				setIsFirstLoggin(false);
-			} else if (!userAuth.isAuthenticated()) {
+			if (!userAuth.isAuthenticated()) {
 				navigate("/");
 			}
 			setIsLoading(false);
@@ -33,7 +28,7 @@ function Home({ userAuth, isFirstLoggin, setIsFirstLoggin }: HomeProps) {
 
 		setIsLoading(true);
 		checkAuth();
-	}, [navigate, userAuth, isFirstLoggin, setIsFirstLoggin]);
+	}, [navigate, userAuth]);
 
 	return (
 		<div

@@ -5,14 +5,12 @@ import Layout from "components/Layout/Layout";
 import ListNav from "components/ListNav/ListNav";
 import MyLists from "components/MyLists/MyLists";
 import Welcome from "components/Welcome/Welcome";
-import { useState } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import BackendFactory from "services/BackendFactory";
 import "./App.css";
 
 function App() {
-	const [isFirstLoggin, setIsFirstLoggin] = useState(true);
 	const userAuth = UserAuthFactory();
 	const backend = BackendFactory(userAuth);
 
@@ -27,13 +25,7 @@ function App() {
 			children: [
 				{
 					path: "/home",
-					element: (
-						<Home
-							userAuth={userAuth}
-							isFirstLoggin={isFirstLoggin}
-							setIsFirstLoggin={(val) => setIsFirstLoggin(val)}
-						/>
-					),
+					element: <Home userAuth={userAuth} />,
 					errorElement: <div>404 Page Not Found</div>,
 				},
 				{

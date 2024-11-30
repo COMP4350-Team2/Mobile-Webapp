@@ -1,136 +1,115 @@
-import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
 
+const ACCESS_TOKEN = "access_token";
+const EMAIL_NOT_VERIFIED = "Email not verified";
+
 export class Auth0User implements UserAuth {
-	private auth0 = useAuth0();
-	private backendHost = process.env.REACT_APP_BACKEND_HOST ?? "";
-	private audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? "";
 	private mylists: List[] = [];
 	private allIngredients: Ingredient[] = [];
+	private isLoading = false;
+	private authenticated = true;
+	private userEmail = EMAIL_NOT_VERIFIED;
 
-	async login() {
-		const response = await axios.get<{
-			access_token: string;
-			refresh_token: string;
-			issued_time: Date;
-			expire_time: Date;
-			user_info: {
-				nickname: string;
-				name: string;
-				picture: URL;
-				updated_at: Date;
-				email: string;
-				email_verified: boolean;
-				sid: string;
-			};
-		}>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`);
-
-		let data;
-		if (response.status === 200) {
-			data = response.data;
-			if (!Cookies.get("access_token")) {
-				Cookies.set("access_token", data.access_token, {
-					path: "/",
-					secure: true,
-					sameSite: "Strict",
-				});
-			}
-		} else {
-			throw new Error("Loggin unsuccessful.");
-		}
+	login(): Promise<void> {
+		this.isLoading = true;
+		return axios
+			.get<{
+				access_token: string;
+				refresh_token: string;
+				issued_time: Date;
+				expire_time: Date;
+				user_info: {
+					nickname: string;
+					name: string;
+					picture: URL;
+					updated_at: Date;
+					email: string;
+					email_verified: boolean;
+					sid: string;
+				};
+			}>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`)
+			.then((response) => {
+				this.isLoading = false;
+				let data;
+				if (response.status === 200) {
+					data = response.data;
+					if (!Cookies.get(ACCESS_TOKEN)) {
+						Cookies.set(ACCESS_TOKEN, data.access_token, {
+							path: "/",
+							secure: true,
+							sameSite: "Strict",
+						});
+					}
+					this.authenticated = true;
+					this.userEmail = data.user_info.email ?? EMAIL_NOT_VERIFIED;
+				} else {
+					this.authenticated = false;
+					throw new Error("Loggin unsuccessful.");
+				}
+			})
+			.catch((e) => {
+				this.isLoading = false;
+				throw e;
+			}) as Promise<void>;
 	}
 
 	async logout(): Promise<string> {
+		this.isLoading = true;
 		const response = await axios.get<{ message: string }>(
 			`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`
 		);
 
+		// Cookies.remove(ACCESS_TOKEN);
+		this.isLoading = false;
+
 		if (response.status === 200) {
+			this.authenticated = false;
 			return response.data.message;
 		} else {
 			throw new Error(response.data.message);
 		}
 	}
 
-	isAuthenticated = () => this.auth0.isAuthenticated; // auth0.isAuthenticated is false initially until Auth0 completes login
-	isProcessing = () => this.auth0.isLoading;
+	isAuthenticated = () => this.authenticated && !["", undefined].includes(Cookies.get(ACCESS_TOKEN));
+	isProcessing = () => this.isLoading;
 	isAuth0User = () => true;
 
 	/**
-	 * Purpose: Store access token to app's cookie and send a new user login update to backend
-	 */
-	completeLogin() {
-		this.getAccessToken().finally(() => this.createUser().then());
-	}
-
-	/**
-	 * Purpose: Retrieve access token, either from auth0 if retrieving for the first time,
-	 * otherwise, from the app's cookie `access_token`
+	 * Purpose: Retrieve access token from the app's cookie `access_token`,
+	 *          or refresh token if token not found
 	 *
 	 * @return {Promise<string>} The JWT access token.
 	 */
 	async getAccessToken(): Promise<string> {
-		if (!Cookies.get("access_token")) {
-			const token = await this.auth0.getAccessTokenSilently({
-				authorizationParams: {
-					audience: this.audience,
-				},
-			});
-			// Store the access token in a cookie using js-cookie
-			Cookies.set("access_token", token, {
-				path: "/",
-				secure: true,
-				sameSite: "Strict",
-			});
-			return token;
+		if (!Cookies.get(ACCESS_TOKEN)) {
+			const response = await axios.get<{
+				access_token: string;
+				message: string;
+			}>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_REFRESH_TOKEN}`);
+
+			let data;
+			if (response.status === 200) {
+				data = response.data;
+				if (!Cookies.get(ACCESS_TOKEN)) {
+					Cookies.set(ACCESS_TOKEN, data.access_token, {
+						path: "/",
+						secure: true,
+						sameSite: "Strict",
+					});
+				}
+				return data.access_token;
+			} else {
+				throw new Error(response.data.message);
+			}
 		}
-		return Cookies.get("access_token")!;
+		return Cookies.get(ACCESS_TOKEN)!;
 	}
 
-	getEmail(): string {
-		// TODO this.auth0.user?.email doesn't have any data,
-		// would need to get this from BE ideally
-		return "auth0-user@cupboard.com";
-	}
-
-	/**
-	 * Purpose: This method makes a POST request to our API endpoint to create a user.
-	 * The backend checks the database for an existing user and adds the user to the database if it’s a new user.
-	 */
-	private async createUser() {
-		try {
-			axios
-				.post<string>(
-					`${this.backendHost}${process.env.REACT_APP_API_CREATE_USER}`,
-					{},
-					{
-						headers: { authorization: "Bearer " + (await this.getAccessToken()) },
-					}
-				)
-				.then((response) => {
-					if (response.status === 201) {
-						const responseBody = response.data["message"];
-						if (responseBody.includes("Item created successfully.")) {
-						} else if (responseBody.includes("Item already exists.")) {
-							console.log("existing user");
-						} else {
-							console.log("Unexpected response:", responseBody);
-						}
-					} else {
-						console.error("Unexpected response status");
-					}
-				})
-				.catch((error) => {
-					console.error(error);
-				});
-		} catch (e) {
-			console.log(e);
-		}
-	}
+	getEmail = () => this.userEmail;
 
 	getMyLists(): List[] {
 		return this.mylists;
