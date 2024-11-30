@@ -37,13 +37,11 @@ export class Auth0User implements UserAuth {
 				let data;
 				if (response.status === 200) {
 					data = response.data;
-					if (!Cookies.get(ACCESS_TOKEN)) {
-						Cookies.set(ACCESS_TOKEN, data.access_token, {
-							path: "/",
-							secure: true,
-							sameSite: "Strict",
-						});
-					}
+					Cookies.set(ACCESS_TOKEN, data.access_token, {
+						path: "/",
+						secure: true,
+						sameSite: "Strict",
+					});
 					this.authenticated = true;
 					this.userEmail = data.user_info.email ?? EMAIL_NOT_VERIFIED;
 				} else {
@@ -63,7 +61,7 @@ export class Auth0User implements UserAuth {
 			`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`
 		);
 
-		// Cookies.remove(ACCESS_TOKEN);
+		Cookies.remove(ACCESS_TOKEN);
 		this.isLoading = false;
 
 		if (response.status === 200) {
