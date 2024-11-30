@@ -25,7 +25,7 @@ export class Ingredient {
         * @return {boolean} - True if equal
     */
     equalTo(other: Ingredient): boolean {
-        return this.name === other.name && this.unit === other.unit;
+        return this.name === other.name && this.unit === other.unit && this.isCustom === other.isCustom;
     }
 
     /**
