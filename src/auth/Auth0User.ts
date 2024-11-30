@@ -162,6 +162,7 @@ export class Auth0User implements UserAuth {
 			return;
 		}
 		this.removeIngredient(listName, ingredientToUpdate);
+        newIngredient.setCustomFlag(oldIngredient.isCustom);
 		list.addOrUpdateIngredient(newIngredient);
 	}
 
