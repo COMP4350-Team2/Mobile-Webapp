@@ -2,12 +2,14 @@
  * This page displays all the ingredients available to the user
  */
 
+import FilterListIcon from '@mui/icons-material/FilterList';
 import {
     Box,
     Button,
     Card,
     CardActions,
     CardContent,
+    Checkbox,
     Container,
     Dialog,
     DialogActions,
@@ -15,6 +17,8 @@ import {
     DialogTitle,
     Grid,
     IconButton,
+    ListItemText,
+    Menu,
     MenuItem,
     TextField,
     Tooltip,
@@ -32,6 +36,7 @@ import { BackendInterface } from "../../services/BackendInterface";
 import { LayoutContext } from "../Layout/Layout";
 import Loading from "../Loading/Loading";
 import "./AllIngredients.css";
+
 
 interface AllIngredientsProps {
 	backend: BackendInterface;
@@ -51,7 +56,14 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 	const [selectedUnit, setSelectedUnit] = useState<string>("g"); //dropdown menu
 	const [amountError, setAmountError] = useState<string>("");
     const [isLoading, setIsLoading] = useState(true);
-    const { filter } = useOutletContext<{ filter: "All" | "Common" | "Custom" }>();
+    //const { filter } = useOutletContext<{ filter: "All" | "Common" | "Custom" }>();
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [filter, setFilter] = useState<"All" | "Common" | "Custom">("All");
+    const [createDialogOpen, setCreateDialogOpen] = useState(false);
+    const [newIngredientName, setNewIngredientName] = useState("");
+    const [newIngredientType, setNewIngredientType] = useState("");
+
+    
 	/**
 	 * This hook calls the BackendInterface and retrieves all ingredients by invoking the getAllIngredients method.
 	 * Once the result is validated, it calls setIngredients to display all available ingredients.
@@ -149,8 +161,9 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 				selectedIngredient.name,
 				selectedIngredient.type,
 				parsedAmount,
-				selectedUnit
+				selectedUnit,
 			);
+            ingredientToAdd.setCustomFlag(selectedIngredient.isCustom);
 			// Call the addIngredient method on the backend
 			await backend.addIngredient(selectedList, ingredientToAdd);
             toast.success(
@@ -198,20 +211,157 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
           )
         );
     };
+    const handleOpenCreateDialog = () => {
+        setCreateDialogOpen(true);
+        setNewIngredientName(""); 
+        setNewIngredientType("");
+      };
+      
+      // Close the Create Ingredient Dialog
+      const handleCloseCreateDialog = () => {
+        setCreateDialogOpen(false);
+      };
+      
+      // Handle Create action
+      const handleCreateIngredient = async () => {
+        if (!newIngredientName || !newIngredientName) {
+            console.error("Name and type are required.");
+            return;
+        }
+    
+        try {
+            // Call backend.createCustomIngredient to create the ingredient
+            await backend.createCustomIngredient(newIngredientName, newIngredientType);
+    
+            toast.success(`Custom ingredient "${newIngredientName}"created!`, {
+                style: {
+                    backgroundColor: "white",
+                    color: "#0f4c75",
+                    fontWeight: "bold",
+                },
+            });
+    
+            // Close the dialog after successful creation
+            handleCloseCreateDialog();
+        } catch (error) {
+            console.error("Error creating custom ingredient:", error);
+            toast.error("Failed to create custom ingredient", {
+                style: {
+                    backgroundColor: "white",
+                    color: "red",
+                    fontWeight: "bold",
+                },
+            });
+        }
+    };
+
+    const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    
+    const handleFilterClose = () => {
+        setAnchorEl(null);
+    };
+    
+    const handleFilterChange = (newFilter: "All" | "Common" | "Custom") => {
+        setFilter(newFilter);
+        setAnchorEl(null); // Close the menu after selection
+    };
+
     return (
+        <>
+        {/* Sticky Box */}
+        <Box
+            sx={{
+                position: "fixed",
+                top: 110,
+                left: "50%", // Center the box horizontally
+                transform: "translateX(-50%)", // Adjust for center alignment
+                zIndex: 1000,
+                maxWidth: "1200px", // Match the maxWidth of the Container (or Grid area)
+                width: "100%",
+                backgroundColor: "#bbe1fa", 
+                padding: "13px 16px", // Adjust padding to match the Grid gutter
+                display: "flex", 
+                justifyContent: "space-between", 
+                alignItems: "center",
+                height: 40,
+                boxSizing: "border-box" // Ensure padding is included in the width
+            }}
+        >
+            <Button
+                onClick={handleFilterClick} 
+                style={{
+                    backgroundColor: "white",
+                    color: "#0f4c75",
+                    fontWeight: "bold",
+                    padding: "6px 40px",
+                    border: "none",
+                    borderRadius: "30px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    height: 30,
+                    textTransform: "none",
+                }}
+            >
+                <FilterListIcon  /> Filter
+            </Button>
+            <Menu
+                anchorEl={anchorEl} 
+                open={Boolean(anchorEl)}  
+                onClose={handleFilterClose}
+            >
+                <MenuItem onClick={() => handleFilterChange("All")}>
+                    <Checkbox checked={filter === "All"} />
+                    <ListItemText primary="All" />
+                </MenuItem>
+                <MenuItem onClick={() => handleFilterChange("Common")}>
+                    <Checkbox checked={filter === "Common"} />
+                    <ListItemText primary="Common" />
+                </MenuItem>
+                <MenuItem onClick={() => handleFilterChange("Custom")}>
+                    <Checkbox checked={filter === "Custom"} />
+                    <ListItemText primary="Custom" />
+                </MenuItem>
+            </Menu>
+
+            <Button
+                variant="contained"
+                onClick={handleOpenCreateDialog}
+                style={{
+                    backgroundColor: "white",
+                    color: "#0f4c75",
+                    fontWeight: "bold",
+                    padding: "6px 8px",
+                    border: "none",
+                    borderRadius: "30px",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    textTransform: "none",
+                    width: "140px",
+                    height: "30px"
+                }}
+            >
+                Create Ingredient
+            </Button>
+        </Box>
         <Container
             maxWidth={false}
             disableGutters
             className="sub-color"
             style={{ height: "100%", marginTop: 6}}
         >
-            
+           
             {/* Ingredient Cards */}
             {isLoading ? (
 				<Loading />
 			) : (
 			<>
-            <Grid container spacing={2} style={{ marginTop: "0px" }}>
+            <Grid container spacing={2} style={{ marginTop: "80px" }}>
                 
                 {filteredIngredients
                 .slice()
@@ -371,7 +521,52 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            {/* Create Ingredient Dialog */}
+            <Dialog open={createDialogOpen} onClose={handleCloseCreateDialog} PaperProps={{ color: "white" }}>
+            <DialogTitle sx={{ color: "black" }}>Create New Ingredient</DialogTitle>
+            <DialogContent
+                sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "16px", 
+                }}
+            >
+                {/* Ingredient Name */}
+                <Box>
+                <div style={{ marginBottom: "2px", color: "black" }}><strong>Name</strong></div>
+                <TextField
+                    autoFocus
+                    value={newIngredientName}
+                    onChange={(e) => setNewIngredientName(e.target.value)}
+                    fullWidth
+                    style={{ backgroundColor: "white" }}
+                />
+                </Box>
+
+                {/* Ingredient Type */}
+                <Box>
+                <div style={{ marginBottom: "2px", color: "black" }}><strong>Type</strong></div>
+                <TextField
+                    value={newIngredientType}
+                    onChange={(e) => setNewIngredientType(e.target.value)}
+                    fullWidth
+                    style={{ backgroundColor: "white" }}
+                />
+                </Box>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCreateIngredient} className="secondary-color" style={{ color: "white" }}>
+                Create
+                </Button>
+                <Button onClick={handleCloseCreateDialog} className="#808080" style={{ color: "black", border: "1px solid #ccc" }}>
+                Cancel
+                </Button>
+            </DialogActions>
+            </Dialog>
+
         </Container>
+        </>
     );
 }
 
