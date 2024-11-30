@@ -10,10 +10,9 @@ import { UserAuth } from "./UserAuth";
     * @return {UserAuth} Either `Auth0User` or `MockUser` 
 */
 export const UserAuthFactory = (): UserAuth => {
-	const domain = process.env.REACT_APP_AUTH0_DOMAIN ?? "";
-	const clientId = process.env.REACT_APP_CLIENT_ID ?? "";
+	const server_url = process.env.REACT_APP_BACKEND_HOST;
 
-	if (domain && clientId) {
+	if (server_url && server_url !== "") {
 		return new Auth0User();
 	} else {
 		return new MockUser();
