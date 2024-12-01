@@ -231,7 +231,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
         }
         
         const ingredientExists = ingredients.some(
-            (ingredient) => ingredient.name === newIngredientName && ingredient.type === newIngredientType
+            (ingredient) => ingredient.name === newIngredientName
         );
 
         if (ingredientExists) {
