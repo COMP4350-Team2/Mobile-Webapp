@@ -59,7 +59,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
 	const [formError, setFormError] = useState("");
     const [dialogFilter, setDialogFilter] = useState<'All' | 'Common' | 'Custom'>('All');
-
 	useEffect(() => {
 		const fetchIngredients = async () => {
 			if (listName) {
@@ -177,7 +176,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 		try {
 			const ingredientToAdd = new Ingredient(chosenIngredient.name, chosenIngredient.type ,amount, selectedUnit);
-
+            ingredientToAdd.setCustomFlag(chosenIngredient.isCustom);
 			// Call the addIngredient method on the backend
 			await backendInterface.addIngredient(listName, ingredientToAdd);
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
@@ -235,8 +234,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		if (!ingredientToMove || !listName) return; // Ensure ingredient and current list are set
 
 		try {
-			await backendInterface.moveIngredient(listName, toListName, ingredientToMove); // Move ingredient
-
+			await backendInterface.moveIngredient(listName, toListName, ingredientToMove);
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
 			toast.success(`${ingredientToMove.name} moved to ${toListName}`, {
@@ -339,7 +337,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 							lg={3}
 							key={index}
 						>
-							<Card>
+							<Card style={{ position: 'relative' }}>
 								<CardContent style={{ display: "flex", flexDirection: "column" }}>
 									<Typography
 										variant="h6"
@@ -359,6 +357,19 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 									>
 										{`${ingredient.type} | ${ingredient.amount} ${ingredient.unit}`}
 									</Typography>
+                                    {ingredient.isCustom && (
+                                <img
+                                    src={customIngredIcon}
+                                    alt="Custom Ingredient"
+                                    style={{
+                                        width: "20px", 
+                                        height: "20px",
+                                        position: "absolute",
+                                        top: "10px",
+                                        right: "10px", 
+                                    }}
+                                />
+                                )}
 								</CardContent>
 								<CardActions sx={{ display: "flex", justifyContent: "space-between", padding: "8px 35px" }}>
 									<Tooltip
@@ -406,7 +417,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 											<Delete />
 										</Button>
 									</Tooltip>
-								</CardActions>
+								</CardActions>                             
 							</Card>
 						</Grid>
 					))
@@ -589,7 +600,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
                                     style={{
                                         width: "20px", 
                                         height: "20px",
-                                        marginLeft: "10px"
+                                        marginRight: "10px"
                                     }}
                                 />
                                 )}

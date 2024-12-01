@@ -88,12 +88,14 @@ export class Backend implements BackendInterface {
 				results.forEach((listItem: any) => {
 					const listName = listItem.list_name;
 					const ingredients: Ingredient[] = (listItem.ingredients || []).map((ingredient: any) => {
-						return new Ingredient(
+						const ingred = new Ingredient(
 							ingredient.ingredient_name, // name
 							ingredient.ingredient_type, // type
 							ingredient.amount, // amount
 							ingredient.unit // unit
 						);
+                        ingred.setCustomFlag(ingredient.is_custom_ingredient)
+                        return ingred;
 					});
 					const list = new List(listName, ingredients);
 					myLists.push(list);
@@ -162,6 +164,7 @@ export class Backend implements BackendInterface {
 	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
+            console.log("CUSTOM?", ingredient.isCustom);
 			const response = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
 				{
@@ -209,7 +212,17 @@ export class Backend implements BackendInterface {
 			);
 
 			if (response.status === 200) {
-				this.userAuth.removeIngredient(listName, ingredient); 
+                const data = JSON.parse(JSON.stringify(response.data));
+                const listName = data.list_name;
+
+                const updatedIngredients = data.ingredients.map((ing: any) => {
+                    const newIngredient = new Ingredient(ing.ingredient_name, ing.ingredient_type, ing.amount, ing.unit );
+                    newIngredient.setCustomFlag(ing.is_custom_ingredient ?? false);
+                    return newIngredient;
+                });
+                console.log((await this.userAuth.getIngredientsFromList(listName)).length);
+                console.log(updatedIngredients.length);
+				await this.userAuth.updateList(listName, updatedIngredients);
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
 			}
@@ -318,9 +331,9 @@ export class Backend implements BackendInterface {
     async moveIngredient(from: string, to: string, ingredient: Ingredient){
         try {
 			const token = await this.userAuth.getAccessToken();
-
+            
 			const response = await axios.patch(
-				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_MOVE_INGREDIENT}`,
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
 				{
 					old_list_name: from,
 					old_ingredient: ingredient.name,
