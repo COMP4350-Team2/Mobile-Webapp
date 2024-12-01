@@ -303,7 +303,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     justifyContent: "center",
                     height: 30,
                     textTransform: "none",
-                    right: 10
                 }}
             >
                 <FilterListIcon  /> Filter
@@ -344,7 +343,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     textTransform: "none",
                     width: "140px",
                     height: "30px",
-                    left: 10
                 }}
             >
                 Create Ingredient
