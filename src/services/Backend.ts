@@ -81,6 +81,7 @@ export class Backend implements BackendInterface {
 			if (response.status === 200) {
 				const data = JSON.parse(JSON.stringify(response.data));
 				const results = data;
+                console.log("Result", results);
 				if (!results) {
 					console.error("Unexpected data format:", data);
 					return [];
@@ -298,7 +299,6 @@ export class Backend implements BackendInterface {
 	async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-
 			const response = await axios.patch(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
 				{

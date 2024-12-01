@@ -210,7 +210,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 		try {
 			const updatedIngredient = new Ingredient(ingredientToEdit.name, ingredientToEdit.type, editAmount, editUnit);
-
+            updatedIngredient.setCustomFlag(ingredientToEdit.isCustom);
 			await backendInterface.updateIngred(listName, ingredientToEdit, updatedIngredient);
 
 			// Fetch updated ingredients for the list to refresh the UI
