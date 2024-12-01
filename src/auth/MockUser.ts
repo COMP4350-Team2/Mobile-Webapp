@@ -162,4 +162,9 @@ export class MockUser implements UserAuth {
             console.error(`Custom ingredient '${name}' not found.`);
         }
     }
+
+    updateList(name: string, updatedIngredients: Ingredient[]){
+        const list = this.mylists.find((list) => list.name === name);
+        list?.updateList(updatedIngredients);
+    }
 }

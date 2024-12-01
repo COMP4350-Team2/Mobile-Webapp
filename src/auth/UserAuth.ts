@@ -26,4 +26,5 @@ export interface UserAuth {
     setListName: (oldName: string, newName: string) => void;
     addCustomIngredient: (customIngredient: Ingredient) => void;
     removeCustomIngredient: (name: string) => void;
+    updateList: (name: string, updatedIngredients: Ingredient[]) => void;
 }
