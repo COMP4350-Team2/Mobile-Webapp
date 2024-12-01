@@ -180,7 +180,12 @@ export class Auth0User implements UserAuth {
     }
 
     addCustomIngredient(customIngredient: Ingredient){
-        this.allIngredients.push(customIngredient);
+        const exists = this.allIngredients.some(ingredient => 
+            ingredient.name === customIngredient.name && ingredient.isCustom
+        );
+        if(!exists){
+            this.allIngredients.push(customIngredient);
+        }
     }
 
     removeCustomIngredient(name: string){

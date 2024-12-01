@@ -229,7 +229,23 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             console.error("Name and type are required.");
             return;
         }
-    
+        
+        const ingredientExists = ingredients.some(
+            (ingredient) => ingredient.name === newIngredientName && ingredient.type === newIngredientType
+        );
+
+        if (ingredientExists) {
+            handleCloseCreateDialog();
+            toast.error("This ingredient already exists", {
+                style: {
+                    backgroundColor: "white",
+                    color: "red",
+                    fontWeight: "bold",
+                },
+            });
+            return;
+        }
+
         try {
             await backend.createCustomIngredient(newIngredientName, newIngredientType);
     
