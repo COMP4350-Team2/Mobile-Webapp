@@ -55,21 +55,19 @@ export class Auth0User implements UserAuth {
 			}) as Promise<void>;
 	}
 
-	async logout(): Promise<string> {
+	logout() {
 		this.isLoading = true;
-		const response = await axios.get<{ message: string }>(
-			`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`
-		);
+		axios
+			.get<{ message: string }>(`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_LOGIN}`)
+			.then((response) => {
+				if (response.status !== 200) {
+					throw new Error(response.data.message);
+				}
+			});
 
 		Cookies.remove(ACCESS_TOKEN);
 		this.isLoading = false;
-
-		if (response.status === 200) {
-			this.authenticated = false;
-			return response.data.message;
-		} else {
-			throw new Error(response.data.message);
-		}
+		this.authenticated = false;
 	}
 
 	isAuthenticated = () => this.authenticated && !["", undefined].includes(Cookies.get(ACCESS_TOKEN));
