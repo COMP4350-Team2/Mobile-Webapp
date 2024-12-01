@@ -274,19 +274,18 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
         <Box
             sx={{
                 position: "fixed",
-                top: 110,
-                left: "50%", // Center the box horizontally
-                transform: "translateX(-50%)", // Adjust for center alignment
+                top: 55,
+                left: 0, 
+                right: 0,
                 zIndex: 1000,
-                maxWidth: "1200px", // Match the maxWidth of the Container (or Grid area)
                 width: "100%",
-                backgroundColor: "#bbe1fa", 
-                padding: "13px 16px", // Adjust padding to match the Grid gutter
+                backgroundColor: "#1b262c", 
+                padding: "13px 16px", 
                 display: "flex", 
                 justifyContent: "space-between", 
                 alignItems: "center",
                 height: 40,
-                boxSizing: "border-box" // Ensure padding is included in the width
+                boxSizing: "border-box"
             }}
         >
             <Button
@@ -304,6 +303,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     justifyContent: "center",
                     height: 30,
                     textTransform: "none",
+                    right: 10
                 }}
             >
                 <FilterListIcon  /> Filter
@@ -343,7 +343,8 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                     justifyContent: "center",
                     textTransform: "none",
                     width: "140px",
-                    height: "30px"
+                    height: "30px",
+                    left: 10
                 }}
             >
                 Create Ingredient
@@ -355,13 +356,12 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
             className="sub-color"
             style={{ height: "100%", marginTop: 6}}
         >
-           
             {/* Ingredient Cards */}
             {isLoading ? (
 				<Loading />
 			) : (
 			<>
-            <Grid container spacing={2} style={{ marginTop: "80px" }}>
+            <Grid container spacing={2} style={{ marginTop: "30px" }}>
                 
                 {filteredIngredients
                 .slice()

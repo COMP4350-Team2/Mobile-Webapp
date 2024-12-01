@@ -112,6 +112,11 @@ function Header({ userAuth, searchQuery, searchQueryChange}: HeaderProp) {
 							<AiOutlineSearch className="search-bar-icon" />
 						</InputAdornment>
 					}
+                    sx ={{
+                        ...(activeScreenName === "Ingredients" && {
+                            marginTop: "40px"
+                        })
+                    }}
 				/>
 			)}
             {menuOpenned && (
