@@ -196,8 +196,6 @@ export class Auth0User implements UserAuth {
         }
     }
     updateList(name: string, updatedIngredients: Ingredient[]){
-        // const list = this.mylists.find((list) => list.name === name);
-        // list?.updateList(updatedIngredients);
         this.mylists.find((list) => list.name === name)?.updateList(updatedIngredients);
     }
 }

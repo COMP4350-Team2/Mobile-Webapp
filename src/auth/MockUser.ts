@@ -154,7 +154,7 @@ export class MockUser implements UserAuth {
         const ingredientIndex = this.allIngredients.findIndex(
             (ingredient) => 
                 ingredient.name === name && 
-                ingredient.isCustom //must be a custom ingredient
+                ingredient.isCustom 
         );
         if (ingredientIndex !== -1) {
             this.allIngredients.splice(ingredientIndex, 1);
