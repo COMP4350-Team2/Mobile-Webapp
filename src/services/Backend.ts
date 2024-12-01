@@ -415,5 +415,22 @@ export class Backend implements BackendInterface {
     }
 
     async deleteCustomIngredient(name: string) {
+        try {
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.delete<any[]>(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_CUSTOM_INGRED}${name}`,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+			if (response.status === 200) {
+				this.userAuth.removeCustomIngredient(name);
+			}
+			return [];
+		} catch (error) {
+			console.error(error);
+			return [];
+		}
     }
 }
