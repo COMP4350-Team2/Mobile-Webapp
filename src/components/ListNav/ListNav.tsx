@@ -177,7 +177,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		try {
 			const ingredientToAdd = new Ingredient(chosenIngredient.name, chosenIngredient.type ,amount, selectedUnit);
             ingredientToAdd.setCustomFlag(chosenIngredient.isCustom);
-			// Call the addIngredient method on the backend
 			await backendInterface.addIngredient(listName, ingredientToAdd);
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);

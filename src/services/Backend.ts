@@ -58,7 +58,7 @@ export class Backend implements BackendInterface {
 				return [];
 			}
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to fetch ingredient", error);
 			return [];
 		}
 	}
@@ -107,7 +107,7 @@ export class Backend implements BackendInterface {
 				return [];
 			}
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to fetch lists", error);
 			return [];
 		}
 	}
@@ -150,7 +150,7 @@ export class Backend implements BackendInterface {
 			}
 			return [];
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to delete list", error);
 			return [];
 		}
 	}
@@ -429,7 +429,7 @@ export class Backend implements BackendInterface {
 			}
 			return [];
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to delete custom ingredient",error);
 			return [];
 		}
     }
