@@ -26,6 +26,7 @@ export class List {
 
     removeIngredient(ingredient: Ingredient): void {
         const ingredientIndex = this.ingredients.findIndex(i => i.equalTo(ingredient));
+        
         if (ingredientIndex === -1) {
             return;
         }
@@ -34,5 +35,9 @@ export class List {
 
     setListName(newName:string): void {
         this.name = newName;
+    }
+
+    updateList(updatedIngredients: Ingredient[]): void{
+        this.ingredients = updatedIngredients;
     }
 }
