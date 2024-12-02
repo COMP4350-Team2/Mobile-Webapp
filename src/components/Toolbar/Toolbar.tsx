@@ -1,4 +1,5 @@
-import React from "react";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import homeIcon from "../../assets/icons/ToolBar/Home/home_col.png";
 import ingredientIcon from "../../assets/icons/ToolBar/Ingredients/ingredients_col.png";
@@ -8,9 +9,9 @@ import "./Toolbar.css";
 
 function ToolBar() {
 	const navigate = useNavigate();
-	const isDisabled = React.useState(true);
 	const location = useLocation();
-
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    
 	// To make button looks selected while on that page
 	const isActive = (path: string) => location.pathname === path;
 
@@ -19,6 +20,14 @@ function ToolBar() {
 			navigate(path);
 		}
 	};
+
+    const handleRecipesClick = () => {
+        setIsDialogOpen(true);
+      };
+    
+      const handleCloseDialog = () => {
+        setIsDialogOpen(false);
+      };
 
 	return (
 		<div className="toolbar">
@@ -60,8 +69,8 @@ function ToolBar() {
 
 			<div
 				className={`toolbar-button 
-                ${isActive("/recipes") ? "selected" : ""} 
-                ${isDisabled ? "disabled" : ""}`}
+                ${isActive("/recipes") ? "selected" : ""} `}
+                onClick={handleRecipesClick}
 			>
 				<img
 					src={recipeIcon}
@@ -70,6 +79,55 @@ function ToolBar() {
 				/>
 				<span className="toolbar-button-text">Recipes</span>
 			</div>
+
+            <Dialog
+                open={isDialogOpen}
+                onClose={handleCloseDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle
+                sx={{
+                    color: "#0f4c75",
+                    textAlign: "center",
+                    marginBottom: "4px",
+                    paddingBottom: "4px",
+                }}
+                >
+                <strong>Let Team Teacup COOK!</strong>
+                </DialogTitle>
+                <DialogContent
+                sx={{
+                    color: "black",
+                    textAlign: "center",
+                    marginBottom: "4px",
+                    paddingBottom: "4px",
+                }}
+                >
+                <span>We got our best people working to bring this feature to you. Stay tuned!</span>
+                </DialogContent>
+                <DialogActions
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "20px",
+                }}
+                >
+                <Button
+                    onClick={handleCloseDialog}
+                    sx={{
+                    backgroundColor: "primary.main",
+                    color: "white",
+                    "&:hover": {
+                        backgroundColor: "primary.dark",
+                    },
+                    }}
+                >
+                    Close
+                </Button>
+                </DialogActions>
+            </Dialog>
 		</div>
 	);
 }
