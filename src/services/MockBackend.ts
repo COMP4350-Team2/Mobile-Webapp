@@ -69,4 +69,14 @@ export class MockBackend implements BackendInterface {
     async renameList(oldName: string, newName: string) {
         this.userAuth.setListName(oldName, newName);
     }
+
+    async createCustomIngredient(name: string, type: string) {
+        const customIngred = new Ingredient(name, type);
+        customIngred.setCustomFlag(true);
+        this.userAuth.addCustomIngredient(customIngred);
+    }
+
+    async deleteCustomIngredient(name: string) {
+        this.userAuth.removeCustomIngredient(name);
+    }
 }

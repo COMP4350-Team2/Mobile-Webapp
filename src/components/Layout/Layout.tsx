@@ -6,8 +6,10 @@ import { Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "./Layout.css";
 
+
 export interface LayoutContext {
 	searchQuery: string;
+
 }
 
 function Layout({ userAuth }: { userAuth: UserAuth }) {
@@ -22,12 +24,11 @@ function Layout({ userAuth }: { userAuth: UserAuth }) {
 				userAuth={userAuth}
 				searchQuery={searchQuery}
 				searchQueryChange={(val) => searchQueryChange(val)}
-			/>
-
+			/>          
 			<div className="content-container">
 				<Outlet context={{ searchQuery }} />
 			</div>
-
+            
 			<ToolBar />
 		</div>
 	);

@@ -162,6 +162,7 @@ export class Auth0User implements UserAuth {
 			return;
 		}
 		this.removeIngredient(listName, ingredientToUpdate);
+        newIngredient.setCustomFlag(oldIngredient.isCustom);
 		list.addOrUpdateIngredient(newIngredient);
 	}
 
@@ -176,5 +177,30 @@ export class Auth0User implements UserAuth {
         } else {
             console.error(`List with name "${oldName}" not found.`);
         }
+    }
+
+    addCustomIngredient(customIngredient: Ingredient){
+        const exists = this.allIngredients.some(ingredient => 
+            ingredient.name === customIngredient.name && ingredient.isCustom
+        );
+        if(!exists){
+            this.allIngredients.push(customIngredient);
+        }
+    }
+
+    removeCustomIngredient(name: string){
+        const ingredientIndex = this.allIngredients.findIndex(
+            (ingredient) => 
+                ingredient.name === name && 
+                ingredient.isCustom //must be a custom ingredient
+        );
+        if (ingredientIndex !== -1) {
+            this.allIngredients.splice(ingredientIndex, 1);
+        } else {
+            console.error(`Custom ingredient '${name}' not found.`);
+        }
+    }
+    updateList(name: string, updatedIngredients: Ingredient[]){
+        this.mylists.find((list) => list.name === name)?.updateList(updatedIngredients);
     }
 }

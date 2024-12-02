@@ -41,7 +41,7 @@ function App() {
 					element: (
 						<AllIngredients
 							backend={backend}
-							user={userAuth}
+							user={userAuth}   
 						/>
 					),
 					errorElement: <div>404 Page Not Found</div>,

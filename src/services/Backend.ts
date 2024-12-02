@@ -14,30 +14,51 @@ export class Backend implements BackendInterface {
 		this.userAuth = userAuth;
 	}
 
+
 	/**
 	 * Purpose: This function makes a GET request to an API endpoint and retrieves a list of ingredients.
 	 *
 	 * @return {Promise<Ingredient[]>} A promise that resolves to an array of `Ingredient` objects.
 	 */
-	async getAllIngredients(): Promise<Ingredient[]> {
+    async getAllIngredients(): Promise<Ingredient[]> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.get<Ingredient[]>(
+			const response = await axios.get<{
+                //we're expecting 2 arrays instead of 1
+                common_ingredients: { name: string; type: string }[];
+                custom_ingredients: { user: string; name: string; type: string }[];
+            }
+            >(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_INGREDIENTS}`,
 				{
 					headers: { Authorization: "Bearer " + token },
 				}
 			);
 			if (response.status === 200) {
-				const ingredients = response.data.map((item) => new Ingredient(item.name, item.type));
-				this.userAuth.setAllIngredients!(ingredients); // Update the user's all ingredients
-				return ingredients; // Return the mapped ingredients
+				const { common_ingredients, custom_ingredients } = response.data;
+                //mapping the common ingredients into its array
+                const commonIngredients = common_ingredients.map(
+                    (item) => new Ingredient(item.name, item.type)
+                );
+                //for mapping custom ingredients, we need to set the flag to true (by default in the Ingredient DSO its false)
+                const customIngredients = custom_ingredients.map(
+                    (item) => {
+                        const customIngredient = new Ingredient(item.name, item.type);
+                        customIngredient.setCustomFlag(true);
+                        return customIngredient;
+                    }
+                );
+
+                //combine the two lists, flags and all
+                const allIngredients = [...commonIngredients, ...customIngredients];
+				this.userAuth.setAllIngredients!(allIngredients); 
+				return allIngredients;
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
 				return [];
 			}
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to fetch ingredient", error);
 			return [];
 		}
 	}
@@ -60,6 +81,7 @@ export class Backend implements BackendInterface {
 			if (response.status === 200) {
 				const data = JSON.parse(JSON.stringify(response.data));
 				const results = data;
+                console.log("Result", results);
 				if (!results) {
 					console.error("Unexpected data format:", data);
 					return [];
@@ -67,12 +89,14 @@ export class Backend implements BackendInterface {
 				results.forEach((listItem: any) => {
 					const listName = listItem.list_name;
 					const ingredients: Ingredient[] = (listItem.ingredients || []).map((ingredient: any) => {
-						return new Ingredient(
+						const ingred = new Ingredient(
 							ingredient.ingredient_name, // name
 							ingredient.ingredient_type, // type
 							ingredient.amount, // amount
 							ingredient.unit // unit
 						);
+                        ingred.setCustomFlag(ingredient.is_custom_ingredient)
+                        return ingred;
 					});
 					const list = new List(listName, ingredients);
 					myLists.push(list);
@@ -83,7 +107,7 @@ export class Backend implements BackendInterface {
 				return [];
 			}
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to fetch lists", error);
 			return [];
 		}
 	}
@@ -126,7 +150,7 @@ export class Backend implements BackendInterface {
 			}
 			return [];
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to delete list", error);
 			return [];
 		}
 	}
@@ -141,6 +165,7 @@ export class Backend implements BackendInterface {
 	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
+            console.log("CUSTOM?", ingredient.isCustom);
 			const response = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
 				{
@@ -148,6 +173,7 @@ export class Backend implements BackendInterface {
 					ingredient: ingredient.name,
 					amount: ingredient.amount,
 					unit: ingredient.unit,
+                    is_custom_ingredient : ingredient.isCustom
 				},
 				{
 					headers: { Authorization: "Bearer " + token },
@@ -174,15 +200,30 @@ export class Backend implements BackendInterface {
 	async deleteIngredientFromList(listName: string, ingredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.delete(
-				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}${listName}/ingredients/${ingredient.name}/units/${ingredient.unit}`,
+            const url = `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_INGREDIENT}?` +
+                        `ingredient=${ingredient.name}` +
+                        `&is_custom_ingredient=${ingredient.isCustom}` +
+                        `&list_name=${listName}` +
+                        `&unit=${ingredient.unit}`;
+            
+			const response = await axios.delete(url,
 				{
 					headers: { Authorization: "Bearer " + token },
 				}
 			);
 
 			if (response.status === 200) {
-				this.userAuth.removeIngredient(listName, ingredient); //updating the DSO for state management
+                const data = JSON.parse(JSON.stringify(response.data));
+                const listName = data.list_name;
+
+                const updatedIngredients = data.ingredients.map((ing: any) => {
+                    const newIngredient = new Ingredient(ing.ingredient_name, ing.ingredient_type, ing.amount, ing.unit );
+                    newIngredient.setCustomFlag(ing.is_custom_ingredient ?? false);
+                    return newIngredient;
+                });
+                console.log((await this.userAuth.getIngredientsFromList(listName)).length);
+                console.log(updatedIngredients.length);
+				await this.userAuth.updateList(listName, updatedIngredients);
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
 			}
@@ -258,7 +299,6 @@ export class Backend implements BackendInterface {
 	async updateIngred(listName: string, oldIngredient: Ingredient, newIngredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-
 			const response = await axios.patch(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
 				{
@@ -266,10 +306,12 @@ export class Backend implements BackendInterface {
 					old_ingredient: oldIngredient.name,
                     old_amount: oldIngredient.amount,
 					old_unit: oldIngredient.unit,
+                    old_is_custom_ingredient: oldIngredient.isCustom,
                     new_list_name: listName,
 					new_ingredient: newIngredient.name,
 					new_amount: newIngredient.amount,
 					new_unit: newIngredient.unit,
+                    new_is_custom_ingredient: newIngredient.isCustom
 				},
 				{
 					headers: { Authorization: "Bearer " + token },
@@ -289,7 +331,7 @@ export class Backend implements BackendInterface {
     async moveIngredient(from: string, to: string, ingredient: Ingredient){
         try {
 			const token = await this.userAuth.getAccessToken();
-
+            
 			const response = await axios.patch(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_SET_INGREDIENT}`,
 				{
@@ -297,10 +339,12 @@ export class Backend implements BackendInterface {
 					old_ingredient: ingredient.name,
                     old_amount: ingredient.amount,
 					old_unit: ingredient.unit,
+                    old_is_custom_ingredient: ingredient.isCustom,
                     new_list_name: to,
 					new_ingredient: ingredient.name,
 					new_amount: ingredient.amount,
 					new_unit: ingredient.unit,
+                    new_is_custom_ingredient: ingredient.isCustom
 				},
 				{
 					headers: { Authorization: "Bearer " + token },
@@ -341,5 +385,52 @@ export class Backend implements BackendInterface {
         } catch (error) {
             console.error("Failed to rename list:", error);
         }
+    }
+
+    async createCustomIngredient(name: string, type: string) {
+        try {
+			const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.post(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_CREATE_CUSTOM_INGRED}`,
+				{
+                    ingredient: name,
+                    type: type
+                },
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+			if (response.status === 201) {
+                const customIngred = new Ingredient(name,type);
+                customIngred.setCustomFlag(true);
+				this.userAuth.addCustomIngredient(customIngred);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Failed to create custom ingredient:", error);
+		}
+    }
+
+    async deleteCustomIngredient(name: string) {
+        try {
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.delete<any[]>(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_CUSTOM_INGRED}${name}`,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+			if (response.status === 200) {
+				this.userAuth.removeCustomIngredient(name);
+			}
+			return [];
+		} catch (error) {
+			console.error("Failed to delete custom ingredient",error);
+			return [];
+		}
     }
 }

@@ -12,4 +12,6 @@ export interface BackendInterface {
 	createNewList(toAdd: List): Promise<void>;
     moveIngredient(from: string, to: string, ingredient: Ingredient);
     renameList(oldName: string, newName: string);
+    createCustomIngredient(name: string, type: string);
+    deleteCustomIngredient(name: string);
 }

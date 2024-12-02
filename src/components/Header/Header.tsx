@@ -1,7 +1,7 @@
-import { AppBar, IconButton, Input, InputAdornment, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, IconButton, Input, InputAdornment, Toolbar, Typography } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
-import SideMenu from "components/SideMenu/SideMenu";
-import React, { useEffect, useMemo, useRef } from "react";
+import SideMenu from 'components/SideMenu/SideMenu';
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
 import { useLocation } from "react-router-dom";
 import "./Header.css";
@@ -12,16 +12,15 @@ interface HeaderProp {
 	searchQueryChange: (val: string) => void;
 }
 
-function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
+function Header({ userAuth, searchQuery, searchQueryChange}: HeaderProp) {
 	const [menuOpenned, toggleMenu] = React.useState(false);
-	const [searchBarOpenned, toggleSearchBar] = React.useState(false);
+	const [searchBarOpenned, toggleSearchBar] = useState(false);
 	const location = useLocation();
 	const prevScreenName = useRef<string | null>(null);
-
 	const routeNames = useMemo(
 		() => ({
 			"/home": "Home",
-			"/all-ingredients": "Ingredient Selections",
+			"/all-ingredients": "Ingredients",
 			"/my-lists": "My Lists",
 			"/view-list/:listName": ":listName",
 		}),
@@ -64,7 +63,7 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 				position="static"
 				className="header-color"
 			>
-				<Toolbar>
+				<Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 					<IconButton
 						aria-label="menu"
 						aria-controls={menuOpenned ? "menu" : undefined}
@@ -75,16 +74,16 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 					>
 						<AiOutlineMenu />
 					</IconButton>
-					<Typography
-						variant="h6"
-						style={{
-							flexGrow: 1,
-							textAlign: "center",
-							color: "white",
-						}}
-					>
-						{activeScreenName}
-					</Typography>
+                    <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
+                        <Typography
+                            variant="h6"
+                            style={{
+                                color: "white",
+                            }}
+                        >
+                            {activeScreenName}
+                        </Typography>
+                    </Box>
 					{!searchInapplicableScreens.includes(activeScreenName) ? (
 						<IconButton
 							aria-label="menu"
@@ -102,8 +101,7 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 					)}
 				</Toolbar>
 			</AppBar>
-
-			{searchBarOpenned && (
+            {searchBarOpenned && (
 				<Input
 					value={searchQuery}
 					onChange={(e) => searchQueryChange(e.target.value)}
@@ -114,16 +112,21 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 							<AiOutlineSearch className="search-bar-icon" />
 						</InputAdornment>
 					}
+                    sx ={{
+                        ...(activeScreenName === "Ingredients" && {
+                            marginTop: "40px"
+                        })
+                    }}
 				/>
 			)}
-
-			{menuOpenned && (
+            {menuOpenned && (
 				<SideMenu
 					userAuth={userAuth}
 					open={menuOpenned}
 					onClose={() => toggleMenu(false)}
 				></SideMenu>
 			)}
+
 		</>
 	);
 }
