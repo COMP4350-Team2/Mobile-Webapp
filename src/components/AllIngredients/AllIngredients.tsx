@@ -663,7 +663,7 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
                 >
                     {ingredientToDelete ? (
                         <span>
-                            Are you sure you want to delete <strong>{ingredientToDelete.name}</strong> from your list?
+                            Are you sure you want to delete <strong>{ingredientToDelete.name}</strong>?
                         </span>
                     ) : null}
                 </DialogContent>
