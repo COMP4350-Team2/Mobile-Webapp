@@ -37,7 +37,16 @@ export class List {
         this.name = newName;
     }
 
-    updateList(updatedIngredients: Ingredient[]): void{
+    updateList(updatedIngredients: Ingredient[]): void {
         this.ingredients = updatedIngredients;
+    }
+
+    removeCustomIngredient(customIngredient : Ingredient): void {
+        const ingredientIndex = this.ingredients.findIndex(i => i.name === customIngredient.name && i.isCustom === customIngredient.isCustom);
+        if (ingredientIndex === -1) {
+            return;
+        }
+        this.ingredients.splice(ingredientIndex, 1);
+
     }
 }

@@ -55,7 +55,10 @@ export class MockUser implements UserAuth {
 
 	// Method to return all ingredients
 	getAllIngredients(): Ingredient[] {
-        this.setAllIngredients();
+        if(this.allIngredients.length === 0)
+        {
+            this.setAllIngredients();
+        }       
         return this.allIngredients;
 	}
 
@@ -147,17 +150,36 @@ export class MockUser implements UserAuth {
     }
 
     addCustomIngredient(customIngredient: Ingredient){
-        this.allIngredients.push(customIngredient);
+        const ingredientExists = this.allIngredients.some(
+            (ingredient) => ingredient.name === customIngredient.name
+        );
+        if (ingredientExists) {
+            console.error(`Ingredient with the name '${customIngredient.name}' already exists in allIngredients.`);
+        } else{
+            this.allIngredients.push(customIngredient);
+        }
+        
     }
 
     removeCustomIngredient(name: string){
+        console.log("Before removal:", this.allIngredients);
         const ingredientIndex = this.allIngredients.findIndex(
             (ingredient) => 
                 ingredient.name === name && 
                 ingredient.isCustom 
         );
         if (ingredientIndex !== -1) {
+            this.mylists.forEach((list) => {
+                const ingredientToRemove = list.ingredients.find(
+                    (ingredient) => ingredient.name === name && ingredient.isCustom
+                );
+        
+                if (ingredientToRemove) {
+                    list.removeCustomIngredient(ingredientToRemove);
+                }
+            });
             this.allIngredients.splice(ingredientIndex, 1);
+            console.log("After removal:", this.allIngredients);
         } else {
             console.error(`Custom ingredient '${name}' not found.`);
         }
