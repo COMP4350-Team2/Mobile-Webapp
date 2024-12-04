@@ -21,4 +21,13 @@ export class Recipe{
         this.ingredients = ingredients;
         this.steps = steps;
     }
+
+    updateStep(step: string, stepNumber: number){
+        const stepIndex = stepNumber - 1;
+        if (stepIndex < 0 || stepIndex >= this.steps.length) {
+            console.error(`Step number ${stepNumber} is out of bounds.`);
+            return;
+        }
+        this.steps[stepIndex] = step;
+    }
 }
