@@ -1,4 +1,5 @@
 /*This is just the interface for our Users. Used for MockUser and Auth0User */
+import { Recipe } from "models/Recipe";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 export interface UserAuth {
@@ -27,4 +28,8 @@ export interface UserAuth {
     addCustomIngredient: (customIngredient: Ingredient) => void;
     removeCustomIngredient: (name: string) => void;
     updateList: (name: string, updatedIngredients: Ingredient[]) => void;
+	getAllRecipes: () => Recipe[];
+	setAllRecipes?: (recipes: Recipe[]) => void;
+	createRecipe: (name: string) => void;
+	deleteRecipe: (name: string) => void;
 }

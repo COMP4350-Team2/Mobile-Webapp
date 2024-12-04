@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
+import { Recipe } from "models/Recipe";
 
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
@@ -11,6 +12,7 @@ export class Auth0User implements UserAuth {
 	private audience = process.env.REACT_APP_AUTH0_AUDIENCE ?? "";
 	private mylists: List[] = [];
 	private allIngredients: Ingredient[] = [];
+	private allRecipes: Recipe[] = [];
 
 	login() {
 		this.auth0.loginWithRedirect().then(); // Logs the user in using Auth0 redirect
@@ -203,4 +205,33 @@ export class Auth0User implements UserAuth {
     updateList(name: string, updatedIngredients: Ingredient[]){
         this.mylists.find((list) => list.name === name)?.updateList(updatedIngredients);
     }
+
+	getAllRecipes(): Recipe[] {
+		return this.allRecipes;
+	}
+
+	setAllRecipes(recipes: Recipe[]) {
+		this.allRecipes = recipes;
+	}
+
+	createRecipe (name: string): void{
+        const recipeExists = this.allRecipes.some(
+            (existingRecipe) => existingRecipe.name === name
+        );
+    
+        if (recipeExists) {
+            console.error(`A recipe with the name '${name}' already exists.`);
+            return;
+        }
+        this.allRecipes.push(new Recipe(name, new List("Ingredients"), []));
+        console.log(`Recipe '${name}' has been added successfully.`);
+    }
+
+	deleteRecipe (name: string): void {
+        const index = this.allRecipes.findIndex((recipe) => recipe.name === name);
+		if (index !== -1) {
+			this.allRecipes.splice(index, 1);
+		}
+    }
+	
 }
