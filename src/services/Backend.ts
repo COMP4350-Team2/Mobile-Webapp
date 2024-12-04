@@ -578,7 +578,64 @@ export class Backend implements BackendInterface {
 					return newIngredient;
 				});
 				const updatedSteps = data.steps;
-				this.userAuth.updateRecipe(recipeName, updatedIngredients, updatedSteps);
+				const list = new List ("Ingredients", updatedIngredients);
+				this.userAuth.updateRecipe(recipeName, list, updatedSteps);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		
+		} catch(error) {
+			console.log("Failed to delete ingredient", error);
+		}
+	}
+
+	async addStepToRecipe(recipeName: string, step: string){
+		try {
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.post(
+				`${process.env.REACT_APP_BACKEND_HOST}`+
+				`${process.env.REACT_APP_ADD_STEP_TO_RECIPE}` + `${recipeName}/step`,
+				{
+					step: step
+				},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+			if (response.status === 200) {
+				this.userAuth.addStepToRecipe(recipeName, step);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Failed to add step:", error);
+		}
+	}
+
+	async deleteStepFromRecipe(recipeName: string, stepNumber: number){
+		try{
+			const token = await this.userAuth.getAccessToken();
+			const url = `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_DELETE_STEP_FROM_RECIPE}`+
+						`${recipeName}/step?`+
+                        `step_number=${stepNumber}`;
+			const response = await axios.delete(url,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+			if (response.status === 200) {
+				const data = JSON.parse(JSON.stringify(response.data));
+				const recipeName = data.recipe_name;
+
+				const updatedIngredients = data.ingredients.map((ing: any) => {
+					const newIngredient = new Ingredient(ing.ingredient_name, ing.ingredient_type, ing.amount, ing.unit );
+					newIngredient.setCustomFlag(ing.is_custom_ingredient ?? false);
+					return newIngredient;
+				});
+				const updatedSteps = data.steps;
+				const list = new List ("Ingredients", updatedIngredients);
+				this.userAuth.updateRecipe(recipeName, list, updatedSteps);
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
 			}

@@ -20,4 +20,6 @@ export interface BackendInterface {
 	deleteRecipe: (name: string) => void;
 	addIngredientToRecipe: (recipeName: string, ingredient: Ingredient) => void;
 	deleteIngredientFromRecipe: (recipeName: string, ingredient: Ingredient) => void;
+	addStepToRecipe: (recipeName: string, step: string) => void;
+	deleteStepFromRecipe: (recipeName: string, stepNumber: number) => void;
 }
