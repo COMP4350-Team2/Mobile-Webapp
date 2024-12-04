@@ -258,7 +258,33 @@ export class MockUser implements UserAuth {
 
     updateRecipe(recipeName: string, ingredients: List, steps: string[]){
         const recipe = this.allRecipes.find((i) => i.name === recipeName);
-        recipe?.updateRecipe(recipeName, ingredients, steps);
+        if(!recipe){
+            console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+        }
+        recipe.updateRecipe(recipeName, ingredients, steps);
     }
 
+    addStepToRecipe(recipeName: string, step: string){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        if(!recipe){
+            console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+        }
+        recipe.steps.push(step);
+    }
+
+    deleteStepFromRecipe(recipeName: string, stepNumber: number){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+		if (!recipe) {
+			console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+		}
+		
+        if (stepNumber < 1 || stepNumber > recipe.steps.length) {
+            console.error(`Step number ${stepNumber} is out of bounds.`);
+            return;
+        }
+        recipe.steps.splice(stepNumber-1, 1);
+    }
 }
