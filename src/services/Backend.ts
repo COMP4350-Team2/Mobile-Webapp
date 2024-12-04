@@ -2,11 +2,11 @@
  * This is our real backend. The purpose of this class is to talk to our actual backend and utilize its methods
  */
 import axios from "axios";
+import { Recipe } from "models/Recipe";
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { BackendInterface } from "./BackendInterface";
-import { Recipe } from "models/Recipe";
 
 export class Backend implements BackendInterface {
 	private userAuth: UserAuth;
@@ -532,7 +532,7 @@ export class Backend implements BackendInterface {
 			const token = await this.userAuth.getAccessToken();
 			const response = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}`+
-				`${process.env.REACT_APP_ADD_INGREDIENT_TO_RECIPE}` + `${recipeName}/ingredient`,
+				`${process.env.REACT_APP_ADD_INGREDIENT_TO_RECIPE}${recipeName}/ingredient`,
 				{
 					ingredient: ingredient.name,
 					amount: ingredient.amount,
@@ -594,7 +594,7 @@ export class Backend implements BackendInterface {
 			const token = await this.userAuth.getAccessToken();
 			const response = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}`+
-				`${process.env.REACT_APP_ADD_STEP_TO_RECIPE}` + `${recipeName}/step`,
+				`${process.env.REACT_APP_ADD_STEP_TO_RECIPE}${recipeName}/step`,
 				{
 					step: step
 				},
