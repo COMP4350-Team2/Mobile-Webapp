@@ -22,4 +22,5 @@ export interface BackendInterface {
 	deleteIngredientFromRecipe: (recipeName: string, ingredient: Ingredient) => void;
 	addStepToRecipe: (recipeName: string, step: string) => void;
 	deleteStepFromRecipe: (recipeName: string, stepNumber: number) => void;
+	updateStep: (recipeName: string, step: string, stepNumber: number) => void;
 }

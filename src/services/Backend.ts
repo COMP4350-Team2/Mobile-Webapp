@@ -644,4 +644,27 @@ export class Backend implements BackendInterface {
 			console.log("Failed to delete ingredient", error);
 		}
 	}
+
+	async updateStep(recipeName: string, step: string, stepNumber: number){
+		try{
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.patch(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_UPDATE_STEP}${recipeName}/step`,
+				{
+					step: step,
+					step_number: stepNumber
+				},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+			if(response.status === 200){
+				this.userAuth.updateStep(recipeName, step, stepNumber);
+			} else {
+				console.error(`Error: Recieved status code ${response.status}`);
+			}
+		} catch (error) {
+			console.log("Failed to update step", error);
+		}
+	}
 }

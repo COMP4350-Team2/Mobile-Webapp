@@ -108,4 +108,8 @@ export class MockBackend implements BackendInterface {
     deleteStepFromRecipe(recipeName: string, stepNumber: number){
         this.userAuth.deleteStepFromRecipe(recipeName, stepNumber);
     }
+
+    updateStep(recipeName: string, step: string, stepNumber: number){
+        this.userAuth.updateStep(recipeName, step, stepNumber);
+    }
 }
