@@ -1,10 +1,11 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
-import Cookies from "js-cookie";
+import { Recipe } from "models/Recipe";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { UserAuth } from "./UserAuth";
-import { Recipe } from "models/Recipe";
+
+const EMAIL_NOT_VERIFIED = "Email not verified";
 
 export class Auth0User implements UserAuth {
 	private auth0 = useAuth0();
@@ -14,8 +15,16 @@ export class Auth0User implements UserAuth {
 	private allIngredients: Ingredient[] = [];
 	private allRecipes: Recipe[] = [];
 
-	login() {
-		this.auth0.loginWithRedirect().then(); // Logs the user in using Auth0 redirect
+	async login() {
+		await this.auth0
+			.loginWithRedirect({
+				authorizationParams: {
+					audience: this.audience,
+					scope: "openid profile email offline_access",
+					useRefreshTokens: true,
+				},
+			})
+			.then();
 	}
 
 	logout() {
@@ -40,27 +49,16 @@ export class Auth0User implements UserAuth {
 	 * @return {Promise<string>} The JWT access token.
 	 */
 	async getAccessToken(): Promise<string> {
-		if (!Cookies.get("access_token")) {
-			const token = await this.auth0.getAccessTokenSilently({
-				authorizationParams: {
-					audience: this.audience,
-				},
-			});
-			// Store the access token in a cookie using js-cookie
-			Cookies.set("access_token", token, {
-				path: "/",
-				secure: true,
-				sameSite: "Strict",
-			});
-			return token;
-		}
-		return Cookies.get("access_token")!;
+		return await this.auth0.getAccessTokenSilently({
+			authorizationParams: {
+				audience: this.audience,
+				useRefreshTokens: true,
+			},
+		});
 	}
 
 	getEmail(): string {
-		// TODO this.auth0.user?.email doesn't have any data,
-		// would need to get this from BE ideally
-		return "auth0-user@cupboard.com";
+		return this.auth0.user?.email ?? EMAIL_NOT_VERIFIED;
 	}
 
 	/**
@@ -164,50 +162,46 @@ export class Auth0User implements UserAuth {
 			return;
 		}
 		this.removeIngredient(listName, ingredientToUpdate);
-        newIngredient.setCustomFlag(oldIngredient.isCustom);
+		newIngredient.setCustomFlag(oldIngredient.isCustom);
 		list.addOrUpdateIngredient(newIngredient);
 	}
 
 	createList(toAdd: List): void {
 		this.mylists.push(toAdd);
 	}
-    
-    setListName(oldName: string, newName: string): void {
-        const list = this.mylists.find((list) => list.name === oldName);
-        if (list) {
-            list.setListName(newName);
-        } else {
-            console.error(`List with name "${oldName}" not found.`);
-        }
-    }
 
-    addCustomIngredient(customIngredient: Ingredient){
-        const exists = this.allIngredients.some(ingredient => 
-            ingredient.name === customIngredient.name && ingredient.isCustom
-        );
-        if(!exists){
-            this.allIngredients.push(customIngredient);
-        }
-    }
+	setListName(oldName: string, newName: string): void {
+		const list = this.mylists.find((list) => list.name === oldName);
+		if (list) {
+			list.setListName(newName);
+		} else {
+			console.error(`List with name "${oldName}" not found.`);
+		}
+	}
 
-    removeCustomIngredient(name: string){
-        const ingredientIndex = this.allIngredients.findIndex(
-            (ingredient) => 
-                ingredient.name === name && 
-                ingredient.isCustom //must be a custom ingredient
-        );
-        if (ingredientIndex !== -1) {
-            this.allIngredients.splice(ingredientIndex, 1);
-        } else {
-            console.error(`Custom ingredient '${name}' not found.`);
-        }
-    }
-	
-    updateList(name: string, updatedIngredients: Ingredient[]){
-        this.mylists.find((list) => list.name === name)?.updateList(updatedIngredients);
-    }
+	addCustomIngredient(customIngredient: Ingredient) {
+		const exists = this.allIngredients.some(
+			(ingredient) => ingredient.name === customIngredient.name && ingredient.isCustom
+		);
+		if (!exists) {
+			this.allIngredients.push(customIngredient);
+		}
+	}
 
-	getAllRecipes(): Recipe[] {
+	removeCustomIngredient(name: string) {
+		const ingredientIndex = this.allIngredients.findIndex(
+			(ingredient) => ingredient.name === name && ingredient.isCustom //must be a custom ingredient
+		);
+		if (ingredientIndex !== -1) {
+			this.allIngredients.splice(ingredientIndex, 1);
+		} else {
+			console.error(`Custom ingredient '${name}' not found.`);
+		}
+	}
+	updateList(name: string, updatedIngredients: Ingredient[]) {
+		this.mylists.find((list) => list.name === name)?.updateList(updatedIngredients);
+	}
+    getAllRecipes(): Recipe[] {
 		return this.allRecipes;
 	}
 

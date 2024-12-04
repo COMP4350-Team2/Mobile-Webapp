@@ -15,6 +15,7 @@ root.render(
 	<Auth0Provider
 		domain={domain}
 		clientId={clientId}
+		useRefreshTokens={true}
 		authorizationParams={{
 			redirect_uri: `${window.location.origin}/home`,
 			audience: auth_audience,
