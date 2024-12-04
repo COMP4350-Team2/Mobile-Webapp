@@ -32,4 +32,7 @@ export interface UserAuth {
 	setAllRecipes?: (recipes: Recipe[]) => void;
 	createRecipe: (name: string) => void;
 	deleteRecipe: (name: string) => void;
+	addIngredientToRecipe: (recipeName: string, ingredient: Ingredient) => void;
+	deleteIngredientFromRecipe: (recipeName: string, ingredient: Ingredient) => void;
+	updateRecipe: (recipeName: string, ingredients: List, steps: string[]) => void;
 }

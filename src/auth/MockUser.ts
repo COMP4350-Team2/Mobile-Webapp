@@ -242,4 +242,23 @@ export class MockUser implements UserAuth {
 			this.allRecipes.splice(index, 1);
 		}
     }
+
+    addIngredientToRecipe(recipeName: string, ingredient: Ingredient){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        recipe?.addIngredient(ingredient);
+    }
+    deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+		if (!recipe) {
+			console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+		}
+		recipe.ingredients.removeIngredient(ingredient);
+    }
+
+    updateRecipe(recipeName: string, ingredients: List, steps: string[]){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        recipe?.updateRecipe(recipeName, ingredients, steps);
+    }
+
 }
