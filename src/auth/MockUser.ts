@@ -287,4 +287,13 @@ export class MockUser implements UserAuth {
         }
         recipe.steps.splice(stepNumber-1, 1);
     }
+
+    updateStep(recipeName: string, step: string, stepNumber: number){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        if(!recipe){
+            console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+        }
+        recipe.updateStep(step, stepNumber);
+    }
 }

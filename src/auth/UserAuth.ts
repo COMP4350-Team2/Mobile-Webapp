@@ -37,4 +37,5 @@ export interface UserAuth {
 	updateRecipe: (recipeName: string, ingredients: List, steps: string[]) => void;
 	addStepToRecipe: (recipeName: string, steps: string) => void;
 	deleteStepFromRecipe: (recipeName: string, stepNumber: number) => void;
+	updateStep: (recipeName: string, step: string, stepNumber: number) => void;
 }
