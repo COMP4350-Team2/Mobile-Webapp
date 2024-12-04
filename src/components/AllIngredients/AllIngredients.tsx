@@ -248,7 +248,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 
         try {
             await backend.createCustomIngredient(newIngredientName, newIngredientType);
-            await backend.deleteRecipe("Recipe to delete");
             toast.success(`Custom ingredient "${newIngredientName}"created!`, {
                 style: {
                     backgroundColor: "white",

@@ -92,4 +92,12 @@ export class MockBackend implements BackendInterface {
     deleteRecipe(name: string): void {
         this.userAuth.deleteRecipe(name);
     }
+
+    addIngredientToRecipe(recipeName: string, ingredient: Ingredient){
+        this.userAuth.addIngredientToRecipe(recipeName, ingredient);
+    }
+
+    deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient){
+        this.userAuth.deleteIngredientFromRecipe(recipeName, ingredient);
+    }
 }

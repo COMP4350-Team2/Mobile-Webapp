@@ -474,6 +474,7 @@ export class Backend implements BackendInterface {
 	
 				// Set all recipes in UserAuth
 				this.userAuth.setAllRecipes!(recipes);
+				console.log(response.data);
 				return recipes;
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
@@ -523,6 +524,67 @@ export class Backend implements BackendInterface {
 			}
 		} catch (error) {
 			console.error("Failed to create recipe:", error);
+		}
+	}
+	
+	async addIngredientToRecipe(recipeName: string, ingredient: Ingredient){
+		try {
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.post(
+				`${process.env.REACT_APP_BACKEND_HOST}`+
+				`${process.env.REACT_APP_ADD_INGREDIENT_TO_RECIPE}` + `${recipeName}/ingredient`,
+				{
+					ingredient: ingredient.name,
+					amount: ingredient.amount,
+					unit: ingredient.unit,
+					is_custom_ingredient: ingredient.isCustom
+				},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+			if (response.status === 200) {
+				this.userAuth.addIngredientToRecipe(recipeName, ingredient);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Failed to add ingredient:", error);
+		}
+	}
+
+	async deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient){
+		try{
+			const token = await this.userAuth.getAccessToken();
+			const url = `${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_DELETE_INGREDIENT_FROM_RECIPE}`+
+						`${recipeName}/ingredient?`+
+                        `ingredient=${ingredient.name}` +
+                        `&is_custom_ingredient=${ingredient.isCustom}` +
+                        `&unit=${ingredient.unit}` +
+						`&recipe_name=${recipeName}`;
+			const response = await axios.delete(url,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+
+			if (response.status === 200) {
+				const data = JSON.parse(JSON.stringify(response.data));
+				const recipeName = data.recipe_name;
+
+				const updatedIngredients = data.ingredients.map((ing: any) => {
+					const newIngredient = new Ingredient(ing.ingredient_name, ing.ingredient_type, ing.amount, ing.unit );
+					newIngredient.setCustomFlag(ing.is_custom_ingredient ?? false);
+					return newIngredient;
+				});
+				const updatedSteps = data.steps;
+				this.userAuth.updateRecipe(recipeName, updatedIngredients, updatedSteps);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		
+		} catch(error) {
+			console.log("Failed to delete ingredient", error);
 		}
 	}
 }
