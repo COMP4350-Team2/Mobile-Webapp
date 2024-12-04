@@ -1,4 +1,5 @@
 /*This is just the interface for our Backend. */
+import { Recipe } from "models/Recipe";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 export interface BackendInterface {
@@ -14,4 +15,7 @@ export interface BackendInterface {
     renameList(oldName: string, newName: string);
     createCustomIngredient(name: string, type: string);
     deleteCustomIngredient(name: string);
+	getAllRecipes: () => Promise <Recipe[]>;
+	createRecipe: (name: string) => void;
+	deleteRecipe: (name: string) => void;
 }

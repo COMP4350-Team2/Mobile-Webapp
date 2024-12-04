@@ -2,6 +2,7 @@
  * This is our Mock Backend. it just returns our Mock user's allIngredients list.
  */
 
+import { Recipe } from "models/Recipe";
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
@@ -78,5 +79,17 @@ export class MockBackend implements BackendInterface {
 
     async deleteCustomIngredient(name: string) {
         this.userAuth.removeCustomIngredient(name);
+    }
+
+    getAllRecipes(): Promise<Recipe[]> {
+		return new Promise<Recipe[]>((resolve) => resolve(this.userAuth.getAllRecipes()));
+	}
+    
+    createRecipe(name: string): void {
+        this.userAuth.createRecipe(name);
+    }
+
+    deleteRecipe(name: string): void {
+        this.userAuth.deleteRecipe(name);
     }
 }

@@ -6,6 +6,7 @@ import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
 import { BackendInterface } from "./BackendInterface";
+import { Recipe } from "models/Recipe";
 
 export class Backend implements BackendInterface {
 	private userAuth: UserAuth;
@@ -81,7 +82,6 @@ export class Backend implements BackendInterface {
 			if (response.status === 200) {
 				const data = JSON.parse(JSON.stringify(response.data));
 				const results = data;
-                console.log("Result", results);
 				if (!results) {
 					console.error("Unexpected data format:", data);
 					return [];
@@ -165,7 +165,6 @@ export class Backend implements BackendInterface {
 	async addIngredient(listName: string, ingredient: Ingredient): Promise<void> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-            console.log("CUSTOM?", ingredient.isCustom);
 			const response = await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ADD_INGREDIENT}`,
 				{
@@ -221,8 +220,6 @@ export class Backend implements BackendInterface {
                     newIngredient.setCustomFlag(ing.is_custom_ingredient ?? false);
                     return newIngredient;
                 });
-                console.log((await this.userAuth.getIngredientsFromList(listName)).length);
-                console.log(updatedIngredients.length);
 				await this.userAuth.updateList(listName, updatedIngredients);
 			} else {
 				console.error(`Error: Received status code ${response.status}`);
@@ -433,4 +430,99 @@ export class Backend implements BackendInterface {
 			return [];
 		}
     }
+
+	async getAllRecipes(): Promise<Recipe[]> {
+		try {
+			const token = await this.userAuth.getAccessToken();
+			const response = await axios.get<{ 
+				recipe_name: string;
+				ingredients: {
+					ingredient_name: string;
+					ingredient_type: string;
+					amount: number;
+					unit: string;
+					is_custom_ingredient: boolean;
+				}[];
+				steps: string[];
+			}[]>(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_ALL_RECIPES}`,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+	
+			if (response.status === 200) {
+				const recipes = response.data.map((recipeData) => {
+					// Map the ingredients from the API response to the Ingredient DSO
+					const ingredients = recipeData.ingredients.map((item) => {
+						const ingredient = new Ingredient(
+							item.ingredient_name,
+							item.ingredient_type,
+							item.amount,
+							item.unit
+						);
+						ingredient.setCustomFlag(item.is_custom_ingredient);
+						return ingredient;
+					});
+	
+					// Create a List for the recipe's ingredients
+					const ingredientList = new List("Ingredients", ingredients);
+	
+					// Create the Recipe object
+					return new Recipe(recipeData.recipe_name, ingredientList, recipeData.steps);
+				});
+	
+				// Set all recipes in UserAuth
+				this.userAuth.setAllRecipes!(recipes);
+				return recipes;
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+				return [];
+			}
+		} catch (error) {
+			console.error("Failed to fetch recipes", error);
+			return [];
+		}
+	}
+	
+	async createRecipe(name: string){
+		try {
+			const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.post(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_CREATE_RECIPE}${name}`,
+				{},
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+			if (response.status === 201) {
+				this.userAuth.createRecipe(name);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Failed to create recipe:", error);
+		}
+	}
+
+	async deleteRecipe(name: string){
+		try {
+			const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.delete(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_DELETE_RECIPE}${name}`,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+			if (response.status === 200) {
+				this.userAuth.deleteRecipe(name);
+			} else {
+				console.error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Failed to create recipe:", error);
+		}
+	}
 }
