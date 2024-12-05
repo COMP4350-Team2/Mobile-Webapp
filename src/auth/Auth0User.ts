@@ -201,12 +201,7 @@ export class Auth0User implements UserAuth {
 	updateList(name: string, updatedIngredients: Ingredient[]) {
 		this.mylists.find((list) => list.name === name)?.updateList(updatedIngredients);
 	}
-
-	getRecipe(name: string): Recipe | undefined {
-		return this.allRecipes.find((i) => i.name === name);
-	}
-
-	getAllRecipes(): Recipe[] {
+    getAllRecipes(): Recipe[] {
 		return this.allRecipes;
 	}
 
@@ -216,83 +211,74 @@ export class Auth0User implements UserAuth {
 
 	createRecipe(name: string): void {
 		const recipeExists = this.allRecipes.some((existingRecipe) => existingRecipe.name === name);
-
-		if (recipeExists) {
-			console.error(`A recipe with the name '${name}' already exists.`);
-			return;
-		}
+    
+        if (recipeExists) {
+            console.error(`A recipe with the name '${name}' already exists.`);
+            return;
+        }
 		this.allRecipes.push(new Recipe(name));
-		console.log(`Recipe '${name}' has been added successfully.`);
-	}
+        console.log(`Recipe '${name}' has been added successfully.`);
+    }
 
-	deleteRecipe(name: string): void {
-		const index = this.allRecipes.findIndex((recipe) => recipe.name === name);
+	deleteRecipe (name: string): void {
+        const index = this.allRecipes.findIndex((recipe) => recipe.name === name);
 		if (index !== -1) {
 			this.allRecipes.splice(index, 1);
 		}
-	}
+    }
+	
+	addIngredientToRecipe(recipeName: string, ingredient: Ingredient){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        recipe?.addIngredient(ingredient);
+    }
 
-	addIngredientToRecipe(recipeName: string, ingredient: Ingredient) {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		recipe?.addIngredient(ingredient);
-	}
-
-	addIngredientToRecipe(recipeName: string, ingredient: Ingredient): Recipe {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		recipe?.addIngredient(ingredient);
-
-		return recipe!;
-	}
-
-	deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient) {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
+	deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
 		if (!recipe) {
 			console.error(`Recipe with name ${recipeName} not found.`);
 			return;
 		}
-		recipe.ingredientList.removeIngredient(ingredient);
-	}
+		recipe.ingredients.removeIngredient(ingredient);
+    }
 
-	updateRecipe(recipeName: string, ingredients: List, steps: string[]): Recipe {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		if (!recipe) {
-			throw new Error(`Recipe with name ${recipeName} not found.`);
-		}
+	updateRecipe(recipeName: string, ingredients: List, steps: string[]){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        if(!recipe){
+            console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+        }
+        recipe.updateRecipe(recipeName, ingredients, steps);
+    }
 
-		recipe.updateRecipe(recipeName, ingredients, steps);
-		return recipe;
-	}
+	addStepToRecipe(recipeName: string, step: string){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        if(!recipe){
+            console.error(`Recipe with name ${recipeName} not found.`);
+			return;
+        }
+        recipe.steps.push(step);
+    }
 
-	addStepToRecipe(recipeName: string, step: string) {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		if (!recipe) {
-			throw new Error(`Recipe with name ${recipeName} not found.`);
-		}
-		recipe.steps.push(step);
-
-		return recipe;
-	}
-
-	deleteStepFromRecipe(recipeName: string, stepNumber: number) {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
+	deleteStepFromRecipe(recipeName: string, stepNumber: number){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
 		if (!recipe) {
 			console.error(`Recipe with name ${recipeName} not found.`);
 			return;
 		}
+		
+        if (stepNumber < 1 || stepNumber > recipe.steps.length) {
+            console.error(`Step number ${stepNumber} is out of bounds.`);
+            return;
+        }
+        recipe.steps.splice(stepNumber-1, 1);
+    }
 
-		if (stepNumber < 1 || stepNumber > recipe.steps.length) {
-			console.error(`Step number ${stepNumber} is out of bounds.`);
+	updateStep(recipeName: string, step: string, stepNumber: number){
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        if(!recipe){
+            console.error(`Recipe with name ${recipeName} not found.`);
 			return;
-		}
-		recipe.steps.splice(stepNumber - 1, 1);
-	}
-
-	updateStep(recipeName: string, step: string, stepNumber: number) {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		if (!recipe) {
-			console.error(`Recipe with name ${recipeName} not found.`);
-			return;
-		}
-		recipe.updateStep(step, stepNumber);
-	}
+        }
+        recipe.updateStep(step, stepNumber);
+    }
 }

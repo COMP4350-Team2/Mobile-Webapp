@@ -3,22 +3,22 @@ import { List } from "./List";
 
 export class Recipe {
 	name: string;
-	ingredientList: List;
+	ingredients: List;
 	steps: string[];
 
 	constructor(name: string, ingredients: List = new List("Ingredient"), steps: string[] = []) {
 		this.name = name;
-		this.ingredientList = ingredients;
+		this.ingredients = ingredients;
 		this.steps = steps;
 	}
 
 	addIngredient(toAdd: Ingredient) {
-		this.ingredientList.addOrUpdateIngredient(toAdd);
+		this.ingredients.addOrUpdateIngredient(toAdd);
 	}
 
 	updateRecipe(name: string, ingredients: List, steps: string[]) {
 		this.name = name;
-		this.ingredientList = ingredients;
+		this.ingredients = ingredients;
 		this.steps = steps;
 	}
 
