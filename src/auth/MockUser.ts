@@ -296,4 +296,14 @@ export class MockUser implements UserAuth {
         }
         recipe.updateStep(step, stepNumber);
     }
+
+    getStepsFromRecipe(recipeName: string) : Promise<string[]> {
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        return Promise.resolve(recipe?.getSteps() || []);
+    }
+
+    getIngredientsFromRecipe(recipeName: string): Promise<List> {
+        const recipe = this.allRecipes.find((i) => i.name === recipeName);
+        return Promise.resolve(recipe ? recipe.getIngredients(): new List("Ingredients")); 
+    }
 }
