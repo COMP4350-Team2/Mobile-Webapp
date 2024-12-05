@@ -232,7 +232,7 @@ export class MockUser implements UserAuth {
             console.error(`A recipe with the name '${name}' already exists.`);
             return;
         }
-        this.allRecipes.push(new Recipe(name, new List("Ingredients"), []));
+		this.allRecipes.push(new Recipe(name));
         console.log(`Recipe '${name}' has been added successfully.`);
     }
 

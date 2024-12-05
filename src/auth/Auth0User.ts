@@ -209,16 +209,14 @@ export class Auth0User implements UserAuth {
 		this.allRecipes = recipes;
 	}
 
-	createRecipe (name: string): void{
-        const recipeExists = this.allRecipes.some(
-            (existingRecipe) => existingRecipe.name === name
-        );
+	createRecipe(name: string): void {
+		const recipeExists = this.allRecipes.some((existingRecipe) => existingRecipe.name === name);
     
         if (recipeExists) {
             console.error(`A recipe with the name '${name}' already exists.`);
             return;
         }
-        this.allRecipes.push(new Recipe(name, new List("Ingredients"), []));
+		this.allRecipes.push(new Recipe(name));
         console.log(`Recipe '${name}' has been added successfully.`);
     }
 
