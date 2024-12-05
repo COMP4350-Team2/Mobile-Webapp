@@ -19,10 +19,11 @@ export interface BackendInterface {
 	deleteCustomIngredient(name: string);
 
 	getAllRecipes: () => Promise<Recipe[]>;
+	getRecipe: (name: string) => Promise<Recipe>;
 	createRecipe: (name: string) => void;
 	deleteRecipe: (name: string) => Promise<Recipe[]>;
-	addIngredientToRecipe: (recipeName: string, ingredient: Ingredient) => void;
-	deleteIngredientFromRecipe: (recipeName: string, ingredient: Ingredient) => void;
+	addIngredientToRecipe: (recipeName: string, ingredient: Ingredient) => Promise<Recipe>;
+	deleteIngredientFromRecipe: (recipeName: string, ingredient: Ingredient) => Promise<Recipe>;
 	addStepToRecipe: (recipeName: string, step: string) => void;
 	deleteStepFromRecipe: (recipeName: string, stepNumber: number) => void;
 	updateStep: (recipeName: string, step: string, stepNumber: number) => void;

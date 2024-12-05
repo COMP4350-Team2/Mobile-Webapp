@@ -85,6 +85,10 @@ export class MockBackend implements BackendInterface {
 		return new Promise<Recipe[]>((resolve) => resolve(this.userAuth.getAllRecipes()));
 	}
 
+	getRecipe(name: string): Promise<Recipe> {
+		return Promise.resolve(this.userAuth.getRecipe(name)!);
+	}
+
 	createRecipe(name: string): void {
 		this.userAuth.createRecipe(name);
 	}
@@ -95,11 +99,12 @@ export class MockBackend implements BackendInterface {
 	}
 
 	addIngredientToRecipe(recipeName: string, ingredient: Ingredient) {
-		this.userAuth.addIngredientToRecipe(recipeName, ingredient);
+		return Promise.resolve(this.userAuth.addIngredientToRecipe(recipeName, ingredient));
 	}
 
-	deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient) {
+	deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient): Promise<Recipe> {
 		this.userAuth.deleteIngredientFromRecipe(recipeName, ingredient);
+		return Promise.resolve(this.userAuth.getAllRecipes().find((r) => r.name === recipeName)!);
 	}
 
 	addStepToRecipe(recipeName: string, step: string) {

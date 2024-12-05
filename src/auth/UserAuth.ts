@@ -24,18 +24,20 @@ export interface UserAuth {
 	removeIngredient: (listName: string, ingredient: Ingredient) => void;
 	updateIngredient: (listName: string, oldIngredient: Ingredient, newIngredient: Ingredient) => void;
 	createList: (toAdd: List) => void;
-    setListName: (oldName: string, newName: string) => void;
-    addCustomIngredient: (customIngredient: Ingredient) => void;
-    removeCustomIngredient: (name: string) => void;
-    updateList: (name: string, updatedIngredients: Ingredient[]) => void;
+	setListName: (oldName: string, newName: string) => void;
+	addCustomIngredient: (customIngredient: Ingredient) => void;
+	removeCustomIngredient: (name: string) => void;
+	updateList: (name: string, updatedIngredients: Ingredient[]) => void;
+
+	getRecipe: (name: string) => Recipe | undefined;
 	getAllRecipes: () => Recipe[];
 	setAllRecipes?: (recipes: Recipe[]) => void;
 	createRecipe: (name: string) => void;
 	deleteRecipe: (name: string) => void;
-	addIngredientToRecipe: (recipeName: string, ingredient: Ingredient) => void;
+	addIngredientToRecipe: (recipeName: string, ingredient: Ingredient) => Recipe;
 	deleteIngredientFromRecipe: (recipeName: string, ingredient: Ingredient) => void;
-	updateRecipe: (recipeName: string, ingredients: List, steps: string[]) => void;
-	addStepToRecipe: (recipeName: string, steps: string) => void;
+	updateRecipe: (recipeName: string, ingredients: List, steps: string[]) => Recipe;
+	addStepToRecipe: (recipeName: string, steps: string) => Recipe;
 	deleteStepFromRecipe: (recipeName: string, stepNumber: number) => void;
 	updateStep: (recipeName: string, step: string, stepNumber: number) => void;
 }

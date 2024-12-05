@@ -465,6 +465,26 @@ export class Backend implements BackendInterface {
 		}
 	}
 
+	async getRecipe(name: string): Promise<Recipe> {
+		try {
+			const token = await this.userAuth.getAccessToken();
+
+			const response = await axios.get(
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_API_CREATE_RECIPE}${name}`,
+				{
+					headers: { Authorization: "Bearer " + token },
+				}
+			);
+			if (response.status === 200) {
+				return this.mapDataToRecipe(response.data);
+			} else {
+				throw new Error(`Error: Received status code ${response.status}`);
+			}
+		} catch (error) {
+			throw new Error(`Failed to create recipe: ${error}`);
+		}
+	}
+
 	async createRecipe(name: string) {
 		try {
 			const token = await this.userAuth.getAccessToken();
@@ -501,18 +521,7 @@ export class Backend implements BackendInterface {
 
 				// Map the API response data to Recipe[]
 				return response.data.map((recipeData) => {
-					// Map the ingredients from the API response to the Ingredient DSO
-					const ingredients = recipeData.ingredients.map((item) => {
-						const ingredient = new Ingredient(item.ingredient_name, item.ingredient_type, item.amount, item.unit);
-						ingredient.setCustomFlag(item.is_custom_ingredient);
-						return ingredient;
-					});
-
-					// Create a List for the recipe's ingredients
-					const ingredientList = new List("Ingredients", ingredients);
-
-					// Create the Recipe object
-					return new Recipe(recipeData.recipe_name, ingredientList, recipeData.steps);
+					return this.mapDataToRecipe(recipeData);
 				});
 			}
 			console.error(`Error: Received status code ${response.status}`);
@@ -523,10 +532,10 @@ export class Backend implements BackendInterface {
 		}
 	}
 
-	async addIngredientToRecipe(recipeName: string, ingredient: Ingredient) {
+	async addIngredientToRecipe(recipeName: string, ingredient: Ingredient): Promise<Recipe> {
 		try {
 			const token = await this.userAuth.getAccessToken();
-			const response = await axios.post(
+			await axios.post(
 				`${process.env.REACT_APP_BACKEND_HOST}` +
 					`${process.env.REACT_APP_ADD_INGREDIENT_TO_RECIPE}${recipeName}/ingredient`,
 				{
@@ -539,17 +548,14 @@ export class Backend implements BackendInterface {
 					headers: { Authorization: "Bearer " + token },
 				}
 			);
-			if (response.status === 200) {
-				this.userAuth.addIngredientToRecipe(recipeName, ingredient);
-			} else {
-				console.error(`Error: Received status code ${response.status}`);
-			}
+
+			return this.userAuth.addIngredientToRecipe(recipeName, ingredient);
 		} catch (error) {
-			console.error("Failed to add ingredient:", error);
+			throw new Error(`Failed to add ingredient: ${error}`);
 		}
 	}
 
-	async deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient) {
+	async deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient): Promise<Recipe> {
 		try {
 			const token = await this.userAuth.getAccessToken();
 			const url =
@@ -574,12 +580,12 @@ export class Backend implements BackendInterface {
 				});
 				const updatedSteps = data.steps;
 				const list = new List("Ingredients", updatedIngredients);
-				this.userAuth.updateRecipe(recipeName, list, updatedSteps);
+				return this.userAuth.updateRecipe(recipeName, list, updatedSteps);
 			} else {
-				console.error(`Error: Received status code ${response.status}`);
+				throw new Error(`Error: Received status code ${response.status}`);
 			}
 		} catch (error) {
-			console.log("Failed to delete ingredient", error);
+			throw new Error(`Failed to delete ingredient ${error}`);
 		}
 	}
 
@@ -657,5 +663,19 @@ export class Backend implements BackendInterface {
 		} catch (error) {
 			console.log("Failed to update step", error);
 		}
+	}
+
+	private mapDataToRecipe(data: any): Recipe {
+		const ingredients = data.ingredients.map((item) => {
+			const ingredient = new Ingredient(item.ingredient_name, item.ingredient_type, item.amount, item.unit);
+			ingredient.setCustomFlag(item.is_custom_ingredient);
+			return ingredient;
+		});
+
+		// Create a List for the recipe's ingredients
+		const ingredientList = new List("Ingredients", ingredients);
+
+		// Create the Recipe object
+		return new Recipe(data.recipe_name, ingredientList, data.steps);
 	}
 }
