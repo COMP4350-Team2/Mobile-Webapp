@@ -30,4 +30,12 @@ export class Recipe {
 		}
 		this.steps[stepIndex] = step;
 	}
+
+    getSteps() {
+        return this.steps;
+    }
+
+    getIngredients() {
+        return this.ingredients;
+    }
 }
