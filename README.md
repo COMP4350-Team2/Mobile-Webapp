@@ -74,7 +74,7 @@ npm install
 
 ## Acceptance Tests
 The acceptance tests for the user stories covered can be found in the following document <br>
-[Acceptance Tests](ACCEPTANCE_TESTS)
+[Acceptance Tests](ACCEPTANCE_TESTS.md)
 ## Docker Commands
 
 build docker image
