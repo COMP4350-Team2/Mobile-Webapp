@@ -288,13 +288,12 @@ export class Auth0User implements UserAuth {
 		return Promise.resolve(recipe?.getSteps() || []);
 	}
 
-	getIngredientsFromRecipe(recipeName: string): Promise<List> {
+	getIngredientsFromRecipe(recipeName: string): Promise<Ingredient[]> {
 		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		return Promise.resolve(recipe ? recipe.getIngredients() : new List("Ingredients"));
+		return Promise.resolve(recipe ? recipe.getIngredients() : []);
 	}
 
-	getRecipe(recipeName: string): Promise<Recipe> {
-		const recipe = this.allRecipes.find((i) => i.name === recipeName);
-		return Promise.resolve(recipe || new Recipe(""));
+	getRecipe(recipeName: string) {
+		return this.allRecipes.find((i) => i.name === recipeName);
 	}
 }

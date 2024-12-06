@@ -31,11 +31,11 @@ export class Recipe {
 		this.steps[stepIndex] = step;
 	}
 
-    getSteps() {
-        return this.steps;
-    }
+	getSteps() {
+		return this.steps;
+	}
 
-    getIngredients() {
-        return this.ingredients;
-    }
+	getIngredients() {
+		return this.ingredients.ingredients;
+	}
 }

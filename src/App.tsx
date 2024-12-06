@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import BackendFactory from "services/BackendFactory";
 import "./App.css";
 import MyRecipe from "./components/MyRecipe/MyRecipe";
+import RecipeNav from "./components/RecipeNav/RecipeNav";
 
 function App() {
 	const [isFirstLoggin, setIsFirstLoggin] = useState(true);
@@ -75,15 +76,17 @@ function App() {
 							backendInterface={backend}
 						/>
 					),
+					errorElement: <div>404 Page Not Found</div>,
 				},
 				{
 					path: "/my-recipes/:recipeName",
 					element: (
-						<MyRecipe
+						<RecipeNav
 							userAuth={userAuth}
 							backendInterface={backend}
 						/>
 					),
+					errorElement: <div>404 Page Not Found</div>,
 				},
 			],
 		},

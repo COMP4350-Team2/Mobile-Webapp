@@ -184,7 +184,7 @@ function MyRecipe({ userAuth, backendInterface }: MyRecipeProps) {
 										.map((recipe, index) => (
 											<TableRow
 												key={index}
-												onClick={() => navigate(`/view-recipe/${encodeURIComponent(recipe.name)}`)}
+												onClick={() => navigate(`/my-recipes/${encodeURIComponent(recipe.name)}`)}
 												sx={{
 													cursor: "pointer",
 													backgroundColor: "white",

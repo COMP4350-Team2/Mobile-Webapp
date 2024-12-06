@@ -3,7 +3,7 @@ import { UserAuth } from "auth/UserAuth";
 import SideMenu from "components/SideMenu/SideMenu";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AiOutlineMenu, AiOutlineSearch } from "react-icons/ai";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import "./Header.css";
 
 interface HeaderProp {
@@ -13,6 +13,7 @@ interface HeaderProp {
 }
 
 function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
+	const { recipeName } = useParams<{ recipeName: string }>();
 	const [menuOpenned, toggleMenu] = React.useState(false);
 	const [searchBarOpenned, toggleSearchBar] = useState(false);
 	const location = useLocation();
@@ -24,12 +25,12 @@ function Header({ userAuth, searchQuery, searchQueryChange }: HeaderProp) {
 			"/my-lists": "My Lists",
 			"/my-lists/:listName": ":listName",
 			"/my-recipes": "My Lists",
-			"/my-recipes/:name": ":name",
+			"/my-recipes/:recipeName": ":recipeName",
 		}),
 		[]
 	);
 
-	const searchInapplicableScreens = useMemo(() => ["Home"], []);
+	const searchInapplicableScreens = useMemo(() => ["Home", recipeName], []);
 
 	// Determine the active screen name based on the current path
 	const activeScreenName = useMemo(() => {

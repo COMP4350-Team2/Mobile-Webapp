@@ -10,7 +10,7 @@ function ToolBar() {
 	const location = useLocation();
 
 	// To make button looks selected while on that page
-	const isActive = (path: string) => location.pathname === path;
+	const isActive = (path: string) => location.pathname.includes(path);
 
 	const goToPage = (path: string) => {
 		if (location.pathname !== path) {
