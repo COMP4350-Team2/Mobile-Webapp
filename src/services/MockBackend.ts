@@ -2,6 +2,7 @@
  * This is our Mock Backend. it just returns our Mock user's allIngredients list.
  */
 
+import { Recipe } from "models/Recipe";
 import { UserAuth } from "../auth/UserAuth";
 import { Ingredient } from "../models/Ingredient";
 import { List } from "../models/List";
@@ -44,39 +45,72 @@ export class MockBackend implements BackendInterface {
 		this.userAuth.updateIngredient(listName, oldIngredient, newIngredient);
 	}
 
-    async createNewList(toAdd: List): Promise<void> {
-        toAdd.ingredients =[];
-        this.userAuth.createList(toAdd);
-    }
+	async createNewList(toAdd: List): Promise<void> {
+		toAdd.ingredients = [];
+		this.userAuth.createList(toAdd);
+	}
 
-    async moveIngredient(from: string, to: string, ingredient: Ingredient) {
-        const allLists= await this.getMyLists();
-        const fromList = allLists.find(list => list.name === from);
-        const toList = allLists.find(list => list.name === to);
+	async moveIngredient(from: string, to: string, ingredient: Ingredient) {
+		const allLists = await this.getMyLists();
+		const fromList = allLists.find((list) => list.name === from);
+		const toList = allLists.find((list) => list.name === to);
 
-        if (!fromList) {
-            console.error(`Source list "${from}" not found.`);
-            return;
-        }
-        if (!toList) {
-            console.error(`Target list "${to}" not found.`);
-            return;
-        }
-        toList.addOrUpdateIngredient(ingredient);
-        fromList.removeIngredient(ingredient);  
-    }
+		if (!fromList) {
+			console.error(`Source list "${from}" not found.`);
+			return;
+		}
+		if (!toList) {
+			console.error(`Target list "${to}" not found.`);
+			return;
+		}
+		toList.addOrUpdateIngredient(ingredient);
+		fromList.removeIngredient(ingredient);
+	}
 
-    async renameList(oldName: string, newName: string) {
-        this.userAuth.setListName(oldName, newName);
-    }
+	async renameList(oldName: string, newName: string) {
+		this.userAuth.setListName(oldName, newName);
+	}
 
-    async createCustomIngredient(name: string, type: string) {
-        const customIngred = new Ingredient(name, type);
-        customIngred.setCustomFlag(true);
-        this.userAuth.addCustomIngredient(customIngred);
-    }
+	async createCustomIngredient(name: string, type: string) {
+		const customIngred = new Ingredient(name, type);
+		customIngred.setCustomFlag(true);
+		this.userAuth.addCustomIngredient(customIngred);
+	}
 
-    async deleteCustomIngredient(name: string) {
-        this.userAuth.removeCustomIngredient(name);
-    }
+	async deleteCustomIngredient(name: string) {
+		this.userAuth.removeCustomIngredient(name);
+	}
+
+	getAllRecipes(): Promise<Recipe[]> {
+		return new Promise<Recipe[]>((resolve) => resolve(this.userAuth.getAllRecipes()));
+	}
+
+	createRecipe(name: string): void {
+		this.userAuth.createRecipe(name);
+	}
+
+	async deleteRecipe(name: string): Promise<Recipe[]> {
+		this.userAuth.deleteRecipe(name);
+		return Promise.resolve(this.userAuth.getAllRecipes());
+	}
+
+	addIngredientToRecipe(recipeName: string, ingredient: Ingredient) {
+		this.userAuth.addIngredientToRecipe(recipeName, ingredient);
+	}
+
+	deleteIngredientFromRecipe(recipeName: string, ingredient: Ingredient) {
+		this.userAuth.deleteIngredientFromRecipe(recipeName, ingredient);
+	}
+
+	addStepToRecipe(recipeName: string, step: string) {
+		this.userAuth.addStepToRecipe(recipeName, step);
+	}
+
+	deleteStepFromRecipe(recipeName: string, stepNumber: number) {
+		this.userAuth.deleteStepFromRecipe(recipeName, stepNumber);
+	}
+
+	updateStep(recipeName: string, step: string, stepNumber: number) {
+		this.userAuth.updateStep(recipeName, step, stepNumber);
+	}
 }

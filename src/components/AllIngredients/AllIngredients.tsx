@@ -219,12 +219,12 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
       };
       
       // Close the Create Ingredient Dialog
-      const handleCloseCreateDialog = () => {
+    const handleCloseCreateDialog = () => {
         setCreateDialogOpen(false);
-      };
+    };
       
       // Handle Create Ingredient
-      const handleCreateIngredient = async () => {
+    const handleCreateIngredient = async () => {
         if (!newIngredientName || !newIngredientName) {
             console.error("Name and type are required.");
             return;
@@ -248,7 +248,6 @@ function AllIngredients({ backend, user }: AllIngredientsProps) {
 
         try {
             await backend.createCustomIngredient(newIngredientName, newIngredientType);
-    
             toast.success(`Custom ingredient "${newIngredientName}"created!`, {
                 style: {
                     backgroundColor: "white",
