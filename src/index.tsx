@@ -16,10 +16,11 @@ root.render(
 		domain={domain}
 		clientId={clientId}
 		useRefreshTokens={true}
+		cacheLocation="localstorage"
 		authorizationParams={{
 			redirect_uri: `${window.location.origin}/home`,
 			audience: auth_audience,
-			scope: "read:post",
+			scope: "read:post openid profile email offline_access",
 		}}
 	>
 		<App />

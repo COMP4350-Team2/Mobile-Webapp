@@ -587,7 +587,7 @@ export class Backend implements BackendInterface {
 		try {
 			const token = await this.userAuth.getAccessToken();
 			const response = await axios.post(
-				`${process.env.REACT_APP_BACKEND_HOST}` + `${process.env.REACT_APP_ADD_STEP_TO_RECIPE}${recipeName}/step`,
+				`${process.env.REACT_APP_BACKEND_HOST}${process.env.REACT_APP_ADD_STEP_TO_RECIPE}${recipeName}/step`,
 				{
 					step: step,
 				},

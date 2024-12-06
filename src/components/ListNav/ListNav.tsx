@@ -1,24 +1,24 @@
 import { Add, Delete, Edit, SwapHoriz } from "@mui/icons-material";
 import {
-    Box,
-    Button,
-    Card,
-    CardActions,
-    CardContent,
-    Checkbox,
-    Container,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Fab,
-    FormControlLabel,
-    Grid,
-    IconButton,
-    MenuItem,
-    TextField,
-    Tooltip,
-    Typography,
+	Box,
+	Button,
+	Card,
+	CardActions,
+	CardContent,
+	Checkbox,
+	Container,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Fab,
+	FormControlLabel,
+	Grid,
+	IconButton,
+	MenuItem,
+	TextField,
+	Tooltip,
+	Typography,
 } from "@mui/material";
 import { UserAuth } from "auth/UserAuth";
 import isNumber from "is-number";
@@ -38,27 +38,28 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const { listName } = useParams<{ listName: string }>();
 	const { searchQuery } = useOutletContext<LayoutContext>();
 
-	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-	const [open, setOpen] = useState(false); //first dialogue for all ingredients
 	const [allIngredients, setAllIngredients] = useState<Ingredient[]>([]);
-	const [chosenIngredient, setChosenIngredient] = useState<Ingredient | null>(null);
 	const [amount, setAmount] = useState<number | "">("");
-	const [units, setUnits] = useState<string[]>([]);
-	const [selectedUnit, setSelectedUnit] = useState<string>("g");
-	const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null);
-	const [openUnitDialog, setOpenUnitDialog] = useState(false);
-	const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
-	const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
-	const [openEditDialog, setOpenEditDialog] = useState(false);
+	const [amountError, setAmountError] = useState<string>("");
+	const [availableLists, setAvailableLists] = useState<string[]>([]);
+	const [chosenIngredient, setChosenIngredient] = useState<Ingredient | null>(null);
+	const [dialogFilter, setDialogFilter] = useState<"All" | "Common" | "Custom">("All");
+	const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
 	const [editAmount, setEditAmount] = useState<number | "">("");
 	const [editUnit, setEditUnit] = useState<string>("g");
-	const [amountError, setAmountError] = useState<string>("");
-	const [dialogSearchQuery, setDialogSearchQuery] = useState<string>("");
-	const [availableLists, setAvailableLists] = useState<string[]>([]);
-	const [openMoveDialog, setOpenMoveDialog] = useState(false);
+	const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+	const [ingredientToDelete, setIngredientToDelete] = useState<Ingredient | null>(null);
+	const [ingredientToEdit, setIngredientToEdit] = useState<Ingredient | null>(null);
 	const [ingredientToMove, setIngredientToMove] = useState<Ingredient | null>(null);
 	const [formError, setFormError] = useState("");
-    const [dialogFilter, setDialogFilter] = useState<'All' | 'Common' | 'Custom'>('All');
+	const [open, setOpen] = useState(false); // first dialogue for all ingredients
+	const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+	const [openEditDialog, setOpenEditDialog] = useState(false);
+	const [openMoveDialog, setOpenMoveDialog] = useState(false);
+	const [openUnitDialog, setOpenUnitDialog] = useState(false);
+	const [selectedUnit, setSelectedUnit] = useState<string>("g");
+	const [units, setUnits] = useState<string[]>([]);
+
 	useEffect(() => {
 		const fetchIngredients = async () => {
 			if (listName) {
@@ -154,7 +155,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 	const handleClose = () => {
 		setOpen(false);
 		setDialogSearchQuery("");
-        setDialogFilter("All");
+		setDialogFilter("All");
 	};
 
 	const handleAdd = async () => {
@@ -175,8 +176,8 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		}
 
 		try {
-			const ingredientToAdd = new Ingredient(chosenIngredient.name, chosenIngredient.type ,amount, selectedUnit);
-            ingredientToAdd.setCustomFlag(chosenIngredient.isCustom);
+			const ingredientToAdd = new Ingredient(chosenIngredient.name, chosenIngredient.type, amount, selectedUnit);
+			ingredientToAdd.setCustomFlag(chosenIngredient.isCustom);
 			await backendInterface.addIngredient(listName, ingredientToAdd);
 			const updatedIngredients = await userAuth.getIngredientsFromList(listName);
 			setIngredients(updatedIngredients);
@@ -209,7 +210,7 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 
 		try {
 			const updatedIngredient = new Ingredient(ingredientToEdit.name, ingredientToEdit.type, editAmount, editUnit);
-            updatedIngredient.setCustomFlag(ingredientToEdit.isCustom);
+			updatedIngredient.setCustomFlag(ingredientToEdit.isCustom);
 			await backendInterface.updateIngred(listName, ingredientToEdit, updatedIngredient);
 
 			// Fetch updated ingredients for the list to refresh the UI
@@ -273,16 +274,16 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		setIngredientToMove(null);
 	};
 
-    const getFilteredIngredients = () => {
-        switch (dialogFilter) {
-            case "Common":
-                return allIngredients.filter((ingredient) => !ingredient.isCustom);
-            case "Custom":
-                return allIngredients.filter((ingredient) => ingredient.isCustom);
-            default:
-                return allIngredients;
-        }
-    };
+	const getFilteredIngredients = () => {
+		switch (dialogFilter) {
+			case "Common":
+				return allIngredients.filter((ingredient) => !ingredient.isCustom);
+			case "Custom":
+				return allIngredients.filter((ingredient) => ingredient.isCustom);
+			default:
+				return allIngredients;
+		}
+	};
 	const filteredIngredients = ingredients.filter((ingredient) =>
 		ingredient.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
@@ -309,7 +310,6 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 		);
 	};
 
-
 	return (
 		<Container
 			maxWidth={false}
@@ -325,101 +325,101 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 			>
 				{ingredients.length > 0 ? (
 					filteredIngredients
-                    .slice()
-                    .sort((a, b) => a.name.localeCompare(b.name))
-                    .map((ingredient, index) => (
-						<Grid
-							item
-							xs={12}
-							sm={6}
-							md={4}
-							lg={3}
-							key={index}
-						>
-							<Card style={{ position: 'relative' }}>
-								<CardContent style={{ display: "flex", flexDirection: "column" }}>
-									<Typography
-										variant="h6"
-										style={{ color: "black", fontWeight: "bold" }}
-									>
-										{highlightText(ingredient.name, searchQuery)}
-									</Typography>
+						.slice()
+						.sort((a, b) => a.name.localeCompare(b.name))
+						.map((ingredient, index) => (
+							<Grid
+								item
+								xs={12}
+								sm={6}
+								md={4}
+								lg={3}
+								key={index}
+							>
+								<Card style={{ position: "relative" }}>
+									<CardContent style={{ display: "flex", flexDirection: "column" }}>
+										<Typography
+											variant="h6"
+											style={{ color: "black", fontWeight: "bold" }}
+										>
+											{highlightText(ingredient.name, searchQuery)}
+										</Typography>
 
-									<Typography
-										variant="body2"
-										style={{
-											color: "black",
-											fontSize: "0.98rem",
-											position: "relative",
-											top: "8px",
-										}}
-									>
-										{`${ingredient.type} | ${ingredient.amount} ${ingredient.unit}`}
-									</Typography>
-                                    {ingredient.isCustom && (
-                                <img
-                                    src={customIngredIcon}
-                                    alt="Custom Ingredient"
-                                    style={{
-                                        width: "20px", 
-                                        height: "20px",
-                                        position: "absolute",
-                                        top: "10px",
-                                        right: "10px", 
-                                    }}
-                                />
-                                )}
-								</CardContent>
-								<CardActions sx={{ display: "flex", justifyContent: "space-between", padding: "8px 35px" }}>
-									<Tooltip
-										title="Move to other list"
-										arrow
-									>
-										<div
+										<Typography
+											variant="body2"
 											style={{
-												display: "flex",
-												justifyContent: "center",
-												width: "65px",
+												color: "black",
+												fontSize: "0.98rem",
+												position: "relative",
+												top: "8px",
 											}}
 										>
-											<IconButton
-												className="secondary-color"
-												onClick={() => handleOpenMoveDialog(ingredient)}
-												sx={{ color: "black", width: "40px", height: "40px" }}
-												size="medium"
+											{`${ingredient.type} | ${ingredient.amount} ${ingredient.unit}`}
+										</Typography>
+										{ingredient.isCustom && (
+											<img
+												src={customIngredIcon}
+												alt="Custom Ingredient"
+												style={{
+													width: "20px",
+													height: "20px",
+													position: "absolute",
+													top: "10px",
+													right: "10px",
+												}}
+											/>
+										)}
+									</CardContent>
+									<CardActions sx={{ display: "flex", justifyContent: "space-between", padding: "8px 35px" }}>
+										<Tooltip
+											title="Move to other list"
+											arrow
+										>
+											<div
+												style={{
+													display: "flex",
+													justifyContent: "center",
+													width: "65px",
+												}}
 											>
-												<SwapHoriz />
-											</IconButton>
-										</div>
-									</Tooltip>
-									<Tooltip
-										title="Edit"
-										arrow
-									>
-										<Button
-											color="primary"
-											onClick={() => handleOpenEditDialog(ingredient)}
-											sx={{ width: "65px" }}
+												<IconButton
+													className="secondary-color"
+													onClick={() => handleOpenMoveDialog(ingredient)}
+													sx={{ color: "black", width: "40px", height: "40px" }}
+													size="medium"
+												>
+													<SwapHoriz />
+												</IconButton>
+											</div>
+										</Tooltip>
+										<Tooltip
+											title="Edit"
+											arrow
 										>
-											<Edit />
-										</Button>
-									</Tooltip>
-									<Tooltip
-										title="Delete"
-										arrow
-									>
-										<Button
-											color="error"
-											onClick={() => handleOpenConfirmDialog(ingredient)}
-											sx={{ width: "65px" }}
+											<Button
+												color="primary"
+												onClick={() => handleOpenEditDialog(ingredient)}
+												sx={{ width: "65px" }}
+											>
+												<Edit />
+											</Button>
+										</Tooltip>
+										<Tooltip
+											title="Delete"
+											arrow
 										>
-											<Delete />
-										</Button>
-									</Tooltip>
-								</CardActions>                             
-							</Card>
-						</Grid>
-					))
+											<Button
+												color="error"
+												onClick={() => handleOpenConfirmDialog(ingredient)}
+												sx={{ width: "65px" }}
+											>
+												<Delete />
+											</Button>
+										</Tooltip>
+									</CardActions>
+								</Card>
+							</Grid>
+						))
 				) : (
 					<Grid
 						item
@@ -518,7 +518,9 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 				onClose={handleClose}
 				PaperProps={{ className: "white" }}
 			>
-				<DialogTitle style={{ color: "black" }}><strong>Select Ingredients</strong></DialogTitle>
+				<DialogTitle style={{ color: "black" }}>
+					<strong>Select Ingredients</strong>
+				</DialogTitle>
 				<DialogContent sx={{ overflowY: "hidden" }}>
 					{/* Search Bar for Dialog */}
 					<TextField
@@ -532,79 +534,85 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 						}}
 						placeholder="Search Ingredients"
 					/>
-                     {/* Filter Checkboxes */}
-                    <div style={{ marginTop: '10px', marginBottom: '10px', marginLeft: "5px" }}>
-                        <Box display="flex" justifyContent="space-between" alignItems="center">
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={dialogFilter === 'All'}
-                                        onChange={() => setDialogFilter('All')}
-                                        color="primary"
-                                    />
-                                }
-                                label="All"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={dialogFilter === 'Common'}
-                                        onChange={() => setDialogFilter('Common')}
-                                        color="primary"
-                                    />
-                                }
-                                label="Common"
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Checkbox
-                                        checked={dialogFilter === 'Custom'}
-                                        onChange={() => setDialogFilter('Custom')}
-                                        color="primary"
-                                    />
-                                }
-                                label="Custom"
-                            />
-                        </Box>
-                    </div>
-					<div style={{ maxHeight: "300px", overflowY: "auto"}}>
+					{/* Filter Checkboxes */}
+					<div style={{ marginTop: "10px", marginBottom: "10px", marginLeft: "5px" }}>
+						<Box
+							display="flex"
+							justifyContent="space-between"
+							alignItems="center"
+						>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={dialogFilter === "All"}
+										onChange={() => setDialogFilter("All")}
+										color="primary"
+									/>
+								}
+								label="All"
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={dialogFilter === "Common"}
+										onChange={() => setDialogFilter("Common")}
+										color="primary"
+									/>
+								}
+								label="Common"
+							/>
+							<FormControlLabel
+								control={
+									<Checkbox
+										checked={dialogFilter === "Custom"}
+										onChange={() => setDialogFilter("Custom")}
+										color="primary"
+									/>
+								}
+								label="Custom"
+							/>
+						</Box>
+					</div>
+					<div style={{ maxHeight: "300px", overflowY: "auto" }}>
 						{filteredAllIngredients
-                        .slice()
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map((ingredient, index) => (
-							<div
-								key={index}
-								onClick={() => handleIngredientClick(ingredient)}
-								style={{
-									cursor: "pointer",
-									borderBottom: "1px solid #808080",
-									color: "black",
-									backgroundColor: "inherit",
-									transition: "background-color 0.2s",
-									padding: "10px",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "space-between"
-								}}
-								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--secondary-color)")}
-								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
-							>   <div>
-								<div> {highlightText(ingredient.name, dialogSearchQuery)}</div>
-								<div style={{ fontSize: "0.9rem", color: "#606060" }}>{ingredient.type}</div>
-                                </div>
-                                {ingredient.isCustom && (
-                                <img
-                                    src={customIngredIcon}
-                                    alt="Custom Ingredient"
-                                    style={{
-                                        width: "20px", 
-                                        height: "20px",
-                                        marginRight: "10px"
-                                    }}
-                                />
-                                )}
-							</div>
-						))}
+							.slice()
+							.sort((a, b) => a.name.localeCompare(b.name))
+							.map((ingredient, index) => (
+								<div
+									key={index}
+									onClick={() => handleIngredientClick(ingredient)}
+									style={{
+										cursor: "pointer",
+										borderBottom: "1px solid #808080",
+										color: "black",
+										backgroundColor: "inherit",
+										transition: "background-color 0.2s",
+										padding: "10px",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "space-between",
+									}}
+									onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--secondary-color)")}
+									onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
+								>
+									{" "}
+									<div>
+										<div> {highlightText(ingredient.name, dialogSearchQuery)}</div>
+										<div style={{ fontSize: "0.9rem", color: "#606060" }}>{ingredient.type}</div>
+									</div>
+									{ingredient.isCustom && (
+										<img
+											src={customIngredIcon}
+											alt="Custom Ingredient"
+											style={{
+												width: "20px",
+												height: "20px",
+												marginRight: "10px",
+											}}
+										/>
+									)}
+								</div>
+							))}
 					</div>
 				</DialogContent>
 				<DialogActions>
@@ -798,27 +806,27 @@ function ListNav({ userAuth, backendInterface }: ListNavProps) {
 					{/* List of available lists */}
 					<div style={{ maxHeight: "300px", overflowY: "auto" }}>
 						{availableLists
-                        .slice()
-                        .sort((a, b) => a.localeCompare(b))
-                        .map((listName, index) => (
-							<div
-								key={index}
-								onClick={() => handleMoveIngredients(listName)}
-								style={{
-									padding: "10px",
-									cursor: "pointer",
-									borderBottom: "1px solid #808080",
-									color: "black",
-									backgroundColor: "inherit",
-									transition: "background-color 0.2s",
-									fontWeight: "bold",
-								}}
-								onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
-								onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
-							>
-								{listName}
-							</div>
-						))}
+							.slice()
+							.sort((a, b) => a.localeCompare(b))
+							.map((listName, index) => (
+								<div
+									key={index}
+									onClick={() => handleMoveIngredients(listName)}
+									style={{
+										padding: "10px",
+										cursor: "pointer",
+										borderBottom: "1px solid #808080",
+										color: "black",
+										backgroundColor: "inherit",
+										transition: "background-color 0.2s",
+										fontWeight: "bold",
+									}}
+									onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3282b8")}
+									onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "inherit")}
+								>
+									{listName}
+								</div>
+							))}
 					</div>
 				</DialogContent>
 				<DialogActions>
