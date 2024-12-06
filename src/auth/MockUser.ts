@@ -214,7 +214,10 @@ export class MockUser implements UserAuth {
 		const recipe1 = new Recipe("Recipe 1", recipe1Ingredients, recipe1steps);
 		const recipe2 = new Recipe("Recipe 2", recipe2Ingredients, recipe2steps);
 
-		this.allRecipes.push(recipe1, recipe2);
+        if(this.allRecipes.length === 0){
+            this.allRecipes.push(recipe1, recipe2);
+        }
+		
 	}
 
 	createRecipe(name: string): void {
