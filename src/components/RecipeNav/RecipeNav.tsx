@@ -126,13 +126,6 @@ function RecipeNav({ userAuth, backendInterface }: RecipeNavProps) {
 			ingredientToAdd.setCustomFlag(chosenIngredient.isCustom);
 			await backendInterface.addIngredientToRecipe(recipeName, ingredientToAdd);
 			setRecipe(userAuth.getRecipe(recipeName)!);
-			toast.success(`${amount} ${selectedUnit} of ${chosenIngredient.name} added to ${recipeName}`, {
-				style: {
-					backgroundColor: "white",
-					color: "#0f4c75",
-					fontWeight: "bold",
-				},
-			});
 		} catch (error) {
 			console.error("Error adding ingredient:", error);
 		} finally {
@@ -148,13 +141,6 @@ function RecipeNav({ userAuth, backendInterface }: RecipeNavProps) {
 		if (recipeName) {
 			await backendInterface.deleteIngredientFromRecipe(recipeName, ingr);
 			setRecipe(userAuth.getRecipe(recipeName)!);
-			toast.success(`${ingr.name} successfully deleted.`, {
-				style: {
-					backgroundColor: "white",
-					color: "#0f4c75",
-					fontWeight: "bold",
-				},
-			});
 		}
 	};
 
