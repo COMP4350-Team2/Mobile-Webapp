@@ -74,7 +74,7 @@ npm install
 
 ## Acceptance Tests
 The acceptance tests for the user stories covered can be found in the following document <br>
-[Acceptance Tests](ACCEPTANCE_TESTS.md)
+[Acceptance Tests](https://github.com/COMP4350-Team2/Mobile-Webapp/blob/fb88c415341c58101516b14e7110853ac0a006c4/ACCEPTANCE_TESTS.md)
 
 ## Docker Commands
 
