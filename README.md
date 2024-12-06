@@ -245,3 +245,6 @@ start the app using the pulled image
 `docker compose up`
 
 The application will be available at http://localhost:8080.
+
+## License
+[GNU GENERAL PUBLIC LICENSE](LICENSE) © Teacup (COMP4350-Team2)
