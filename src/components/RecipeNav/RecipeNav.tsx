@@ -1,17 +1,17 @@
 import { Delete, Edit } from "@mui/icons-material";
 import {
-	Box,
-	Button,
-	Checkbox,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	FormControlLabel,
-	IconButton,
-	MenuItem,
-	TextField,
-	Tooltip,
+    Box,
+    Button,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControlLabel,
+    IconButton,
+    MenuItem,
+    TextField,
+    Tooltip,
 } from "@mui/material";
 import isNumber from "is-number";
 import { useEffect, useRef, useState } from "react";
@@ -199,7 +199,7 @@ function RecipeNav({ userAuth, backendInterface }: RecipeNavProps) {
 
 	const handleStepBlur = async () => {
 		if (editingIndex !== null && recipeName) {
-			await backendInterface.updateStep(recipeName, editedStep, editingIndex);
+			await backendInterface.updateStep(recipeName, editedStep, editingIndex + 1);
 			const updatedSteps = [...steps];
 			updatedSteps[editingIndex] = editedStep;
 			setSteps(updatedSteps);
