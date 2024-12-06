@@ -75,6 +75,7 @@ npm install
 ## Acceptance Tests
 The acceptance tests for the user stories covered can be found in the following document <br>
 [Acceptance Tests](ACCEPTANCE_TESTS.md)
+
 ## Docker Commands
 
 build docker image
@@ -90,6 +91,13 @@ start the app using the pulled image
 `docker compose up`
 
 The application will be available at http://localhost:8080.
+
+## Contributors
+<a href="https://github.com/COMP4350-Team2/Mobile-Webapp/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=COMP4350-Team2/Mobile-Webapp" />
+</a>
+
+Image made with [contrib.rocks](https://contrib.rocks).
 
 ## License
 [GNU GENERAL PUBLIC LICENSE](LICENSE) © Teacup (COMP4350-Team2)
